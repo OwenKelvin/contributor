@@ -4,7 +4,9 @@
   "license": "MIT",
   "scripts": {
     "serve:client": "pnpm nx serve client",
-    "serve:backend": "pnpm nx serve backend"
+    "serve:backend": "pnpm nx serve backend",
+    "docker:compose-up": "pnpm nx docker:compose-up backend",
+    "docker:compose-down": "pnpm nx docker:compose-down backend"
   },
   "private": true,
   "dependencies": {

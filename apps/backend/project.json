@@ -60,6 +60,20 @@
           "buildTarget": "backend:build:production"
         }
       }
-    }
+    },
+    "docker:compose-up": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose up -d",
+        "cwd": "apps/backend"
+      }
+    },
+    "docker:compose-down": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose down -v",
+        "cwd": "apps/backend"
+      }
+    },
   }
 }
