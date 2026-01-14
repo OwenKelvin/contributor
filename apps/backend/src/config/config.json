@@ -1,0 +1,26 @@
+{
+  "development": {
+    "dialect": "postgres",
+    "host": "localhost",
+    "port": 5432,
+    "username": "postgres",
+    "password": "postgres",
+    "database": "backend_db"
+  },
+  "test": {
+    "dialect": "postgres",
+    "host": "localhost",
+    "port": 5432,
+    "username": "postgres",
+    "password": "postgres",
+    "database": "backend_test_db"
+  },
+  "production": {
+    "dialect": "postgres",
+    "host": "localhost",
+    "port": 5432,
+    "username": "postgres",
+    "password": "postgres",
+    "database": "backend_prod_db"
+  }
+}
