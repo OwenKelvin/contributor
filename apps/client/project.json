@@ -1,29 +1,29 @@
 {
-  "name": "contributor",
+  "name": "client",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "prefix": "app",
-  "sourceRoot": "apps/contributor/src",
+  "sourceRoot": "apps/client/src",
   "tags": [],
   "targets": {
     "build": {
       "executor": "@angular/build:application",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/contributor",
-        "browser": "apps/contributor/src/main.ts",
-        "tsConfig": "apps/contributor/tsconfig.app.json",
+        "outputPath": "dist/apps/client",
+        "browser": "apps/client/src/main.ts",
+        "tsConfig": "apps/client/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
           {
             "glob": "**/*",
-            "input": "apps/contributor/public"
+            "input": "apps/client/public"
           }
         ],
-        "styles": ["apps/contributor/src/styles.scss"],
-        "server": "apps/contributor/src/main.server.ts",
+        "styles": ["apps/client/src/styles.scss"],
+        "server": "apps/client/src/main.server.ts",
         "ssr": {
-          "entry": "apps/contributor/src/server.ts"
+          "entry": "apps/client/src/server.ts"
         },
         "outputMode": "server"
       },
@@ -56,10 +56,10 @@
       "executor": "@angular/build:dev-server",
       "configurations": {
         "production": {
-          "buildTarget": "contributor:build:production"
+          "buildTarget": "client:build:production"
         },
         "development": {
-          "buildTarget": "contributor:build:development"
+          "buildTarget": "client:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -71,15 +71,15 @@
       "executor": "@nx/vitest:test",
       "outputs": ["{options.reportsDirectory}"],
       "options": {
-        "reportsDirectory": "../../coverage/apps/contributor"
+        "reportsDirectory": "../../coverage/apps/client"
       }
     },
     "serve-static": {
       "continuous": true,
       "executor": "@nx/web:file-server",
       "options": {
-        "buildTarget": "contributor:build",
-        "staticFilePath": "dist/apps/contributor/browser",
+        "buildTarget": "client:build",
+        "staticFilePath": "dist/apps/client/browser",
         "spa": true
       }
     }
