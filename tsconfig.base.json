@@ -78,6 +78,13 @@
       "@nyots/client-pages/register": [
         "libs/client/pages/register/src/index.ts"
       ],
+
+      "@nyots/admin-pages": ["libs/admin/pages/src/index.ts"],
+      "@nyots/admin-pages/dashboard": ["libs/admin/pages/dashboard/src/index.ts"],
+      "@nyots/admin-pages/login": ["libs/admin/pages/login/src/index.ts"],
+      "@nyots/admin-pages/register": [
+        "libs/admin/pages/register/src/index.ts"
+      ],
       "@nyots/data-source": ["libs/shared/data-source/src/index.ts"],
       "@nyots/data-source/apollo": ["libs/shared/data-source/apollo/src/index.ts"],
       "@nyots/data-source/constants": ["libs/shared/data-source/constants/src/index.ts"],
