@@ -1,4 +1,4 @@
 type Mutation {
-  register(registerInput: RegisterInput!): String!
-  login(loginInput: LoginInput!): String!
+  register(registerInput: RegisterInput!): AuthResponse!
+  login(loginInput: LoginInput!): AuthResponse!
 }

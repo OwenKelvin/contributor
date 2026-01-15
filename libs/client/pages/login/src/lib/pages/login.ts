@@ -64,12 +64,12 @@ export class Login {
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
 
-  async onSubmit() {
-    if (!this.loginForm().valid) {
-      return;
-    }
-
+  async onSubmit(e: Event) {
+    e.preventDefault()
     await submit(this.loginForm, async (state) => {
+      if (!this.loginForm().valid) {
+        return;
+      }
       this.isLoading.set(true);
       this.errorMessage.set(null);
 
