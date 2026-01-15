@@ -1,0 +1,24 @@
+type Query {
+  getAllProjects(
+    search: String
+    filter: ProjectFilter
+    pagination: PaginationInput
+  ): ProjectConnection!
+  
+  getProjectById(id: ID!): Project!
+  
+  getActiveProjects(
+    pagination: PaginationInput
+  ): ProjectConnection!
+  
+  getPendingProjects(
+    pagination: PaginationInput
+  ): ProjectConnection!
+  
+  getArchivedProjects(
+    filter: ArchivedProjectFilter
+    pagination: PaginationInput
+  ): ProjectConnection!
+  
+  getAllCategories: [Category!]!
+}

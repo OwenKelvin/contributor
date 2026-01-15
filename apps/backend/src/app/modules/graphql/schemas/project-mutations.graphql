@@ -1,0 +1,22 @@
+type Mutation {
+  createProject(input: CreateProjectInput!): Project!
+  
+  updateProject(id: ID!, input: UpdateProjectInput!): Project!
+  
+  deleteProject(id: ID!): Boolean!
+  
+  bulkUpdateProjects(
+    ids: [ID!]!
+    input: BulkUpdateInput!
+  ): BulkUpdateResult!
+  
+  approveProject(id: ID!, notes: String): Project!
+  
+  rejectProject(id: ID!, reason: String!): Project!
+  
+  createCategory(input: CreateCategoryInput!): Category!
+  
+  updateCategory(id: ID!, input: UpdateCategoryInput!): Category!
+  
+  deleteCategory(id: ID!): Boolean!
+}
