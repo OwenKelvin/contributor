@@ -8,18 +8,19 @@ import { CurrentUser } from './decorators/current-user.decorator';
 import { User } from '../user/user.model';
 import { Roles } from './decorators/roles.decorator';
 import { RolesGuard } from './guards/roles.guard';
+import { AuthResponse } from './types/auth-response.type'; // Assuming this file exists and defines AuthResponse
 
 @Resolver()
 export class AuthResolver {
   constructor(private authService: AuthService) {}
 
-  @Mutation(() => String)
-  async register(@Args('registerInput') registerInput: RegisterInput) {
+  @Mutation(() => AuthResponse)
+  async register(@Args('registerInput') registerInput: RegisterInput): Promise<AuthResponse> {
     return this.authService.register(registerInput);
   }
 
-  @Mutation(() => String)
-  async login(@Args('loginInput') loginInput: LoginInput) {
+  @Mutation(() => AuthResponse)
+  async login(@Args('loginInput') loginInput: LoginInput): Promise<AuthResponse> {
     return this.authService.login(loginInput);
   }
 
