@@ -10,6 +10,7 @@ import { HlmIcon, HlmIconImports } from '@nyots/ui/icon';
 import { provideIcons } from '@ng-icons/core';
 import { lucideLoader2, lucideMail, lucideLock } from '@ng-icons/lucide';
 import { RouterLink } from '@angular/router';
+import { ILoginGQL } from '@nyots/data-source/auth';
 
 interface LoginResponse {
   success: boolean;
@@ -47,6 +48,7 @@ interface LoginResponse {
 })
 export class Login {
   private http = inject(HttpClient);
+  private loginGQL = inject(ILoginGQL);
 
   // Form model - single source of truth
   private loginModel = signal({
@@ -76,6 +78,11 @@ export class Login {
       const credentials = state().value();
 
       try {
+        this.loginGQL.mutate({
+          variables: credentials
+        })
+
+
         const response = await this.http
           .post<LoginResponse>('api/auth/login', credentials)
           .toPromise();
