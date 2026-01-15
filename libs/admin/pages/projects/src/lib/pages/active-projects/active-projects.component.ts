@@ -10,6 +10,7 @@ import {
 import { ProjectService } from '@nyots/data-source/projects';
 import { ProjectTableComponent } from '../../components/project-table/project-table.component';
 import { ConfirmationDialogComponent } from '../../components/confirmation-dialog/confirmation-dialog.component';
+import { ErrorBoundaryComponent } from '../../components/error-boundary/error-boundary.component';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmCard, HlmCardContent } from '@nyots/ui/card';
 import { HlmDialogService } from '@nyots/ui/dialog';
@@ -21,6 +22,7 @@ import {
   lucideChevronRight,
 } from '@ng-icons/lucide';
 import { firstValueFrom } from 'rxjs';
+import { retryAsync, getUserFriendlyErrorMessage, isNetworkError } from '../../utils/retry.util';
 
 @Component({
   selector: 'nyots-active-projects',
@@ -28,6 +30,7 @@ import { firstValueFrom } from 'rxjs';
   imports: [
     CommonModule,
     ProjectTableComponent,
+    ErrorBoundaryComponent,
     HlmButton,
     HlmCard,
     HlmCardContent,
@@ -53,6 +56,11 @@ export class ActiveProjectsComponent {
   projects = signal<IProject[]>([]);
   isLoading = signal(false);
 
+  // Error state
+  hasError = signal(false);
+  errorMessage = signal<string>('');
+  errorDetails = signal<string | null>(null);
+
   // Empty set for table component
   readonly emptySet = new Set<string>();
 
@@ -74,6 +82,8 @@ export class ActiveProjectsComponent {
    */
   async loadActiveProjects() {
     this.isLoading.set(true);
+    this.hasError.set(false);
+    
     try {
       // Build pagination object
       const pagination: IPaginationInput = {
@@ -81,7 +91,19 @@ export class ActiveProjectsComponent {
         cursor: this.currentCursor() ?? undefined,
       };
 
-      const result = await this.projectService.getActiveProjects(pagination);
+      const result = await retryAsync(
+        () => this.projectService.getActiveProjects(pagination),
+        {
+          maxAttempts: 3,
+          delayMs: 1000,
+          onRetry: (attempt, error) => {
+            console.log(`Retrying active projects load (attempt ${attempt})...`, error);
+            if (isNetworkError(error)) {
+              toast.info('Retrying connection...');
+            }
+          },
+        }
+      );
 
       if (result && result.pageInfo) {
         this.projects.set((result.projects || []).filter((p): p is IProject => p !== undefined));
@@ -94,7 +116,10 @@ export class ActiveProjectsComponent {
       }
     } catch (error) {
       console.error('Error loading active projects:', error);
-      toast.error('Failed to load active projects');
+      this.hasError.set(true);
+      this.errorMessage.set(getUserFriendlyErrorMessage(error));
+      this.errorDetails.set(error instanceof Error ? error.message : null);
+      toast.error(getUserFriendlyErrorMessage(error));
     } finally {
       this.isLoading.set(false);
     }
@@ -154,7 +179,8 @@ export class ActiveProjectsComponent {
       await this.loadActiveProjects();
     } catch (error) {
       console.error('Error deleting project:', error);
-      toast.error('Failed to delete project');
+      const message = getUserFriendlyErrorMessage(error);
+      toast.error(message);
     }
   }
 

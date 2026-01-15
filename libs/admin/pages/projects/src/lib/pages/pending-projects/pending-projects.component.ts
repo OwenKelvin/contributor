@@ -11,6 +11,7 @@ import { ProjectService } from '@nyots/data-source/projects';
 import { ProjectTableComponent } from '../../components/project-table/project-table.component';
 import { ApprovalDialogComponent } from '../../components/approval-dialog/approval-dialog.component';
 import { RejectionDialogComponent } from '../../components/rejection-dialog/rejection-dialog.component';
+import { ErrorBoundaryComponent } from '../../components/error-boundary/error-boundary.component';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmCard, HlmCardContent } from '@nyots/ui/card';
 import { HlmDialogService } from '@nyots/ui/dialog';
@@ -23,6 +24,7 @@ import {
   lucideXCircle,
 } from '@ng-icons/lucide';
 import { firstValueFrom } from 'rxjs';
+import { retryAsync, getUserFriendlyErrorMessage, isNetworkError } from '../../utils/retry.util';
 
 @Component({
   selector: 'nyots-pending-projects',
@@ -30,6 +32,7 @@ import { firstValueFrom } from 'rxjs';
   imports: [
     CommonModule,
     ProjectTableComponent,
+    ErrorBoundaryComponent,
     HlmButton,
     HlmCard,
     HlmCardContent,
@@ -56,6 +59,11 @@ export class PendingProjectsComponent {
   projects = signal<IProject[]>([]);
   isLoading = signal(false);
 
+  // Error state
+  hasError = signal(false);
+  errorMessage = signal<string>('');
+  errorDetails = signal<string | null>(null);
+
   // Empty set for table component (no bulk actions for pending projects)
   readonly emptySet = new Set<string>();
 
@@ -77,6 +85,8 @@ export class PendingProjectsComponent {
    */
   async loadPendingProjects() {
     this.isLoading.set(true);
+    this.hasError.set(false);
+    
     try {
       // Build pagination object
       const pagination: IPaginationInput = {
@@ -84,7 +94,19 @@ export class PendingProjectsComponent {
         cursor: this.currentCursor() ?? undefined,
       };
 
-      const result = await this.projectService.getPendingProjects(pagination);
+      const result = await retryAsync(
+        () => this.projectService.getPendingProjects(pagination),
+        {
+          maxAttempts: 3,
+          delayMs: 1000,
+          onRetry: (attempt, error) => {
+            console.log(`Retrying pending projects load (attempt ${attempt})...`, error);
+            if (isNetworkError(error)) {
+              toast.info('Retrying connection...');
+            }
+          },
+        }
+      );
 
       if (result && result.pageInfo) {
         this.projects.set((result.projects || []).filter((p): p is IProject => p !== undefined));
@@ -97,7 +119,10 @@ export class PendingProjectsComponent {
       }
     } catch (error) {
       console.error('Error loading pending projects:', error);
-      toast.error('Failed to load pending projects');
+      this.hasError.set(true);
+      this.errorMessage.set(getUserFriendlyErrorMessage(error));
+      this.errorDetails.set(error instanceof Error ? error.message : null);
+      toast.error(getUserFriendlyErrorMessage(error));
     } finally {
       this.isLoading.set(false);
     }
@@ -171,7 +196,8 @@ export class PendingProjectsComponent {
       await this.loadPendingProjects();
     } catch (error) {
       console.error('Error approving project:', error);
-      toast.error('Failed to approve project');
+      const message = getUserFriendlyErrorMessage(error);
+      toast.error(message);
     }
   }
 
@@ -219,7 +245,8 @@ export class PendingProjectsComponent {
       await this.loadPendingProjects();
     } catch (error) {
       console.error('Error rejecting project:', error);
-      toast.error('Failed to reject project');
+      const message = getUserFriendlyErrorMessage(error);
+      toast.error(message);
     }
   }
 }

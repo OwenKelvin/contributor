@@ -26,6 +26,7 @@ import {
   HlmCardTitle,
 } from '@nyots/ui/card';
 import { HlmSpinner } from '@nyots/ui/spinner';
+import { getUserFriendlyErrorMessage } from '../../utils/retry.util';
 
 @Component({
   selector: 'nyots-edit-project',
@@ -166,11 +167,12 @@ export class EditProjectComponent implements OnInit {
       console.error('Error loading project:', error);
       
       // Handle 404 error
+      const message = getUserFriendlyErrorMessage(error);
       const httpError = error as HttpErrorResponse;
       if (httpError?.status === 404) {
         toast.error('Project not found');
       } else {
-        toast.error('Failed to load project');
+        toast.error(message);
       }
       
       await this.router.navigate(['/admin/projects']);
@@ -189,7 +191,8 @@ export class EditProjectComponent implements OnInit {
       this.categories.set((categories || []) as ICategory[]);
     } catch (error) {
       console.error('Error loading categories:', error);
-      toast.error('Failed to load categories');
+      const message = getUserFriendlyErrorMessage(error);
+      toast.error(message);
     } finally {
       this.isCategoriesLoading.set(false);
     }
@@ -238,10 +241,7 @@ export class EditProjectComponent implements OnInit {
       }
 
       // Handle other errors
-      const errorMessage =
-        (e as HttpErrorResponse)?.error?.message ??
-        (e as Error).message ??
-        'An unknown error occurred.';
+      const errorMessage = getUserFriendlyErrorMessage(e);
 
       toast.error(errorMessage);
 

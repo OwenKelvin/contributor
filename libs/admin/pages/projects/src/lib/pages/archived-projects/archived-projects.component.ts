@@ -13,6 +13,7 @@ import {
 import { ProjectService } from '@nyots/data-source/projects';
 import { ProjectTableComponent } from '../../components/project-table/project-table.component';
 import { ConfirmationDialogComponent } from '../../components/confirmation-dialog/confirmation-dialog.component';
+import { ErrorBoundaryComponent } from '../../components/error-boundary/error-boundary.component';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
@@ -29,6 +30,7 @@ import {
   lucideX,
 } from '@ng-icons/lucide';
 import { firstValueFrom } from 'rxjs';
+import { retryAsync, getUserFriendlyErrorMessage, isNetworkError } from '../../utils/retry.util';
 
 @Component({
   selector: 'nyots-archived-projects',
@@ -37,6 +39,7 @@ import { firstValueFrom } from 'rxjs';
     CommonModule,
     FormsModule,
     ProjectTableComponent,
+    ErrorBoundaryComponent,
     HlmButton,
     HlmInput,
     HlmLabel,
@@ -67,6 +70,11 @@ export class ArchivedProjectsComponent {
   projects = signal<IProject[]>([]);
   isLoading = signal(false);
 
+  // Error state
+  hasError = signal(false);
+  errorMessage = signal<string>('');
+  errorDetails = signal<string | null>(null);
+
   // Empty set for table component (no bulk actions for archived projects)
   readonly emptySet = new Set<string>();
 
@@ -93,6 +101,8 @@ export class ArchivedProjectsComponent {
    */
   async loadArchivedProjects() {
     this.isLoading.set(true);
+    this.hasError.set(false);
+    
     try {
       // Build filter object
       const filter: IArchivedProjectFilter = {};
@@ -111,10 +121,22 @@ export class ArchivedProjectsComponent {
         cursor: this.currentCursor() ?? undefined,
       };
 
-      const result = await this.projectService.getArchivedProjects({
-        filter: Object.keys(filter).length > 0 ? filter : undefined,
-        pagination,
-      });
+      const result = await retryAsync(
+        () => this.projectService.getArchivedProjects({
+          filter: Object.keys(filter).length > 0 ? filter : undefined,
+          pagination,
+        }),
+        {
+          maxAttempts: 3,
+          delayMs: 1000,
+          onRetry: (attempt, error) => {
+            console.log(`Retrying archived projects load (attempt ${attempt})...`, error);
+            if (isNetworkError(error)) {
+              toast.info('Retrying connection...');
+            }
+          },
+        }
+      );
 
       if (result && result.pageInfo) {
         this.projects.set((result.projects || []).filter((p): p is IProject => p !== undefined));
@@ -127,7 +149,10 @@ export class ArchivedProjectsComponent {
       }
     } catch (error) {
       console.error('Error loading archived projects:', error);
-      toast.error('Failed to load archived projects');
+      this.hasError.set(true);
+      this.errorMessage.set(getUserFriendlyErrorMessage(error));
+      this.errorDetails.set(error instanceof Error ? error.message : null);
+      toast.error(getUserFriendlyErrorMessage(error));
     } finally {
       this.isLoading.set(false);
     }
@@ -233,7 +258,8 @@ export class ArchivedProjectsComponent {
       await this.loadArchivedProjects();
     } catch (error) {
       console.error('Error restoring project:', error);
-      toast.error('Failed to restore project');
+      const message = getUserFriendlyErrorMessage(error);
+      toast.error(message);
     }
   }
 
@@ -267,7 +293,8 @@ export class ArchivedProjectsComponent {
       await this.loadArchivedProjects();
     } catch (error) {
       console.error('Error permanently deleting project:', error);
-      toast.error('Failed to permanently delete project');
+      const message = getUserFriendlyErrorMessage(error);
+      toast.error(message);
     }
   }
 

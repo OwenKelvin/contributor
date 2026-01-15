@@ -1,17 +1,27 @@
 <div class="container mx-auto py-6 space-y-6">
-  <!-- Header Section -->
-  <div class="flex items-center justify-between">
-    <div>
-      <h1 class="text-3xl font-bold tracking-tight">Active Projects</h1>
-      <p class="text-muted-foreground">
-        View and manage all currently active projects
-      </p>
+  <!-- Error Boundary -->
+  @if (hasError()) {
+    <nyots-error-boundary
+      [title]="'Failed to Load Active Projects'"
+      [message]="errorMessage()"
+      [details]="errorDetails()"
+      [retryLabel]="'Retry Loading'"
+      (retry)="loadActiveProjects()"
+    />
+  } @else {
+    <!-- Header Section -->
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight">Active Projects</h1>
+        <p class="text-muted-foreground">
+          View and manage all currently active projects
+        </p>
+      </div>
+      <button hlmBtn (click)="navigateToCreate()">
+        <ng-icon hlm size="sm" name="lucidePlus" class="mr-2" />
+        Create Project
+      </button>
     </div>
-    <button hlmBtn (click)="navigateToCreate()">
-      <ng-icon hlm size="sm" name="lucidePlus" class="mr-2" />
-      Create Project
-    </button>
-  </div>
 
   <!-- Projects Table -->
   <div hlmCard>
@@ -72,5 +82,6 @@
         Create Your First Project
       </button>
     </div>
+  }
   }
 </div>
