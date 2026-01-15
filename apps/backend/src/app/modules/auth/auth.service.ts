@@ -7,10 +7,16 @@ import { UserService } from '../user/user.service';
 import { RegisterInput } from './dto/register.input';
 import { LoginInput } from './dto/login.input';
 import { JwtService } from '@nestjs/jwt';
-import { compare } from 'bcryptjs';
+import * as bcrypt from 'bcryptjs';
 import { RoleService } from '../role/role.service';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { User } from '../user/user.model';
+
+interface AuthResponse {
+  user: User;
+  accessToken: string;
+}
 
 @Injectable()
 export class AuthService {
@@ -21,8 +27,8 @@ export class AuthService {
     @InjectQueue('email') private emailQueue: Queue,
   ) {}
 
-  async register(registerInput: RegisterInput): Promise<string> {
-    const { email, password, firstName, lastName } = registerInput;
+  async register(registerInput: RegisterInput): Promise<AuthResponse> {
+    const { email, password, firstName, lastName, phoneNumber } = registerInput;
 
     const existingUser = await this.userService.findByEmail(email);
     if (existingUser) {
@@ -41,6 +47,7 @@ export class AuthService {
       password,
       firstName,
       lastName,
+      phoneNumber,
       roles: [clientRole],
     });
 
@@ -50,10 +57,11 @@ export class AuthService {
       name: user.firstName,
     });
 
-    return this.generateJwtToken(user.id, user.email);
+    const accessToken = this.generateJwtToken(user.id, user.email);
+    return { user, accessToken };
   }
 
-  async login(loginInput: LoginInput): Promise<string> {
+  async login(loginInput: LoginInput): Promise<AuthResponse> {
     const { email, password } = loginInput;
 
     const user = await this.userService.findByEmail(email);
@@ -61,12 +69,13 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isPasswordValid = compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    return this.generateJwtToken(user.id, user.email);
+    const accessToken = this.generateJwtToken(user.id, user.email);
+    return { user, accessToken };
   }
 
   private generateJwtToken(userId: string, email: string): string {

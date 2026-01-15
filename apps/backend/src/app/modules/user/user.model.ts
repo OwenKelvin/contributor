@@ -55,6 +55,15 @@ export class User extends Model<User> {
   })
   lastName: string;
 
+  @Field({ nullable: true })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    unique: true,
+    field: 'phone_number',
+  })
+  phoneNumber: string;
+
   @BeforeCreate
   static async hashPassword(user: User) {
     if (user.password) {
