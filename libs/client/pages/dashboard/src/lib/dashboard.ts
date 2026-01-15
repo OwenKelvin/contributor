@@ -11,13 +11,21 @@ import {
   HlmSidebarInset,
   HlmSidebarMenu,
   HlmSidebarMenuButton,
-  HlmSidebarMenuItem,
+  HlmSidebarMenuItem, HlmSidebarMenuSub, HlmSidebarMenuSubButton, HlmSidebarMenuSubItem,
   HlmSidebarTrigger,
   HlmSidebarWrapper
 } from '@nyots/ui/sidebar';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { HlmIcon } from '@nyots/ui/icon';
-import { lucideChevronDown, lucideChevronUp, lucideHouse, lucideSettings } from '@ng-icons/lucide';
+import {
+  lucideBarChart3,
+  lucideChevronRight,
+  lucideFileText,
+  lucideFolderOpen, lucideHistory,
+  lucidePlus,
+  lucideWallet,
+  lucideChevronDown, lucideChevronUp
+} from '@ng-icons/lucide';
 import { RouterOutlet } from '@angular/router';
 import {
   HlmDropdownMenu,
@@ -25,6 +33,7 @@ import {
   HlmDropdownMenuLabel,
   HlmDropdownMenuTrigger
 } from '@nyots/ui/dropdown-menu';
+import { HlmCollapsible, HlmCollapsibleContent, HlmCollapsibleTrigger } from '@nyots/ui/collapsible';
 
 @Component({
   imports: [
@@ -48,61 +57,84 @@ import {
     HlmDropdownMenu,
     HlmDropdownMenuLabel,
     HlmDropdownMenuItem,
+    HlmCollapsible,
+    HlmCollapsibleTrigger,
+    HlmCollapsibleContent,
+    HlmSidebarMenuSubItem,
+    HlmSidebarMenuSub,
+    HlmSidebarMenuSubButton,
   ],
   template: `
     <div hlmSidebarWrapper>
       <hlm-sidebar>
         <div hlmSidebarHeader class="flex items-center gap-2 px-4 py-3">
           <div class="flex items-center w-full">
-            <img src="/logo.svg" alt="My App" class="h-16 w-16" />
-            <span class="text-lg font-semibold">NyotsCo</span>
+            <ng-icon hlm name="lucideWallet" size="24" class="mr-2" />
+            <span class="text-lg font-semibold">Contributions Hub</span>
           </div>
         </div>
         <div hlmSidebarContent>
           <div hlmSidebarGroup>
-            <div hlmSidebarGroupLabel>Application</div>
             <div hlmSidebarGroupContent>
               <ul hlmSidebarMenu>
                 @for (item of _items; track item.title) {
-                  <li hlmSidebarMenuItem>
-                    <a hlmSidebarMenuButton>
-                      <ng-icon hlm [name]="item.icon" />
-                      <span>{{ item.title }}</span>
-                    </a>
-                  </li>
+                  <hlm-collapsible
+                    [expanded]="item.defaultOpen"
+                    class="group/collapsible"
+                  >
+                    <li hlmSidebarMenuItem>
+                      <button
+                        hlmCollapsibleTrigger
+                        hlmSidebarMenuButton
+                        class="flex w-full items-center justify-between"
+                      >
+                        <div class="flex items-center gap-2">
+                          <ng-icon [name]="item.icon" hlm size="18" />
+                          <span>{{ item.title }}</span>
+                        </div>
+                        <ng-icon
+                          name="lucideChevronRight"
+                          class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90"
+                          hlm
+                        />
+                      </button>
+                      <hlm-collapsible-content>
+                        <ul hlmSidebarMenuSub>
+                          @for (subItem of item.items; track subItem.title) {
+                            <li hlmSidebarMenuSubItem>
+                              <button hlmSidebarMenuSubButton class="w-full">
+                                <span>{{ subItem.title }}</span>
+                              </button>
+                            </li>
+                          }
+                        </ul>
+                      </hlm-collapsible-content>
+                    </li>
+                  </hlm-collapsible>
                 }
               </ul>
             </div>
           </div>
         </div>
-        <div hlmSidebarFooter>
-          <ul hlmSidebarMenu>
-            <li hlmSidebarMenuItem>
-              <button hlmSidebarMenuButton [hlmDropdownMenuTrigger]="menu">
-                Select Project
-                <ng-icon hlm name="lucideChevronUp" class="ml-auto" />
-              </button>
-              <ng-template #menu>
-                <hlm-dropdown-menu class="w-60">
-                  <button hlmDropdownMenuItem>Coming soon</button>
-                </hlm-dropdown-menu>
-              </ng-template>
-            </li>
-          </ul>
-        </div>
       </hlm-sidebar>
       <main hlmSidebarInset>
         <header class="flex h-12 items-center justify-between px-4">
-          <button hlmSidebarTrigger><span class="sr-only"></span></button>
-          <router-outlet />
+          <button hlmSidebarTrigger>
+            <span class="sr-only">Toggle Sidebar</span>
+          </button>
         </header>
       </main>
     </div>
   `,
   providers: [
     provideIcons({
-      lucideHouse,
-      lucideSettings,
+      lucideChevronRight,
+      lucideFolderOpen,
+      lucideWallet,
+      lucidePlus,
+      lucideBarChart3,
+      lucideHistory,
+      lucideFileText,
       lucideChevronDown,
       lucideChevronUp
     }),
@@ -111,14 +143,59 @@ import {
 export class Dashboard {
   protected readonly _items = [
     {
-      title: 'Home',
-      url: '#',
-      icon: 'lucideHouse',
+      title: 'Projects',
+      icon: 'lucideFolderOpen',
+      defaultOpen: true,
+      items: [
+        { title: 'Browse All Projects' },
+        { title: 'Active Projects' },
+        { title: 'Completed Projects' },
+        { title: 'Favorite Projects' },
+      ],
     },
     {
-      title: 'Settings',
-      url: '#',
-      icon: 'lucideSettings',
+      title: 'My Contributions',
+      icon: 'lucideWallet',
+      defaultOpen: false,
+      items: [
+        { title: 'Overview' },
+        { title: 'By Project' },
+        { title: 'By Date' },
+        { title: 'Recurring Contributions' },
+        { title: 'Pending Contributions' },
+      ],
+    },
+    {
+      title: 'Make Contribution',
+      icon: 'lucidePlus',
+      defaultOpen: false,
+      items: [
+        { title: 'One-time Contribution' },
+        { title: 'Set Up Recurring' },
+        { title: 'Quick Contribute' },
+        { title: 'Custom Amount' },
+      ],
+    },
+    {
+      title: 'Reports & Analytics',
+      icon: 'lucideBarChart3',
+      defaultOpen: false,
+      items: [
+        { title: 'Contribution Summary' },
+        { title: 'Impact Dashboard' },
+        { title: 'Monthly Reports' },
+        { title: 'Tax Documents' },
+      ],
+    },
+    {
+      title: 'History',
+      icon: 'lucideHistory',
+      defaultOpen: false,
+      items: [
+        { title: 'Transaction History' },
+        { title: 'Receipts' },
+        { title: 'Export History' },
+      ],
     },
   ];
 }
