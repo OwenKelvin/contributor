@@ -1,0 +1,169 @@
+<div hlmTableContainer class="rounded-md border">
+  <table hlm class="w-full">
+    <thead hlm>
+      <tr hlm>
+        <!-- Checkbox column for bulk selection -->
+        @if (showBulkActions()) {
+          <th hlm class="w-12">
+            <hlm-checkbox
+              [checked]="allSelected()"
+              [indeterminate]="someSelected()"
+              (changed)="toggleAllSelection()"
+              aria-label="Select all projects"
+            />
+          </th>
+        }
+        <th hlm class="w-24">ID</th>
+        <th hlm>Title</th>
+        <th hlm class="w-32">Status</th>
+        <th hlm class="w-40 text-right">Goal Amount</th>
+        <th hlm class="w-40 text-right">Current Amount</th>
+        <th hlm class="w-40">Created Date</th>
+        <th hlm class="w-40 text-center">Actions</th>
+      </tr>
+    </thead>
+    <tbody hlm>
+      <!-- Loading skeletons -->
+      @if (isLoading()) {
+        @for (row of skeletonRows; track $index) {
+          <tr hlm>
+            @if (showBulkActions()) {
+              <td hlm>
+                <hlm-skeleton class="h-4 w-4" />
+              </td>
+            }
+            <td hlm>
+              <hlm-skeleton class="h-4 w-16" />
+            </td>
+            <td hlm>
+              <hlm-skeleton class="h-4 w-48" />
+            </td>
+            <td hlm>
+              <hlm-skeleton class="h-6 w-20" />
+            </td>
+            <td hlm class="text-right">
+              <hlm-skeleton class="h-4 w-24 ml-auto" />
+            </td>
+            <td hlm class="text-right">
+              <hlm-skeleton class="h-4 w-24 ml-auto" />
+            </td>
+            <td hlm>
+              <hlm-skeleton class="h-4 w-32" />
+            </td>
+            <td hlm>
+              <div class="flex justify-center gap-2">
+                <hlm-skeleton class="h-8 w-8" />
+                <hlm-skeleton class="h-8 w-8" />
+                <hlm-skeleton class="h-8 w-8" />
+              </div>
+            </td>
+          </tr>
+        }
+      }
+
+      <!-- Empty state -->
+      @if (!isLoading() && projects().length === 0) {
+        <tr hlm>
+          <td [attr.colspan]="showBulkActions() ? 8 : 7" class="h-64 text-center">
+            <div class="flex flex-col items-center justify-center gap-4 text-muted-foreground">
+              <ng-icon name="lucideInbox" size="48" class="text-muted-foreground/50" />
+              <div>
+                <p class="text-lg font-medium">No projects found</p>
+                <p class="text-sm">Get started by creating a new project</p>
+              </div>
+            </div>
+          </td>
+        </tr>
+      }
+
+      <!-- Project rows -->
+      @if (!isLoading()) {
+        @for (project of projects(); track project.id) {
+          <tr hlm class="hover:bg-muted/50">
+            <!-- Checkbox column -->
+            @if (showBulkActions()) {
+              <td hlm>
+                <hlm-checkbox
+                  [checked]="isProjectSelected(project.id)"
+                  (changed)="toggleProjectSelection(project.id)"
+                  [attr.aria-label]="'Select project ' + project.title"
+                />
+              </td>
+            }
+            
+            <!-- ID column -->
+            <td hlm class="font-mono text-xs text-muted-foreground">
+              {{ project.id.substring(0, 8) }}...
+            </td>
+            
+            <!-- Title column -->
+            <td hlm class="font-medium">
+              {{ project.title }}
+            </td>
+            
+            <!-- Status column -->
+            <td hlm>
+              <span
+                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                [ngClass]="getStatusClass(project.status)"
+              >
+                {{ getStatusLabel(project.status) }}
+              </span>
+            </td>
+            
+            <!-- Goal Amount column -->
+            <td hlm class="text-right font-medium">
+              {{ formatCurrency(project.goalAmount) }}
+            </td>
+            
+            <!-- Current Amount column -->
+            <td hlm class="text-right">
+              {{ formatCurrency(project.currentAmount) }}
+            </td>
+            
+            <!-- Created Date column -->
+            <td hlm class="text-muted-foreground">
+              {{ formatDate(project.createdAt) }}
+            </td>
+            
+            <!-- Actions column -->
+            <td hlm>
+              <div class="flex justify-center gap-1">
+                <button
+                  hlmBtn
+                  variant="ghost"
+                  size="icon"
+                  (click)="onView(project.id)"
+                  [attr.aria-label]="'View project ' + project.title"
+                  class="h-8 w-8"
+                >
+                  <ng-icon name="lucideEye" size="16" />
+                </button>
+                <button
+                  hlmBtn
+                  variant="ghost"
+                  size="icon"
+                  (click)="onEdit(project.id)"
+                  [attr.aria-label]="'Edit project ' + project.title"
+                  class="h-8 w-8"
+                >
+                  <ng-icon name="lucideEdit" size="16" />
+                </button>
+                <button
+                  hlmBtn
+                  variant="ghost"
+                  size="icon"
+                  (click)="onDelete(project.id)"
+                  [attr.aria-label]="'Delete project ' + project.title"
+                  class="h-8 w-8 text-destructive hover:text-destructive"
+                >
+                  <ng-icon name="lucideTrash2" size="16" />
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+</div>

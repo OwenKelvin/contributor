@@ -1,0 +1,76 @@
+<div class="container mx-auto py-6 space-y-6">
+  <!-- Header Section -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight">Active Projects</h1>
+      <p class="text-muted-foreground">
+        View and manage all currently active projects
+      </p>
+    </div>
+    <button hlmBtn (click)="navigateToCreate()">
+      <ng-icon hlm size="sm" name="lucidePlus" class="mr-2" />
+      Create Project
+    </button>
+  </div>
+
+  <!-- Projects Table -->
+  <div hlmCard>
+    <div hlmCardContent class="p-0">
+      <nyots-project-table
+        [projects]="projects()"
+        [isLoading]="isLoading()"
+        [showBulkActions]="false"
+        [selectedProjects]="emptySet"
+        (projectEdit)="onProjectEdit($event)"
+        (projectDelete)="onProjectDelete($event)"
+        (projectView)="onProjectView($event)"
+        (selectionChange)="$event"
+      />
+    </div>
+  </div>
+
+  <!-- Pagination Controls -->
+  @if (!isLoading() && projects().length > 0) {
+    <div class="flex items-center justify-between">
+      <div class="text-sm text-muted-foreground">
+        Showing {{ projects().length }} active project(s)
+      </div>
+      <div class="flex gap-2">
+        <button
+          hlmBtn
+          variant="outline"
+          size="sm"
+          [disabled]="!pagination().hasPreviousPage"
+          (click)="previousPage()"
+        >
+          <ng-icon hlm size="sm" name="lucideChevronLeft" class="mr-2" />
+          Previous
+        </button>
+        <button
+          hlmBtn
+          variant="outline"
+          size="sm"
+          [disabled]="!pagination().hasNextPage"
+          (click)="nextPage()"
+        >
+          Next
+          <ng-icon hlm size="sm" name="lucideChevronRight" class="ml-2" />
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (!isLoading() && projects().length === 0) {
+    <div class="text-center py-12">
+      <p class="text-muted-foreground text-lg">No active projects found</p>
+      <p class="text-muted-foreground text-sm mt-2">
+        Create a new project to get started
+      </p>
+      <button hlmBtn class="mt-4" (click)="navigateToCreate()">
+        <ng-icon hlm size="sm" name="lucidePlus" class="mr-2" />
+        Create Your First Project
+      </button>
+    </div>
+  }
+</div>

@@ -1,0 +1,19 @@
+// Archived Projects Component Styles
+// Following the pattern from other project page components
+
+:host {
+  display: block;
+}
+
+// Ensure proper table layout
+table {
+  border-collapse: collapse;
+}
+
+// Line clamp utility for description text
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

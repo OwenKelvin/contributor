@@ -1,0 +1,19 @@
+<div class="container mx-auto py-8 px-4 max-w-4xl">
+  <hlm-card>
+    <hlm-card-header>
+      <hlm-card-title>Create New Project</hlm-card-title>
+      <hlm-card-description>
+        Fill in the details below to create a new project. All fields marked with * are required.
+      </hlm-card-description>
+    </hlm-card-header>
+    <hlm-card-content>
+      <nyots-project-form
+        [projectForm]="projectForm"
+        [isLoading]="isLoading()"
+        [submitLabel]="'Create Project'"
+        [categories]="categories()"
+        (formSubmit)="onSubmit($event)"
+      />
+    </hlm-card-content>
+  </hlm-card>
+</div>

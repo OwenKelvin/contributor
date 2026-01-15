@@ -1,0 +1,187 @@
+<div class="container mx-auto py-6 space-y-6">
+  <!-- Header Section -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight">All Projects</h1>
+      <p class="text-muted-foreground">
+        Manage and organize all projects in the system
+      </p>
+    </div>
+    <button hlmBtn (click)="navigateToCreate()">
+      <ng-icon hlm size="sm" name="lucidePlus" class="mr-2" />
+      Create Project
+    </button>
+  </div>
+
+  <!-- Search and Filters Section -->
+  <div hlmCard>
+    <div hlmCardHeader>
+      <h3 hlmCardTitle>Search & Filters</h3>
+      <p hlmCardDescription>
+        Find projects by title, status, category, or date range
+      </p>
+    </div>
+    <div hlmCardContent>
+      <div class="space-y-4">
+        <!-- Search Input -->
+        <div class="flex items-center gap-2">
+          <div class="relative flex-1">
+            <ng-icon
+              hlm
+              size="sm"
+              name="lucideSearch"
+              class="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
+            <input
+              hlmInput
+              type="text"
+              placeholder="Search projects by title..."
+              [value]="searchTerm()"
+              (input)="onSearchChange($any($event.target).value)"
+              class="pl-10"
+            />
+          </div>
+        </div>
+
+        <!-- Filters Row -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <!-- Status Filter -->
+          <div class="space-y-2">
+            <label hlmLabel>Status</label>
+            <select
+              hlmInput
+              [value]="selectedStatus()"
+              (change)="selectedStatus.set($any($event.target).value)"
+            >
+              <option value="">All Statuses</option>
+              <option [value]="ProjectStatus.Draft">Draft</option>
+              <option [value]="ProjectStatus.Active">Active</option>
+              <option [value]="ProjectStatus.Pending">Pending</option>
+              <option [value]="ProjectStatus.Completed">Completed</option>
+              <option [value]="ProjectStatus.Archived">Archived</option>
+            </select>
+          </div>
+
+          <!-- Category Filter -->
+          <div class="space-y-2">
+            <label hlmLabel>Category</label>
+            <select
+              hlmInput
+              [value]="selectedCategoryId()"
+              (change)="selectedCategoryId.set($any($event.target).value)"
+            >
+              <option value="">All Categories</option>
+              @for (category of categories(); track category.id) {
+                <option [value]="category.id">{{ category.name }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Date Range Start -->
+          <div class="space-y-2">
+            <label hlmLabel>Start Date</label>
+            <input
+              hlmInput
+              type="date"
+              [value]="dateRangeStart() ? dateRangeStart()!.toISOString().split('T')[0] : ''"
+              (change)="onDateRangeStartChange($event)"
+            />
+          </div>
+
+          <!-- Date Range End -->
+          <div class="space-y-2">
+            <label hlmLabel>End Date</label>
+            <input
+              hlmInput
+              type="date"
+              [value]="dateRangeEnd() ? dateRangeEnd()!.toISOString().split('T')[0] : ''"
+              (change)="onDateRangeEndChange($event)"
+            />
+          </div>
+        </div>
+
+        <!-- Filter Actions -->
+        <div class="flex gap-2">
+          <button hlmBtn variant="outline" (click)="applyFilters()">
+            <ng-icon hlm size="sm" name="lucideFilter" class="mr-2" />
+            Apply Filters
+          </button>
+          <button hlmBtn variant="ghost" (click)="clearFilters()">
+            Clear Filters
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bulk Actions Toolbar -->
+  @if (hasSelection()) {
+    <nyots-bulk-actions-toolbar
+      [selectedCount]="selectedCount()"
+      [availableActions]="availableBulkActions"
+      (actionSelected)="onBulkActionSelected($event)"
+      (clearSelection)="onClearSelection()"
+    />
+  }
+
+  <!-- Projects Table -->
+  <div hlmCard>
+    <div hlmCardContent class="p-0">
+      <nyots-project-table
+        [projects]="projects()"
+        [isLoading]="isLoading()"
+        [showBulkActions]="true"
+        [selectedProjects]="selectedProjects()"
+        (projectEdit)="onProjectEdit($event)"
+        (projectDelete)="onProjectDelete($event)"
+        (projectView)="onProjectView($event)"
+        (selectionChange)="onSelectionChange($event)"
+      />
+    </div>
+  </div>
+
+  <!-- Pagination Controls -->
+  @if (!isLoading() && projects().length > 0) {
+    <div class="flex items-center justify-between">
+      <div class="text-sm text-muted-foreground">
+        Showing {{ projects().length }} project(s)
+      </div>
+      <div class="flex gap-2">
+        <button
+          hlmBtn
+          variant="outline"
+          size="sm"
+          [disabled]="!pagination().hasPreviousPage"
+          (click)="previousPage()"
+        >
+          <ng-icon hlm size="sm" name="lucideChevronLeft" class="mr-2" />
+          Previous
+        </button>
+        <button
+          hlmBtn
+          variant="outline"
+          size="sm"
+          [disabled]="!pagination().hasNextPage"
+          (click)="nextPage()"
+        >
+          Next
+          <ng-icon hlm size="sm" name="lucideChevronRight" class="ml-2" />
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (!isLoading() && projects().length === 0) {
+    <div class="text-center py-12">
+      <p class="text-muted-foreground text-lg">No projects found</p>
+      <p class="text-muted-foreground text-sm mt-2">
+        Try adjusting your search or filters, or create a new project
+      </p>
+      <button hlmBtn class="mt-4" (click)="navigateToCreate()">
+        <ng-icon hlm size="sm" name="lucidePlus" class="mr-2" />
+        Create Your First Project
+      </button>
+    </div>
+  }
+</div>

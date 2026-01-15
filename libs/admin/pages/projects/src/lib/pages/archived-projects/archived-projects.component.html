@@ -1,0 +1,237 @@
+<div class="container mx-auto py-6 space-y-6">
+  <!-- Header Section -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight">Archived Projects</h1>
+      <p class="text-muted-foreground">
+        View and manage archived projects, restore or permanently delete them
+      </p>
+    </div>
+    <button hlmBtn variant="outline" (click)="toggleFilters()">
+      <ng-icon hlm size="sm" name="lucideFilter" class="mr-2" />
+      {{ showFilters() ? 'Hide' : 'Show' }} Filters
+    </button>
+  </div>
+
+  <!-- Date Range Filter Section -->
+  @if (showFilters()) {
+    <div hlmCard>
+      <div hlmCardContent class="p-6">
+        <div class="space-y-4">
+          <div>
+            <h3 class="text-lg font-semibold mb-4">Filter by Archive Date</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label hlmLabel for="archivedAfter">Archived After</label>
+                <input
+                  hlmInput
+                  type="date"
+                  id="archivedAfter"
+                  [value]="archivedAfter()"
+                  (input)="archivedAfter.set($any($event.target).value)"
+                  placeholder="Select start date"
+                />
+              </div>
+              <div class="space-y-2">
+                <label hlmLabel for="archivedBefore">Archived Before</label>
+                <input
+                  hlmInput
+                  type="date"
+                  id="archivedBefore"
+                  [value]="archivedBefore()"
+                  (input)="archivedBefore.set($any($event.target).value)"
+                  placeholder="Select end date"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button hlmBtn (click)="applyFilters()">
+              <ng-icon hlm size="sm" name="lucideFilter" class="mr-2" />
+              Apply Filters
+            </button>
+            <button hlmBtn variant="outline" (click)="clearFilters()">
+              <ng-icon hlm size="sm" name="lucideX" class="mr-2" />
+              Clear Filters
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Warning Message -->
+  <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+    <div class="flex items-start gap-3">
+      <div class="text-yellow-600 dark:text-yellow-500 mt-0.5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <div class="flex-1">
+        <h4 class="text-sm font-semibold text-yellow-800 dark:text-yellow-200">
+          Archived Projects Warning
+        </h4>
+        <p class="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
+          Archived projects can be restored to draft status or permanently deleted. 
+          <strong>Permanent deletion cannot be undone</strong> and will remove all project data from the system.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Projects Table with Restore/Delete Actions -->
+  <div hlmCard>
+    <div hlmCardContent class="p-0">
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="border-b bg-muted/50">
+            <tr>
+              <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                Title
+              </th>
+              <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                Category
+              </th>
+              <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                Goal Amount
+              </th>
+              <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                Archived Date
+              </th>
+              <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (isLoading()) {
+              <!-- Loading Skeletons -->
+              @for (i of [1, 2, 3, 4, 5]; track i) {
+                <tr class="border-b">
+                  <td class="p-4" colspan="5">
+                    <div class="h-4 bg-muted rounded animate-pulse"></div>
+                  </td>
+                </tr>
+              }
+            } @else if (projects().length === 0) {
+              <!-- Empty State -->
+              <tr>
+                <td colspan="5" class="p-8 text-center">
+                  <p class="text-muted-foreground">No archived projects found</p>
+                  @if (archivedAfter() || archivedBefore()) {
+                    <p class="text-sm text-muted-foreground mt-2">
+                      Try adjusting your date filters
+                    </p>
+                  }
+                </td>
+              </tr>
+            } @else {
+              <!-- Project Rows -->
+              @for (project of projects(); track project.id) {
+                <tr class="border-b hover:bg-muted/50 transition-colors">
+                  <td class="p-4">
+                    <div class="font-medium">{{ project.title }}</div>
+                    <div class="text-sm text-muted-foreground line-clamp-1">
+                      {{ project.description }}
+                    </div>
+                  </td>
+                  <td class="p-4">
+                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-primary/10 text-primary">
+                      {{ project.category?.name || 'N/A' }}
+                    </span>
+                  </td>
+                  <td class="p-4">
+                    <div class="font-medium">
+                      {{ project.goalAmount | currency }}
+                    </div>
+                    <div class="text-sm text-muted-foreground">
+                      Raised: {{ project.currentAmount | currency }}
+                    </div>
+                  </td>
+                  <td class="p-4 text-sm">
+                    {{ project.updatedAt | date: 'MMM d, y' }}
+                  </td>
+                  <td class="p-4">
+                    <div class="flex items-center gap-2">
+                      <button
+                        hlmBtn
+                        variant="outline"
+                        size="sm"
+                        (click)="onProjectView(project.id)"
+                        title="View Details"
+                      >
+                        View
+                      </button>
+                      <button
+                        hlmBtn
+                        variant="default"
+                        size="sm"
+                        (click)="onProjectRestore(project.id)"
+                        title="Restore Project"
+                      >
+                        <ng-icon hlm size="sm" name="lucideRotateCcw" class="mr-1" />
+                        Restore
+                      </button>
+                      <button
+                        hlmBtn
+                        variant="destructive"
+                        size="sm"
+                        (click)="onProjectPermanentDelete(project.id)"
+                        title="Permanently Delete Project"
+                      >
+                        <ng-icon hlm size="sm" name="lucideTrash2" class="mr-1" />
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination Controls -->
+  @if (!isLoading() && projects().length > 0) {
+    <div class="flex items-center justify-between">
+      <div class="text-sm text-muted-foreground">
+        Showing {{ projects().length }} archived project(s)
+      </div>
+      <div class="flex gap-2">
+        <button
+          hlmBtn
+          variant="outline"
+          size="sm"
+          [disabled]="!pagination().hasPreviousPage"
+          (click)="previousPage()"
+        >
+          <ng-icon hlm size="sm" name="lucideChevronLeft" class="mr-2" />
+          Previous
+        </button>
+        <button
+          hlmBtn
+          variant="outline"
+          size="sm"
+          [disabled]="!pagination().hasNextPage"
+          (click)="nextPage()"
+        >
+          Next
+          <ng-icon hlm size="sm" name="lucideChevronRight" class="ml-2" />
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Empty State with No Archived Projects -->
+  @if (!isLoading() && projects().length === 0 && !archivedAfter() && !archivedBefore()) {
+    <div class="text-center py-12">
+      <p class="text-muted-foreground text-lg">No archived projects</p>
+      <p class="text-muted-foreground text-sm mt-2">
+        Archived projects will appear here
+      </p>
+    </div>
+  }
+</div>
