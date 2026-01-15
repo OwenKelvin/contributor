@@ -75,5 +75,11 @@
         "cwd": "apps/backend"
       }
     },
+    "graphql-codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["graphql-codegen --config ./apps/backend/codegen.ts"]
+      }
+    }
   }
 }

@@ -9,12 +9,15 @@ import {
   withEventReplay,
 } from '@angular/platform-browser';
 import { provideHttpClient, withFetch } from '@angular/common/http';
+import { apolloConfig } from '@nyots/data-source/apollo';
+import { provideApollo } from 'apollo-angular';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideClientHydration(withEventReplay()),
     provideBrowserGlobalErrorListeners(),
     provideRouter(appRoutes),
-    provideHttpClient(withFetch())
+    provideHttpClient(withFetch()),
+    provideApollo(apolloConfig)
   ],
 };
