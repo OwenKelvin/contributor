@@ -10,6 +10,7 @@ import { EmailModule } from './modules/email/email.module';
 import { QueueModule } from './modules/queue/queue.module';
 import { ProjectModule } from './modules/project/project.module';
 import { CategoryModule } from './modules/category/category.module';
+import { FileModule } from './modules/file/file.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { CategoryModule } from './modules/category/category.module';
     QueueModule,
     ProjectModule,
     CategoryModule,
+    FileModule,
   ],
 })
 export class AppModule {}
