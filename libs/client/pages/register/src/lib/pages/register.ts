@@ -34,6 +34,8 @@ import { Router } from '@angular/router';
 import { GraphQLError } from 'graphql/error';
 import { IRegisterInput } from '@nyots/data-source';
 import { mapGraphqlValidationErrors } from '@nyots/data-source/helpers';
+import { HttpErrorResponse } from '@angular/common/http';
+import { JsonPipe } from '@angular/common';
 
 @Component({
   standalone: true,
@@ -50,6 +52,7 @@ import { mapGraphqlValidationErrors } from '@nyots/data-source/helpers';
     HlmCardTitle,
     HlmIcon,
     NgIcon,
+    JsonPipe
   ],
   providers: [
     provideIcons({
@@ -100,17 +103,25 @@ export class Register {
   });
 
   isLoading = signal(false);
-  errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
 
   async registerNewUser(registrationForm: FieldTree<IRegisterInput>) {
     try {
       await this.authService.register(registrationForm().value());
     } catch (e) {
-      return mapGraphqlValidationErrors(
-        (e as { errors: GraphQLError[] }).errors,
-        registrationForm,
-      );
+      const graphqlError = (e as { errors: GraphQLError[] }).errors
+      if(graphqlError?.length > 0) {
+        return mapGraphqlValidationErrors(
+          graphqlError,
+          registrationForm,
+        );
+      }
+      return [{
+        kind: 'server',
+        message: (e as HttpErrorResponse)?.error?.message || 'An unknown error occurred.',
+        fieldTree: registrationForm,
+      }]
+
     }
 
     return null;
@@ -118,15 +129,15 @@ export class Register {
 
   async onSubmit(e: Event) {
     e.preventDefault();
-
+    this.isLoading.set(true);
     await submit(this.signupForm, async (fieldTree) =>
       this.registerNewUser(fieldTree),
     );
+    this.isLoading.set(false);
   }
 
   onGoogleSignup() {
     this.isLoading.set(true);
-    this.errorMessage.set(null);
     this.successMessage.set(null);
 
     // Implement Google OAuth flow
