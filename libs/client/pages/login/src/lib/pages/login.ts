@@ -9,22 +9,9 @@ import { HlmCard, HlmCardContent, HlmCardDescription, HlmCardFooter, HlmCardHead
 import { HlmIcon, HlmIconImports } from '@nyots/ui/icon';
 import { provideIcons } from '@ng-icons/core';
 import { lucideLoader2, lucideMail, lucideLock } from '@ng-icons/lucide';
-import { RouterLink } from '@angular/router';
-import { ILoginGQL } from '@nyots/data-source/auth';
-
-interface LoginResponse {
-  success: boolean;
-  data: {
-    accessToken: string;
-    refreshToken: string;
-    user: {
-      firstName: string;
-      lastName: string;
-      email: string;
-      phone: string;
-    };
-  };
-}
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '@nyots/data-source/auth';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   imports: [
@@ -48,7 +35,8 @@ interface LoginResponse {
 })
 export class Login {
   private http = inject(HttpClient);
-  private loginGQL = inject(ILoginGQL);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
   // Form model - single source of truth
   private loginModel = signal({
@@ -78,33 +66,21 @@ export class Login {
       const credentials = state().value();
 
       try {
-        this.loginGQL.mutate({
-          variables: credentials
-        })
 
-
-        const response = await this.http
-          .post<LoginResponse>('api/auth/login', credentials)
-          .toPromise();
+        const response = await this.authService.login(credentials);
 
         this.isLoading.set(false);
+        console.log(response);
 
-        if (response && response.success) {
-          // Store tokens
-          localStorage.setItem('accessToken', response.data.accessToken);
-          localStorage.setItem('refreshToken', response.data.refreshToken);
-
-          // Store user info
-          localStorage.setItem('user', JSON.stringify(response.data.user));
-
-          console.log('Login successful:', response.data.user);
+        if (response.data?.login.accessToken) {
           // Navigate to dashboard or home page
-          // this.router.navigate(['/dashboard']);
+          await this.router.navigate(['/dashboard']);
         }
       } catch (error: any) {
+        console.log({ error });
         this.isLoading.set(false);
         this.errorMessage.set(
-          error.error?.message || 'Login failed. Please try again.',
+          error.errors?.[0]?.message || 'Login failed. Please try again.',
         );
         console.error('Login error:', error);
       }
