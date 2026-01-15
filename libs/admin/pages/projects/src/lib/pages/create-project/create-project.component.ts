@@ -18,13 +18,7 @@ import { mapGraphqlValidationErrors } from '@nyots/data-source/helpers';
 import { ProjectService } from '@nyots/data-source/projects';
 import { CategoryService } from '@nyots/data-source/projects';
 import { ProjectFormComponent, ProjectFormModel } from '../../components/project-form/project-form.component';
-import {
-  HlmCard,
-  HlmCardContent,
-  HlmCardDescription,
-  HlmCardHeader,
-  HlmCardTitle,
-} from '@nyots/ui/card';
+import { HlmCard, HlmCardContent, HlmCardDescription, HlmCardHeader, HlmCardTitle } from '@nyots/ui/card';
 
 @Component({
   selector: 'nyots-create-project',
@@ -125,7 +119,7 @@ export class CreateProjectComponent {
     this.isCategoriesLoading.set(true);
     try {
       const categories = await this.categoryService.getAllCategories();
-      this.categories.set(categories || []);
+      this.categories.set((categories || []).filter((c): c is ICategory => c !== undefined));
     } catch (error) {
       console.error('Error loading categories:', error);
       toast.error('Failed to load categories');
@@ -193,8 +187,7 @@ export class CreateProjectComponent {
   /**
    * Handle form submission
    */
-  async onSubmit(e: Event) {
-    e.preventDefault();
+  async onSubmit() {
     this.isLoading.set(true);
     await submit(this.projectForm, async (fieldTree) =>
       this.createProject(fieldTree)
