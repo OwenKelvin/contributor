@@ -26,13 +26,6 @@ import {
   lucideWallet,
   lucideChevronDown, lucideChevronUp
 } from '@ng-icons/lucide';
-import { RouterOutlet } from '@angular/router';
-import {
-  HlmDropdownMenu,
-  HlmDropdownMenuItem,
-  HlmDropdownMenuLabel,
-  HlmDropdownMenuTrigger
-} from '@nyots/ui/dropdown-menu';
 import { HlmCollapsible, HlmCollapsibleContent, HlmCollapsibleTrigger } from '@nyots/ui/collapsible';
 
 @Component({
@@ -52,11 +45,6 @@ import { HlmCollapsible, HlmCollapsibleContent, HlmCollapsibleTrigger } from '@n
     HlmIcon,
     HlmSidebarInset,
     HlmSidebarTrigger,
-    RouterOutlet,
-    HlmDropdownMenuTrigger,
-    HlmDropdownMenu,
-    HlmDropdownMenuLabel,
-    HlmDropdownMenuItem,
     HlmCollapsible,
     HlmCollapsibleTrigger,
     HlmCollapsibleContent,
