@@ -57,7 +57,7 @@ export class Login {
   async onSubmit(e: Event) {
     e.preventDefault()
     await submit(this.loginForm, async (state) => {
-      if (!this.loginForm().valid) {
+      if (!this.loginForm().valid()) {
         return;
       }
       this.isLoading.set(true);
