@@ -35,7 +35,6 @@ import { GraphQLError } from 'graphql/error';
 import { IRegisterInput } from '@nyots/data-source';
 import { mapGraphqlValidationErrors } from '@nyots/data-source/helpers';
 import { HttpErrorResponse } from '@angular/common/http';
-import { JsonPipe } from '@angular/common';
 
 @Component({
   standalone: true,
@@ -52,7 +51,6 @@ import { JsonPipe } from '@angular/common';
     HlmCardTitle,
     HlmIcon,
     NgIcon,
-    JsonPipe
   ],
   providers: [
     provideIcons({
@@ -108,20 +106,23 @@ export class Register {
   async registerNewUser(registrationForm: FieldTree<IRegisterInput>) {
     try {
       await this.authService.register(registrationForm().value());
+      await this.router.navigate(['/dashboard']);
     } catch (e) {
-      const graphqlError = (e as { errors: GraphQLError[] }).errors
-      if(graphqlError?.length > 0) {
-        return mapGraphqlValidationErrors(
-          graphqlError,
-          registrationForm,
-        );
+      const graphqlError = (e as { errors: GraphQLError[] }).errors;
+      if (graphqlError?.length > 0) {
+        return mapGraphqlValidationErrors(graphqlError, registrationForm);
       }
-      return [{
-        kind: 'server',
-        message: (e as HttpErrorResponse)?.error?.message || 'An unknown error occurred.',
-        fieldTree: registrationForm,
-      }]
-
+      console.log({ e });
+      return [
+        {
+          kind: 'server',
+          message:
+            (e as HttpErrorResponse)?.error?.message ??
+            (e as Error).message ??
+            'An unknown error occurred.',
+          fieldTree: registrationForm,
+        },
+      ];
     }
 
     return null;
