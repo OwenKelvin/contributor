@@ -1,4 +1,5 @@
-<div hlmTableContainer class="rounded-md border">
+<!-- Desktop Table View (hidden on mobile) -->
+<div hlmTableContainer class="rounded-md border hidden md:block">
   <table hlm class="w-full">
     <thead hlm>
       <tr hlm>
@@ -166,4 +167,63 @@
       }
     </tbody>
   </table>
+</div>
+
+<!-- Mobile Card View (visible on mobile only) -->
+<div class="md:hidden space-y-4">
+  <!-- Loading skeletons -->
+  @if (isLoading()) {
+    @for (row of skeletonRows; track $index) {
+      <div class="rounded-lg border p-4 space-y-3">
+        <div class="flex items-start justify-between">
+          <div class="flex-1 space-y-2">
+            <hlm-skeleton class="h-5 w-3/4" />
+            <hlm-skeleton class="h-4 w-1/2" />
+          </div>
+          @if (showBulkActions()) {
+            <hlm-skeleton class="h-4 w-4" />
+          }
+        </div>
+        <hlm-skeleton class="h-6 w-20" />
+        <div class="space-y-2">
+          <hlm-skeleton class="h-4 w-full" />
+          <hlm-skeleton class="h-4 w-full" />
+          <hlm-skeleton class="h-4 w-full" />
+        </div>
+        <div class="flex gap-2 pt-2">
+          <hlm-skeleton class="h-9 flex-1" />
+          <hlm-skeleton class="h-9 flex-1" />
+          <hlm-skeleton class="h-9 w-9" />
+        </div>
+      </div>
+    }
+  }
+
+  <!-- Empty state -->
+  @if (!isLoading() && projects().length === 0) {
+    <div class="text-center py-12 border rounded-lg">
+      <div class="flex flex-col items-center justify-center gap-4 text-muted-foreground">
+        <ng-icon name="lucideInbox" size="48" class="text-muted-foreground/50" />
+        <div>
+          <p class="text-lg font-medium">No projects found</p>
+          <p class="text-sm">Get started by creating a new project</p>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Project cards -->
+  @if (!isLoading()) {
+    @for (project of projects(); track project.id) {
+      <nyots-project-card
+        [project]="project"
+        [showCheckbox]="showBulkActions()"
+        [isSelected]="isProjectSelected(project.id)"
+        (projectEdit)="onEdit(project.id)"
+        (projectDelete)="onDelete(project.id)"
+        (projectView)="onView(project.id)"
+        (selectionChange)="toggleProjectSelection(project.id)"
+      />
+    }
+  }
 </div>

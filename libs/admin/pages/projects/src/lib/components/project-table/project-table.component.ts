@@ -19,6 +19,7 @@ import {
   lucideEye,
   lucideInbox,
 } from '@ng-icons/lucide';
+import { ProjectCardComponent } from '../project-card/project-card.component';
 
 @Component({
   selector: 'nyots-project-table',
@@ -31,6 +32,7 @@ import {
     HlmButton,
     HlmIcon,
     NgIcon,
+    ProjectCardComponent,
   ],
   providers: [
     provideIcons({

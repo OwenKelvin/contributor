@@ -1,6 +1,6 @@
 @if (selectedCount() > 0) {
   <div
-    class="flex items-center justify-between gap-4 rounded-lg border bg-muted/50 px-4 py-3 shadow-sm"
+    class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 rounded-lg border bg-muted/50 px-4 py-3 shadow-sm"
     role="toolbar"
     aria-label="Bulk actions toolbar"
   >
@@ -12,7 +12,7 @@
     </div>
 
     <!-- Bulk action buttons -->
-    <div class="flex items-center gap-2">
+    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
       @for (action of availableActions(); track action.id) {
         <button
           hlmBtn
@@ -20,10 +20,11 @@
           size="sm"
           (click)="onActionClick(action.id)"
           [attr.aria-label]="action.label + ' selected projects'"
-          class="gap-2"
+          class="gap-2 flex-1 sm:flex-none"
         >
           <ng-icon [name]="action.icon" size="16" />
-          <span>{{ action.label }}</span>
+          <span class="hidden sm:inline">{{ action.label }}</span>
+          <span class="sm:hidden">{{ action.label.split(' ')[0] }}</span>
         </button>
       }
 
@@ -37,7 +38,7 @@
         class="gap-2"
       >
         <ng-icon name="lucideX" size="16" />
-        <span>Clear</span>
+        <span class="hidden sm:inline">Clear</span>
       </button>
     </div>
   </div>
