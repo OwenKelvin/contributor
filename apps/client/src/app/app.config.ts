@@ -11,6 +11,7 @@ import {
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { apolloConfig } from '@nyots/data-source/apollo';
 import { provideApollo } from 'apollo-angular';
+import { provideBackendUrl } from '@nyots/data-source/constants';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,6 +19,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(appRoutes),
     provideHttpClient(withFetch()),
-    provideApollo(apolloConfig)
+    provideApollo(apolloConfig),
+    provideBackendUrl('http://localhost:3000'),
   ],
 };

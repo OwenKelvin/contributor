@@ -9,11 +9,12 @@ export type ILoginMutationVariables = Types.Exact<{
 }>;
 
 
-export type ILoginMutation = { login: { user: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, roles?: Array<{ id: string, name: string }> | null } } };
+export type ILoginMutation = { login: { accessToken: string, user: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, roles?: Array<{ id: string, name: string }> | null } } };
 
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(loginInput: {email: $email, password: $password}) {
+    accessToken
     user {
       id
       email
