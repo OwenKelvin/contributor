@@ -1,0 +1,163 @@
+<div class="container mx-auto py-8 px-4">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-3xl font-bold">Project Categories</h1>
+      <p class="text-muted-foreground mt-1">
+        Manage categories to organize your projects
+      </p>
+    </div>
+    <button
+      hlmBtn
+      (click)="showAddForm()"
+      [disabled]="isFormVisible()"
+    >
+      Add Category
+    </button>
+  </div>
+
+  <!-- Category Form -->
+  @if (isFormVisible()) {
+    <div hlmCard class="mb-6">
+      <div hlmCardHeader>
+        <h3 hlmCardTitle>{{ formTitle() }}</h3>
+        <p hlmCardDescription>
+          @if (isEditing()) {
+            Update the category details below
+          } @else {
+            Fill in the details to create a new category
+          }
+        </p>
+      </div>
+      <div hlmCardContent>
+        <form (ngSubmit)="onSubmit()" class="space-y-4">
+          <!-- Name Field -->
+          <div class="space-y-2">
+            <label hlmLabel for="name">
+              Category Name <span class="text-destructive">*</span>
+            </label>
+            <input
+              hlmInput
+              id="name"
+              type="text"
+              placeholder="Enter category name"
+              [field]="categoryForm.name"
+            />
+            @if (categoryForm.name().errors(); as errors) {
+              <p class="text-sm text-destructive">
+                {{ errors[0]?.message }}
+              </p>
+            }
+          </div>
+
+          <!-- Description Field -->
+          <div class="space-y-2">
+            <label hlmLabel for="description">
+              Description
+            </label>
+            <textarea
+              hlmInput
+              id="description"
+              rows="3"
+              placeholder="Enter category description (optional)"
+              [field]="categoryForm.description"
+            ></textarea>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="flex gap-2 justify-end">
+            <button
+              hlmBtn
+              variant="outline"
+              type="button"
+              (click)="hideForm()"
+              [disabled]="isSubmitting()"
+            >
+              Cancel
+            </button>
+            <button
+              hlmBtn
+              type="submit"
+              [disabled]="isSubmitting() || categoryForm().invalid()"
+            >
+              @if (isSubmitting()) {
+                <hlm-spinner size="sm" class="mr-2" />
+              }
+              {{ submitButtonLabel() }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+
+  <!-- Categories List -->
+  <div hlmCard>
+    <div hlmCardHeader>
+      <h3 hlmCardTitle>All Categories</h3>
+      <p hlmCardDescription>
+        {{ categories().length }} {{ categories().length === 1 ? 'category' : 'categories' }} total
+      </p>
+    </div>
+    <div hlmCardContent>
+      @if (isLoading()) {
+        <!-- Loading State -->
+        <div class="flex justify-center items-center py-12">
+          <hlm-spinner size="lg" />
+        </div>
+      } @else if (categories().length === 0) {
+        <!-- Empty State -->
+        <div class="text-center py-12">
+          <p class="text-muted-foreground mb-4">
+            No categories found. Create your first category to get started.
+          </p>
+          <button hlmBtn (click)="showAddForm()">
+            Add Category
+          </button>
+        </div>
+      } @else {
+        <!-- Categories Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          @for (category of categories(); track category.id) {
+            <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+              <div class="flex justify-between items-start mb-2">
+                <div class="flex-1">
+                  <h4 class="font-semibold text-lg">{{ category.name }}</h4>
+                  @if (category.description) {
+                    <p class="text-sm text-muted-foreground mt-1">
+                      {{ category.description }}
+                    </p>
+                  }
+                </div>
+                <span hlmBadge variant="secondary" class="ml-2">
+                  {{ category.projectCount || 0 }} projects
+                </span>
+              </div>
+
+              <div class="flex gap-2 mt-4">
+                <button
+                  hlmBtn
+                  variant="outline"
+                  size="sm"
+                  (click)="showEditForm(category)"
+                  [disabled]="isFormVisible()"
+                >
+                  Edit
+                </button>
+                <button
+                  hlmBtn
+                  variant="destructive"
+                  size="sm"
+                  (click)="onDeleteCategory(category)"
+                  [disabled]="isFormVisible()"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

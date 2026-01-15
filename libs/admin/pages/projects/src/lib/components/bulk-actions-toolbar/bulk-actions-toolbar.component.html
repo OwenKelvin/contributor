@@ -1,0 +1,44 @@
+@if (selectedCount() > 0) {
+  <div
+    class="flex items-center justify-between gap-4 rounded-lg border bg-muted/50 px-4 py-3 shadow-sm"
+    role="toolbar"
+    aria-label="Bulk actions toolbar"
+  >
+    <!-- Selected count display -->
+    <div class="flex items-center gap-2">
+      <span class="text-sm font-medium">
+        {{ selectedCount() }} {{ selectedCount() === 1 ? 'project' : 'projects' }} selected
+      </span>
+    </div>
+
+    <!-- Bulk action buttons -->
+    <div class="flex items-center gap-2">
+      @for (action of availableActions(); track action.id) {
+        <button
+          hlmBtn
+          [variant]="action.variant || 'outline'"
+          size="sm"
+          (click)="onActionClick(action.id)"
+          [attr.aria-label]="action.label + ' selected projects'"
+          class="gap-2"
+        >
+          <ng-icon [name]="action.icon" size="16" />
+          <span>{{ action.label }}</span>
+        </button>
+      }
+
+      <!-- Clear selection button -->
+      <button
+        hlmBtn
+        variant="ghost"
+        size="sm"
+        (click)="onClearSelection()"
+        aria-label="Clear selection"
+        class="gap-2"
+      >
+        <ng-icon name="lucideX" size="16" />
+        <span>Clear</span>
+      </button>
+    </div>
+  </div>
+}

@@ -1,0 +1,12 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+// Ensure table is responsive
+.hlm-table-container {
+  overflow-x: auto;
+}
+
+// Status badge styles are handled via ngClass in the template
+// Additional custom styles can be added here if needed
