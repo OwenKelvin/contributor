@@ -1,0 +1,130 @@
+.rich-text-editor-container {
+  width: 100%;
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+
+.editor-wrapper {
+  position: relative;
+}
+
+.editor {
+  min-height: 300px;
+  background: hsl(var(--background));
+  
+  ::ng-deep .ql-container {
+    font-family: var(--font-sans);
+  }
+  
+  ::ng-deep .ql-editor {
+    min-height: 300px;
+    color: hsl(var(--foreground));
+    
+    &.ql-blank::before {
+      color: hsl(var(--muted-foreground));
+      font-style: italic;
+    }
+  }
+  
+  ::ng-deep .ql-toolbar {
+    background: hsl(var(--muted));
+    border-bottom: 1px solid hsl(var(--border));
+    
+    button {
+      &:hover {
+        background: hsl(var(--accent));
+        color: hsl(var(--accent-foreground));
+      }
+      
+      &.ql-active {
+        background: hsl(var(--accent));
+        color: hsl(var(--accent-foreground));
+      }
+    }
+    
+    .ql-stroke {
+      stroke: hsl(var(--foreground));
+    }
+    
+    .ql-fill {
+      fill: hsl(var(--foreground));
+    }
+    
+    .ql-picker-label {
+      color: hsl(var(--foreground));
+    }
+  }
+  
+  ::ng-deep .ql-editor {
+    h1 {
+      font-size: 1.875rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+    
+    p {
+      margin-bottom: 0.5rem;
+    }
+    
+    ul, ol {
+      margin-bottom: 0.5rem;
+      padding-left: 1.5rem;
+    }
+    
+    a {
+      color: hsl(var(--primary));
+      text-decoration: underline;
+    }
+    
+    img {
+      max-width: 100%;
+      height: auto;
+      margin: 1rem 0;
+      border-radius: 0.375rem;
+    }
+  }
+}
+
+.upload-overlay {
+  position: absolute;
+  inset: 0;
+  background: hsl(var(--background) / 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.upload-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  color: hsl(var(--foreground));
+}
+
+.upload-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.editor-footer {
+  padding: 0.5rem 1rem;
+  background: hsl(var(--muted));
+  border-top: 1px solid hsl(var(--border));
+  display: flex;
+  justify-content: flex-end;
+}
+
+.character-count {
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+}
