@@ -11,6 +11,16 @@ export type ILoginMutationVariables = Types.Exact<{
 
 export type ILoginMutation = { login: { accessToken: string, user: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, roles?: Array<{ id: string, name: string }> | null } } };
 
+export type IRegisterMutationVariables = Types.Exact<{
+  email: Types.Scalars['String']['input'];
+  password: Types.Scalars['String']['input'];
+  firstName: Types.Scalars['String']['input'];
+  lastName: Types.Scalars['String']['input'];
+}>;
+
+
+export type IRegisterMutation = { register: { accessToken: string, user: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, roles?: Array<{ id: string, name: string }> | null } } };
+
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(loginInput: {email: $email, password: $password}) {
@@ -35,6 +45,37 @@ export const LoginDocument = gql`
   })
   export class ILoginGQL extends Apollo.Mutation<ILoginMutation, ILoginMutationVariables> {
     override document = LoginDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const RegisterDocument = gql`
+    mutation Register($email: String!, $password: String!, $firstName: String!, $lastName: String!) {
+  register(
+    registerInput: {lastName: $lastName, firstName: $firstName, email: $email, password: $password}
+  ) {
+    accessToken
+    user {
+      id
+      email
+      firstName
+      lastName
+      phoneNumber
+      roles {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class IRegisterGQL extends Apollo.Mutation<IRegisterMutation, IRegisterMutationVariables> {
+    override document = RegisterDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

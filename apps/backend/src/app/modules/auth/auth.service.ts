@@ -12,6 +12,7 @@ import { RoleService } from '../role/role.service';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { User } from '../user/user.model';
+import { GraphQLError } from 'graphql/error';
 
 interface AuthResponse {
   user: User;
@@ -32,7 +33,14 @@ export class AuthService {
 
     const existingUser = await this.userService.findByEmail(email);
     if (existingUser) {
-      throw new BadRequestException('User with this email already exists');
+      throw new GraphQLError('Validation failed', {
+        extensions: {
+          code: 'BAD_REQUEST',
+          validationErrors: {
+            email: 'User with this email already exists',
+          },
+        },
+      });
     }
 
     const clientRole = await this.roleService.findByName('client');
