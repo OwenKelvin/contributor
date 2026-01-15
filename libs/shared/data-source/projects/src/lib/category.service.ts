@@ -1,52 +1,80 @@
-import { Injectable } from '@angular/core';
-// import { inject } from '@angular/core';
-// import { firstValueFrom } from 'rxjs';
-// import {
-//   IGetAllCategoriesGQL,
-//   ICreateCategoryGQL,
-//   IUpdateCategoryGQL,
-//   IDeleteCategoryGQL,
-// } from './graphql/categories.generated';
+import { inject, Injectable } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
+import {
+  IGetAllCategoriesGQL,
+  ICreateCategoryGQL,
+  IUpdateCategoryGQL,
+  IDeleteCategoryGQL,
+} from './graphql/categories.generated';
 import {
   ICreateCategoryInput,
   IUpdateCategoryInput,
-} from './types';
+} from '@nyots/data-source';
 
 /**
  * Service for managing category-related GraphQL operations.
- * 
- * Note: This service requires the GraphQL schema to be defined in the backend
- * and codegen to be run to generate the GQL service classes.
- * 
- * Run: npm run graphql-codegen:dataSource
+ * Follows the error handling pattern from AuthService.
  */
 @Injectable({
   providedIn: 'root',
 })
 export class CategoryService {
-  // Uncomment these once codegen has been run
-  // private getAllCategoriesGQL = inject(IGetAllCategoriesGQL);
-  // private createCategoryGQL = inject(ICreateCategoryGQL);
-  // private updateCategoryGQL = inject(IUpdateCategoryGQL);
-  // private deleteCategoryGQL = inject(IDeleteCategoryGQL);
+  private getAllCategoriesGQL = inject(IGetAllCategoriesGQL);
+  private createCategoryGQL = inject(ICreateCategoryGQL);
+  private updateCategoryGQL = inject(IUpdateCategoryGQL);
+  private deleteCategoryGQL = inject(IDeleteCategoryGQL);
 
+  /**
+   * Retrieves all categories.
+   * @returns Array of all categories
+   */
   async getAllCategories() {
-    // Implementation will be added in task 3
-    throw new Error('Not implemented - requires backend GraphQL schema and codegen');
+    const response = await firstValueFrom(
+      this.getAllCategoriesGQL.watch().valueChanges
+    );
+    return response.data?.getAllCategories;
   }
 
+  /**
+   * Creates a new category.
+   * @param input - Category creation input
+   * @returns Created category
+   */
   async createCategory(input: ICreateCategoryInput) {
-    // Implementation will be added in task 3
-    throw new Error('Not implemented - requires backend GraphQL schema and codegen');
+    const response = await firstValueFrom(
+      this.createCategoryGQL.mutate({
+        variables: { input },
+      })
+    );
+    return response.data?.createCategory;
   }
 
+  /**
+   * Updates an existing category.
+   * @param id - Category ID
+   * @param input - Category update input
+   * @returns Updated category
+   */
   async updateCategory(id: string, input: IUpdateCategoryInput) {
-    // Implementation will be added in task 3
-    throw new Error('Not implemented - requires backend GraphQL schema and codegen');
+    const response = await firstValueFrom(
+      this.updateCategoryGQL.mutate({
+        variables: { id, input },
+      })
+    );
+    return response.data?.updateCategory;
   }
 
+  /**
+   * Deletes a category.
+   * @param id - Category ID
+   * @returns Boolean indicating success
+   */
   async deleteCategory(id: string) {
-    // Implementation will be added in task 3
-    throw new Error('Not implemented - requires backend GraphQL schema and codegen');
+    const response = await firstValueFrom(
+      this.deleteCategoryGQL.mutate({
+        variables: { id },
+      })
+    );
+    return response.data?.deleteCategory;
   }
 }
