@@ -8,5 +8,9 @@ export const appRoutes: Route[] = [
   {
     path: 'dashboard',
     loadComponent: () => import('@nyots/admin-pages/dashboard')
+  },
+  {
+    path: 'projects',
+    loadChildren: () => import('@nyots/admin-pages/projects').then(m => m.projectsRoutes)
   }
 ];
