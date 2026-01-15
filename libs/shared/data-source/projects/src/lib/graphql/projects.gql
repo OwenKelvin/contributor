@@ -1,0 +1,244 @@
+query GetAllProjects(
+  $search: String
+  $filter: ProjectFilter
+  $pagination: PaginationInput
+) {
+  getAllProjects(search: $search, filter: $filter, pagination: $pagination) {
+    projects {
+      id
+      title
+      description
+      detailedDescription
+      goalAmount
+      currentAmount
+      startDate
+      endDate
+      status
+      category {
+        id
+        name
+        description
+      }
+      featuredImage
+      createdAt
+      updatedAt
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      cursor
+    }
+  }
+}
+
+query GetProjectById($id: ID!) {
+  getProjectById(id: $id) {
+    id
+    title
+    description
+    detailedDescription
+    goalAmount
+    currentAmount
+    startDate
+    endDate
+    status
+    category {
+      id
+      name
+      description
+    }
+    featuredImage
+    createdAt
+    updatedAt
+  }
+}
+
+query GetActiveProjects($pagination: PaginationInput) {
+  getActiveProjects(pagination: $pagination) {
+    projects {
+      id
+      title
+      description
+      detailedDescription
+      goalAmount
+      currentAmount
+      startDate
+      endDate
+      status
+      category {
+        id
+        name
+        description
+      }
+      featuredImage
+      createdAt
+      updatedAt
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      cursor
+    }
+  }
+}
+
+query GetPendingProjects($pagination: PaginationInput) {
+  getPendingProjects(pagination: $pagination) {
+    projects {
+      id
+      title
+      description
+      detailedDescription
+      goalAmount
+      currentAmount
+      startDate
+      endDate
+      status
+      category {
+        id
+        name
+        description
+      }
+      featuredImage
+      createdAt
+      updatedAt
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      cursor
+    }
+  }
+}
+
+query GetArchivedProjects(
+  $filter: ArchivedProjectFilter
+  $pagination: PaginationInput
+) {
+  getArchivedProjects(filter: $filter, pagination: $pagination) {
+    projects {
+      id
+      title
+      description
+      detailedDescription
+      goalAmount
+      currentAmount
+      startDate
+      endDate
+      status
+      category {
+        id
+        name
+        description
+      }
+      featuredImage
+      createdAt
+      updatedAt
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      cursor
+    }
+  }
+}
+
+mutation CreateProject($input: CreateProjectInput!) {
+  createProject(input: $input) {
+    id
+    title
+    description
+    detailedDescription
+    goalAmount
+    currentAmount
+    startDate
+    endDate
+    status
+    category {
+      id
+      name
+      description
+    }
+    featuredImage
+    createdAt
+    updatedAt
+  }
+}
+
+mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {
+  updateProject(id: $id, input: $input) {
+    id
+    title
+    description
+    detailedDescription
+    goalAmount
+    currentAmount
+    startDate
+    endDate
+    status
+    category {
+      id
+      name
+      description
+    }
+    featuredImage
+    createdAt
+    updatedAt
+  }
+}
+
+mutation DeleteProject($id: ID!) {
+  deleteProject(id: $id)
+}
+
+mutation BulkUpdateProjects($ids: [ID!]!, $input: BulkUpdateInput!) {
+  bulkUpdateProjects(ids: $ids, input: $input) {
+    successCount
+    failureCount
+    errors
+  }
+}
+
+mutation ApproveProject($id: ID!, $notes: String) {
+  approveProject(id: $id, notes: $notes) {
+    id
+    title
+    description
+    detailedDescription
+    goalAmount
+    currentAmount
+    startDate
+    endDate
+    status
+    category {
+      id
+      name
+      description
+    }
+    featuredImage
+    createdAt
+    updatedAt
+  }
+}
+
+mutation RejectProject($id: ID!, $reason: String!) {
+  rejectProject(id: $id, reason: $reason) {
+    id
+    title
+    description
+    detailedDescription
+    goalAmount
+    currentAmount
+    startDate
+    endDate
+    status
+    category {
+      id
+      name
+      description
+    }
+    featuredImage
+    createdAt
+    updatedAt
+  }
+}

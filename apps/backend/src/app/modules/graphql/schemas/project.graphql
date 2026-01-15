@@ -1,0 +1,43 @@
+type Project {
+  id: ID!
+  title: String!
+  description: String!
+  detailedDescription: String!
+  goalAmount: Float!
+  currentAmount: Float!
+  startDate: DateTime!
+  endDate: DateTime!
+  status: ProjectStatus!
+  category: Category!
+  featuredImage: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum ProjectStatus {
+  DRAFT
+  ACTIVE
+  PENDING
+  COMPLETED
+  ARCHIVED
+}
+
+type ProjectConnection {
+  projects: [Project!]!
+  pageInfo: PageInfo!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  cursor: String
+}
+
+type BulkUpdateResult {
+  successCount: Int!
+  failureCount: Int!
+  errors: [String!]
+}
+
+scalar DateTime
+scalar Upload

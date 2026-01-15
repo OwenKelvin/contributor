@@ -1,0 +1,8 @@
+type Category {
+  id: ID!
+  name: String!
+  description: String
+  projectCount: Int!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}

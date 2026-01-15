@@ -1,0 +1,59 @@
+input CreateProjectInput {
+  title: String!
+  description: String!
+  detailedDescription: String!
+  goalAmount: Float!
+  startDate: DateTime!
+  endDate: DateTime!
+  categoryId: ID!
+  featuredImage: Upload
+  status: ProjectStatus!
+}
+
+input UpdateProjectInput {
+  title: String
+  description: String
+  detailedDescription: String
+  goalAmount: Float
+  startDate: DateTime
+  endDate: DateTime
+  categoryId: ID
+  featuredImage: Upload
+  status: ProjectStatus
+}
+
+input ProjectFilter {
+  status: ProjectStatus
+  categoryId: ID
+  dateRange: DateRangeInput
+}
+
+input ArchivedProjectFilter {
+  archivedAfter: DateTime
+  archivedBefore: DateTime
+}
+
+input DateRangeInput {
+  start: DateTime!
+  end: DateTime!
+}
+
+input PaginationInput {
+  cursor: String
+  limit: Int!
+}
+
+input BulkUpdateInput {
+  status: ProjectStatus
+  categoryId: ID
+}
+
+input CreateCategoryInput {
+  name: String!
+  description: String
+}
+
+input UpdateCategoryInput {
+  name: String
+  description: String
+}
