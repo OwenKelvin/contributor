@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "serve:client": "pnpm nx serve client",
+    "serve:client": "pnpm nx serve client --port=51000",
+    "serve:admin": "pnpm nx serve admin --port=51001",
     "serve:backend": "pnpm nx serve backend",
     "docker:compose-up": "pnpm nx docker:compose-up backend",
     "docker:compose-down": "pnpm nx docker:compose-down backend",
