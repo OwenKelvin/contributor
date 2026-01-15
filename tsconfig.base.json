@@ -73,6 +73,7 @@
       "@nyots/ui/typography": ["libs/ui/typography/src/index.ts"],
       "@nyots/ui/utils": ["libs/ui/utils/src/index.ts"],
       "@nyots/client-pages": ["libs/client/pages/src/index.ts"],
+      "@nyots/client-pages/dashboard": ["libs/client/pages/dashboard/src/index.ts"],
       "@nyots/client-pages/login": ["libs/client/pages/login/src/index.ts"],
       "@nyots/client-pages/register": [
         "libs/client/pages/register/src/index.ts"

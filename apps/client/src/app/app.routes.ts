@@ -8,5 +8,9 @@ export const appRoutes: Route[] = [
   {
     path: 'register',
     loadComponent: () => import('@nyots/client-pages/register')
+  },
+  {
+    path: 'dashboard',
+    loadComponent: () => import('@nyots/client-pages/dashboard')
   }
 ];
