@@ -20,6 +20,7 @@ import {
 } from '../../components/bulk-actions-toolbar/bulk-actions-toolbar.component';
 import { ConfirmationDialogComponent } from '../../components/confirmation-dialog/confirmation-dialog.component';
 import { StatusSelectionDialogComponent } from '../../components/status-selection-dialog/status-selection-dialog.component';
+import { ErrorBoundaryComponent } from '../../components/error-boundary/error-boundary.component';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
@@ -41,6 +42,7 @@ import {
   lucideChevronRight,
 } from '@ng-icons/lucide';
 import { firstValueFrom } from 'rxjs';
+import { retryAsync, getUserFriendlyErrorMessage, isNetworkError } from '../../utils/retry.util';
 
 @Component({
   selector: 'nyots-all-projects',
@@ -50,6 +52,7 @@ import { firstValueFrom } from 'rxjs';
     FormsModule,
     ProjectTableComponent,
     BulkActionsToolbarComponent,
+    ErrorBoundaryComponent,
     HlmButton,
     HlmInput,
     HlmLabel,
@@ -86,6 +89,11 @@ export class AllProjectsComponent {
   debouncedSearchTerm = signal('');
   selectedProjects = signal<Set<string>>(new Set());
   categories = signal<ICategory[]>([]);
+  
+  // Error state
+  hasError = signal(false);
+  errorMessage = signal<string>('');
+  errorDetails = signal<string | null>(null);
 
   // Filter state
   filters = signal<IProjectFilter>({});
@@ -156,11 +164,21 @@ export class AllProjectsComponent {
    */
   async loadCategories() {
     try {
-      const categories = await this.categoryService.getAllCategories();
+      const categories = await retryAsync(
+        () => this.categoryService.getAllCategories(),
+        {
+          maxAttempts: 3,
+          delayMs: 1000,
+          onRetry: (attempt) => {
+            console.log(`Retrying category load (attempt ${attempt})...`);
+          },
+        }
+      );
       this.categories.set((categories || []).filter((c): c is ICategory => c !== undefined));
     } catch (error) {
       console.error('Error loading categories:', error);
-      toast.error('Failed to load categories');
+      const message = getUserFriendlyErrorMessage(error);
+      toast.error(message);
     }
   }
 
@@ -169,6 +187,8 @@ export class AllProjectsComponent {
    */
   async loadProjects() {
     this.isLoading.set(true);
+    this.hasError.set(false);
+    
     try {
       // Build filter object
       const filter: IProjectFilter = {};
@@ -198,11 +218,23 @@ export class AllProjectsComponent {
         cursor: this.currentCursor() ?? undefined,
       };
 
-      const result = await this.projectService.getAllProjects({
-        search: this.debouncedSearchTerm() || undefined,
-        filters: Object.keys(filter).length > 0 ? filter : undefined,
-        pagination,
-      });
+      const result = await retryAsync(
+        () => this.projectService.getAllProjects({
+          search: this.debouncedSearchTerm() || undefined,
+          filters: Object.keys(filter).length > 0 ? filter : undefined,
+          pagination,
+        }),
+        {
+          maxAttempts: 3,
+          delayMs: 1000,
+          onRetry: (attempt, error) => {
+            console.log(`Retrying project load (attempt ${attempt})...`, error);
+            if (isNetworkError(error)) {
+              toast.info('Retrying connection...');
+            }
+          },
+        }
+      );
 
       if (result && result.pageInfo) {
         this.projects.set((result.projects || []).filter((p): p is IProject => p !== undefined));
@@ -215,7 +247,10 @@ export class AllProjectsComponent {
       }
     } catch (error) {
       console.error('Error loading projects:', error);
-      toast.error('Failed to load projects');
+      this.hasError.set(true);
+      this.errorMessage.set(getUserFriendlyErrorMessage(error));
+      this.errorDetails.set(error instanceof Error ? error.message : null);
+      toast.error(getUserFriendlyErrorMessage(error));
     } finally {
       this.isLoading.set(false);
     }
@@ -328,7 +363,8 @@ export class AllProjectsComponent {
       await this.loadProjects();
     } catch (error) {
       console.error('Error deleting project:', error);
-      toast.error('Failed to delete project');
+      const message = getUserFriendlyErrorMessage(error);
+      toast.error(message);
     }
   }
 
@@ -397,7 +433,7 @@ export class AllProjectsComponent {
         if (failureCount > 0) {
           const errors = results
             .filter((r): r is PromiseRejectedResult => r.status === 'rejected')
-            .map(r => r.reason?.message || 'Unknown error')
+            .map(r => getUserFriendlyErrorMessage(r.reason))
             .join(', ');
           toast.error(`Failed to delete ${failureCount} project(s): ${errors}`);
         }
@@ -406,7 +442,7 @@ export class AllProjectsComponent {
         await this.loadProjects();
       } catch (error) {
         console.error('Error deleting projects:', error);
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        const errorMessage = getUserFriendlyErrorMessage(error);
         toast.error(`Failed to delete projects: ${errorMessage}`);
       }
     }
@@ -435,7 +471,7 @@ export class AllProjectsComponent {
           }
 
           if (result.failureCount > 0) {
-            const errorMessages = result.errors?.join(', ') || 'Unknown errors';
+            const errorMessages = result.errors?.map(e => getUserFriendlyErrorMessage(e)).join(', ') || 'Unknown errors';
             toast.error(
               `Failed to update ${result.failureCount} project(s): ${errorMessages}`
             );
@@ -446,7 +482,7 @@ export class AllProjectsComponent {
         await this.loadProjects();
       } catch (error) {
         console.error('Error updating projects:', error);
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        const errorMessage = getUserFriendlyErrorMessage(error);
         toast.error(`Failed to update projects: ${errorMessage}`);
       }
     }

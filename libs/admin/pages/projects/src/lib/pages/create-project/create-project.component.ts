@@ -19,6 +19,7 @@ import { ProjectService } from '@nyots/data-source/projects';
 import { CategoryService } from '@nyots/data-source/projects';
 import { ProjectFormComponent, ProjectFormModel } from '../../components/project-form/project-form.component';
 import { HlmCard, HlmCardContent, HlmCardDescription, HlmCardHeader, HlmCardTitle } from '@nyots/ui/card';
+import { getUserFriendlyErrorMessage } from '../../utils/retry.util';
 
 @Component({
   selector: 'nyots-create-project',
@@ -122,7 +123,8 @@ export class CreateProjectComponent {
       this.categories.set((categories || []).filter((c): c is ICategory => c !== undefined));
     } catch (error) {
       console.error('Error loading categories:', error);
-      toast.error('Failed to load categories');
+      const message = getUserFriendlyErrorMessage(error);
+      toast.error(message);
     } finally {
       this.isCategoriesLoading.set(false);
     }
@@ -165,10 +167,7 @@ export class CreateProjectComponent {
       }
 
       // Handle other errors
-      const errorMessage =
-        (e as HttpErrorResponse)?.error?.message ??
-        (e as Error).message ??
-        'An unknown error occurred.';
+      const errorMessage = getUserFriendlyErrorMessage(e);
 
       toast.error(errorMessage);
 
