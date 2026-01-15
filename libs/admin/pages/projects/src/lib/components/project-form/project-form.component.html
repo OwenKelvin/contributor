@@ -1,0 +1,302 @@
+<form (submit)="onSubmit($event)" class="space-y-6">
+  <!-- Title -->
+  <div class="space-y-2">
+    <label hlmLabel for="title">Project Title <span class="text-red-500">*</span></label>
+    <input
+      hlmInput
+      id="title"
+      type="text"
+      [field]="projectForm().title"
+      placeholder="Enter project title"
+      [class.border-red-500]="projectForm().title().invalid() && projectForm().title().touched()"
+      [disabled]="isFormDisabled"
+    />
+    @if (projectForm().title().invalid() && projectForm().title().touched()) {
+      <p class="text-sm text-red-500">
+        @for (error of projectForm().title().errors(); track error.kind) {
+          {{ error.message }}
+        }
+      </p>
+    }
+  </div>
+
+  <!-- Description -->
+  <div class="space-y-2">
+    <label hlmLabel for="description">Short Description <span class="text-red-500">*</span></label>
+    <textarea
+      hlmInput
+      id="description"
+      rows="3"
+      [field]="projectForm().description"
+      placeholder="Enter a brief description of the project"
+      [class.border-red-500]="projectForm().description().invalid() && projectForm().description().touched()"
+      [disabled]="isFormDisabled"
+      class="resize-none"
+    ></textarea>
+    @if (projectForm().description().invalid() && projectForm().description().touched()) {
+      <p class="text-sm text-red-500">
+        @for (error of projectForm().description().errors(); track error.kind) {
+          {{ error.message }}
+        }
+      </p>
+    }
+  </div>
+
+  <!-- Goal Amount -->
+  <div class="space-y-2">
+    <label hlmLabel for="goalAmount">Goal Amount <span class="text-red-500">*</span></label>
+    <div class="relative">
+      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">$</span>
+      <input
+        hlmInput
+        id="goalAmount"
+        type="number"
+        step="0.01"
+        min="0"
+        [field]="projectForm().goalAmount"
+        placeholder="0.00"
+        class="pl-8"
+        [class.border-red-500]="projectForm().goalAmount().invalid() && projectForm().goalAmount().touched()"
+        [disabled]="isFormDisabled"
+      />
+    </div>
+    @if (projectForm().goalAmount().invalid() && projectForm().goalAmount().touched()) {
+      <p class="text-sm text-red-500">
+        @for (error of projectForm().goalAmount().errors(); track error.kind) {
+          {{ error.message }}
+        }
+      </p>
+    }
+  </div>
+
+  <!-- Date Range -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Start Date -->
+    <div class="space-y-2">
+      <label hlmLabel for="startDate">Start Date <span class="text-red-500">*</span></label>
+      <div class="relative">
+        <ng-icon hlmIcon name="lucideCalendar" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size="sm" />
+        <input
+          hlmInput
+          id="startDate"
+          type="date"
+          [value]="formatDate(projectForm().startDate().value())"
+          (change)="onDateChange('startDate', $event)"
+          class="pl-10"
+          [class.border-red-500]="projectForm().startDate().invalid() && projectForm().startDate().touched()"
+          [disabled]="isFormDisabled"
+        />
+      </div>
+      @if (projectForm().startDate().invalid() && projectForm().startDate().touched()) {
+        <p class="text-sm text-red-500">
+          @for (error of projectForm().startDate().errors(); track error.kind) {
+            {{ error.message }}
+          }
+        </p>
+      }
+    </div>
+
+    <!-- End Date -->
+    <div class="space-y-2">
+      <label hlmLabel for="endDate">End Date <span class="text-red-500">*</span></label>
+      <div class="relative">
+        <ng-icon hlmIcon name="lucideCalendar" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size="sm" />
+        <input
+          hlmInput
+          id="endDate"
+          type="date"
+          [value]="formatDate(projectForm().endDate().value())"
+          (change)="onDateChange('endDate', $event)"
+          class="pl-10"
+          [class.border-red-500]="projectForm().endDate().invalid() && projectForm().endDate().touched()"
+          [disabled]="isFormDisabled"
+        />
+      </div>
+      @if (projectForm().endDate().invalid() && projectForm().endDate().touched()) {
+        <p class="text-sm text-red-500">
+          @for (error of projectForm().endDate().errors(); track error.kind) {
+            {{ error.message }}
+          }
+        </p>
+      }
+    </div>
+  </div>
+
+  <!-- Category -->
+  <div class="space-y-2">
+    <label hlmLabel for="category">Category <span class="text-red-500">*</span></label>
+    <brn-select
+      class="w-full"
+      placeholder="Select a category"
+      [field]="projectForm().categoryId"
+      [disabled]="isFormDisabled"
+    >
+      <hlm-select-trigger class="w-full">
+        <hlm-select-value />
+      </hlm-select-trigger>
+      <hlm-select-content>
+        @for (category of categories(); track category.id) {
+          <hlm-select-option [value]="category.id">
+            {{ category.name }}
+          </hlm-select-option>
+        }
+        @if (categories().length === 0) {
+          <div class="px-2 py-1.5 text-sm text-slate-500">No categories available</div>
+        }
+      </hlm-select-content>
+    </brn-select>
+    @if (projectForm().categoryId().invalid() && projectForm().categoryId().touched()) {
+      <p class="text-sm text-red-500">
+        @for (error of projectForm().categoryId().errors(); track error.kind) {
+          {{ error.message }}
+        }
+      </p>
+    }
+  </div>
+
+  <!-- Featured Image Upload -->
+  <div class="space-y-2">
+    <label hlmLabel for="featuredImage">Featured Image</label>
+    <div class="space-y-3">
+      @if (imagePreviewUrl()) {
+        <!-- Image Preview -->
+        <div class="relative rounded-lg border border-slate-200 overflow-hidden">
+          <img
+            [src]="imagePreviewUrl()"
+            alt="Featured image preview"
+            class="w-full h-48 object-cover"
+          />
+          <button
+            type="button"
+            (click)="removeImage()"
+            class="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+            [disabled]="isFormDisabled"
+          >
+            <ng-icon hlmIcon name="lucideX" size="sm" />
+          </button>
+        </div>
+      } @else {
+        <!-- Upload Button -->
+        <div class="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:border-slate-400 transition-colors">
+          <input
+            type="file"
+            id="featuredImage"
+            accept="image/jpeg,image/png,image/webp"
+            (change)="onFileSelected($event)"
+            class="hidden"
+            [disabled]="isFormDisabled"
+          />
+          <button
+            type="button"
+            (click)="triggerFileInput()"
+            class="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900"
+            [disabled]="isFormDisabled"
+          >
+            @if (isImageUploading()) {
+              <ng-icon hlmIcon name="lucideLoader2" class="animate-spin" size="lg" />
+              <span>Uploading... {{ uploadProgress() }}%</span>
+            } @else {
+              <ng-icon hlmIcon name="lucideImage" size="lg" />
+              <span>Click to upload featured image</span>
+            }
+          </button>
+          <p class="text-xs text-slate-500 mt-2">JPEG, PNG, or WebP (max 5MB)</p>
+        </div>
+      }
+
+      <!-- Upload Progress -->
+      @if (isImageUploading() && uploadProgress() > 0) {
+        <div class="w-full bg-slate-200 rounded-full h-2">
+          <div
+            class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+            [style.width.%]="uploadProgress()"
+          ></div>
+        </div>
+      }
+
+      <!-- Upload Error -->
+      @if (uploadError()) {
+        <p class="text-sm text-red-500">{{ uploadError() }}</p>
+      }
+    </div>
+  </div>
+
+  <!-- Detailed Description (Rich Text Editor) -->
+  <div class="space-y-2">
+    <label hlmLabel for="detailedDescription">Detailed Description <span class="text-red-500">*</span></label>
+    <nyots-rich-text-editor
+      [content]="projectForm().detailedDescription().value()"
+      (contentChange)="onDetailedDescriptionChange($event)"
+      (validationError)="onDetailedDescriptionError($event)"
+      [config]="{
+        maxLength: 50000,
+        placeholder: 'Enter detailed project description with formatting...',
+        readonly: isFormDisabled
+      }"
+    />
+    @if (projectForm().detailedDescription().invalid() && projectForm().detailedDescription().touched()) {
+      <p class="text-sm text-red-500">
+        @for (error of projectForm().detailedDescription().errors(); track error.kind) {
+          {{ error.message }}
+        }
+      </p>
+    }
+  </div>
+
+  <!-- Status -->
+  <div class="space-y-2">
+    <label hlmLabel for="status">Status <span class="text-red-500">*</span></label>
+    <brn-select
+      class="w-full"
+      placeholder="Select project status"
+      [field]="projectForm().status"
+      [disabled]="isFormDisabled"
+    >
+      <hlm-select-trigger class="w-full">
+        <hlm-select-value />
+      </hlm-select-trigger>
+      <hlm-select-content>
+        @for (status of statusOptions; track status.value) {
+          <hlm-select-option [value]="status.value">
+            {{ status.label }}
+          </hlm-select-option>
+        }
+      </hlm-select-content>
+    </brn-select>
+    @if (projectForm().status().invalid() && projectForm().status().touched()) {
+      <p class="text-sm text-red-500">
+        @for (error of projectForm().status().errors(); track error.kind) {
+          {{ error.message }}
+        }
+      </p>
+    }
+  </div>
+
+  <!-- Form-level Errors -->
+  @if (projectForm()().errors().length > 0) {
+    <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+      <ul class="list-disc list-inside space-y-1">
+        @for (error of projectForm()().errors(); track error.kind) {
+          <li class="text-sm">{{ error.message }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  <!-- Submit Button -->
+  <div class="flex justify-end gap-3 pt-4 border-t">
+    <button
+      hlmBtn
+      type="submit"
+      [disabled]="isFormDisabled || projectForm()().invalid()"
+      class="min-w-[150px]"
+    >
+      @if (isLoading()) {
+        <ng-icon hlmIcon name="lucideLoader2" class="mr-2 animate-spin" size="sm" />
+        Saving...
+      } @else {
+        {{ submitLabel() }}
+      }
+    </button>
+  </div>
+</form>
