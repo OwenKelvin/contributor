@@ -1,4 +1,3 @@
-
 import { Component } from '@angular/core';
 import {
   HlmSidebar,
@@ -9,7 +8,10 @@ import {
   HlmSidebarInset,
   HlmSidebarMenu,
   HlmSidebarMenuButton,
-  HlmSidebarMenuItem, HlmSidebarMenuSub, HlmSidebarMenuSubButton, HlmSidebarMenuSubItem,
+  HlmSidebarMenuItem,
+  HlmSidebarMenuSub,
+  HlmSidebarMenuSubButton,
+  HlmSidebarMenuSubItem,
   HlmSidebarTrigger,
   HlmSidebarWrapper
 } from '@nyots/ui/sidebar';
@@ -19,10 +21,19 @@ import {
   lucideBarChart3,
   lucideChevronRight,
   lucideFileText,
-  lucideFolderOpen, lucideHistory,
+  lucideFolderOpen,
+  lucideHistory,
   lucidePlus,
   lucideWallet,
-  lucideChevronDown, lucideChevronUp
+  lucideUsers,
+  lucideSettings,
+  lucideShield,
+  lucideUserCheck,
+  lucideListChecks,
+  lucideDollarSign,
+  lucideTrendingUp,
+  lucideArchive,
+  lucideAlertCircle
 } from '@ng-icons/lucide';
 import { HlmCollapsible, HlmCollapsibleContent, HlmCollapsibleTrigger } from '@nyots/ui/collapsible';
 import { NgOptimizedImage } from '@angular/common';
@@ -55,8 +66,8 @@ import { NgOptimizedImage } from '@angular/common';
       <hlm-sidebar>
         <div hlmSidebarHeader class="flex items-center gap-2 px-4 py-3">
           <div class="flex items-center w-full">
-            <img class="w-16" ngSrc="/logo.svg" width="472" height="472" alt="" priority="" />
-            <span class="ms-4 text-lg font-semibold">NyotsCo.</span>
+            <img class="w-16" ngSrc="/logo.svg" width="472" height="472" alt="Admin Logo" priority="" />
+            <span class="ms-4 text-lg font-semibold">NyotsCo. Admin</span>
           </div>
         </div>
         <div hlmSidebarContent>
@@ -117,6 +128,9 @@ import { NgOptimizedImage } from '@angular/common';
           <button hlmSidebarTrigger>
             <span class="sr-only">Toggle Sidebar</span>
           </button>
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-medium">Admin Panel</span>
+          </div>
         </header>
       </main>
     </div>
@@ -130,66 +144,113 @@ import { NgOptimizedImage } from '@angular/common';
       lucideBarChart3,
       lucideHistory,
       lucideFileText,
-      lucideChevronDown,
-      lucideChevronUp,
+      lucideUsers,
+      lucideSettings,
+      lucideShield,
+      lucideUserCheck,
+      lucideListChecks,
+      lucideDollarSign,
+      lucideTrendingUp,
+      lucideArchive,
+      lucideAlertCircle
     }),
   ],
 })
 export class Dashboard {
   protected readonly _items = [
     {
-      title: 'Projects',
-      icon: 'lucideFolderOpen',
+      title: 'Dashboard',
+      icon: 'lucideBarChart3',
       defaultOpen: true,
       items: [
-        { title: 'Browse All Projects', icon: 'lucideFolderOpen' },
-        { title: 'Active Projects', icon: 'lucideBarChart3' },
-        { title: 'Completed Projects', icon: 'lucideHistory' },
-        { title: 'Favorite Projects', icon: 'lucidePlus' },
+        { title: 'Overview', icon: 'lucideBarChart3' },
+        { title: 'System Health', icon: 'lucideTrendingUp' },
+        { title: 'Recent Activity', icon: 'lucideHistory' },
       ],
     },
     {
-      title: 'My Contributions',
+      title: 'Project Management',
+      icon: 'lucideFolderOpen',
+      defaultOpen: false,
+      items: [
+        { title: 'Create New Project', icon: 'lucidePlus' },
+        { title: 'All Projects', icon: 'lucideFolderOpen' },
+        { title: 'Active Projects', icon: 'lucideTrendingUp' },
+        { title: 'Pending Approval', icon: 'lucideAlertCircle' },
+        { title: 'Archived Projects', icon: 'lucideArchive' },
+        { title: 'Project Categories', icon: 'lucideListChecks' },
+      ],
+    },
+    {
+      title: 'User Management',
+      icon: 'lucideUsers',
+      defaultOpen: false,
+      items: [
+        { title: 'All Users', icon: 'lucideUsers' },
+        { title: 'User Permissions', icon: 'lucideUserCheck' },
+        { title: 'User Activity', icon: 'lucideHistory' },
+        { title: 'Banned Users', icon: 'lucideShield' },
+        { title: 'Invite Users', icon: 'lucidePlus' },
+      ],
+    },
+    {
+      title: 'Contributions',
       icon: 'lucideWallet',
       defaultOpen: false,
       items: [
-        { title: 'Overview', icon: 'lucideBarChart3' },
-        { title: 'By Project', icon: 'lucideFolderOpen' },
-        { title: 'By Date', icon: 'lucideHistory' },
-        { title: 'Recurring Contributions', icon: 'lucideWallet' },
-        { title: 'Pending Contributions', icon: 'lucideFileText' },
+        { title: 'All Contributions', icon: 'lucideDollarSign' },
+        { title: 'Pending Contributions', icon: 'lucideAlertCircle' },
+        { title: 'Contribution Reports', icon: 'lucideFileText' },
+        { title: 'Refund Requests', icon: 'lucideHistory' },
+        { title: 'Transaction Logs', icon: 'lucideFileText' },
       ],
     },
     {
-      title: 'Make Contribution',
-      icon: 'lucidePlus',
+      title: 'Financial Management',
+      icon: 'lucideDollarSign',
       defaultOpen: false,
       items: [
-        { title: 'One-time Contribution', icon: 'lucidePlus' },
-        { title: 'Set Up Recurring', icon: 'lucideWallet' },
-        { title: 'Quick Contribute', icon: 'lucideChevronRight' },
-        { title: 'Custom Amount', icon: 'lucideFileText' },
+        { title: 'Revenue Overview', icon: 'lucideBarChart3' },
+        { title: 'Withdrawal Requests', icon: 'lucideWallet' },
+        { title: 'Tax Reports', icon: 'lucideFileText' },
+        { title: 'Financial Statements', icon: 'lucideFileText' },
+        { title: 'Payment Gateways', icon: 'lucideSettings' },
       ],
     },
     {
-      title: 'Reports & Analytics',
-      icon: 'lucideBarChart3',
+      title: 'Analytics & Reports',
+      icon: 'lucideTrendingUp',
       defaultOpen: false,
       items: [
-        { title: 'Contribution Summary', icon: 'lucideBarChart3' },
-        { title: 'Impact Dashboard', icon: 'lucideBarChart3' },
-        { title: 'Monthly Reports', icon: 'lucideFileText' },
-        { title: 'Tax Documents', icon: 'lucideFileText' },
+        { title: 'Project Analytics', icon: 'lucideBarChart3' },
+        { title: 'User Engagement', icon: 'lucideUsers' },
+        { title: 'Financial Reports', icon: 'lucideDollarSign' },
+        { title: 'Export Data', icon: 'lucideFileText' },
+        { title: 'Custom Reports', icon: 'lucidePlus' },
       ],
     },
     {
-      title: 'History',
+      title: 'System Settings',
+      icon: 'lucideSettings',
+      defaultOpen: false,
+      items: [
+        { title: 'General Settings', icon: 'lucideSettings' },
+        { title: 'Project Settings', icon: 'lucideFolderOpen' },
+        { title: 'Payment Settings', icon: 'lucideWallet' },
+        { title: 'Email Templates', icon: 'lucideFileText' },
+        { title: 'Security Settings', icon: 'lucideShield' },
+        { title: 'Backup & Restore', icon: 'lucideArchive' },
+      ],
+    },
+    {
+      title: 'Audit Log',
       icon: 'lucideHistory',
       defaultOpen: false,
       items: [
-        { title: 'Transaction History', icon: 'lucideHistory' },
-        { title: 'Receipts', icon: 'lucideFileText' },
-        { title: 'Export History', icon: 'lucideChevronDown' },
+        { title: 'System Logs', icon: 'lucideHistory' },
+        { title: 'User Actions', icon: 'lucideUsers' },
+        { title: 'Security Events', icon: 'lucideShield' },
+        { title: 'Export Logs', icon: 'lucideFileText' },
       ],
     },
   ];
