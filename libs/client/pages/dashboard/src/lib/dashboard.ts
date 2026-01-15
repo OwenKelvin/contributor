@@ -3,10 +3,8 @@ import { Component } from '@angular/core';
 import {
   HlmSidebar,
   HlmSidebarContent,
-  HlmSidebarFooter,
   HlmSidebarGroup,
   HlmSidebarGroupContent,
-  HlmSidebarGroupLabel,
   HlmSidebarHeader,
   HlmSidebarInset,
   HlmSidebarMenu,
@@ -27,16 +25,15 @@ import {
   lucideChevronDown, lucideChevronUp
 } from '@ng-icons/lucide';
 import { HlmCollapsible, HlmCollapsibleContent, HlmCollapsibleTrigger } from '@nyots/ui/collapsible';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   imports: [
     HlmSidebar,
     HlmSidebarContent,
-    HlmSidebarFooter,
     HlmSidebarGroup,
     HlmSidebarHeader,
     HlmSidebarWrapper,
-    HlmSidebarGroupLabel,
     HlmSidebarGroupContent,
     HlmSidebarMenu,
     HlmSidebarMenuItem,
@@ -51,14 +48,15 @@ import { HlmCollapsible, HlmCollapsibleContent, HlmCollapsibleTrigger } from '@n
     HlmSidebarMenuSubItem,
     HlmSidebarMenuSub,
     HlmSidebarMenuSubButton,
+    NgOptimizedImage,
   ],
   template: `
     <div hlmSidebarWrapper>
       <hlm-sidebar>
         <div hlmSidebarHeader class="flex items-center gap-2 px-4 py-3">
           <div class="flex items-center w-full">
-            <ng-icon hlm name="lucideWallet" size="24" class="mr-2" />
-            <span class="text-lg font-semibold">Contributions Hub</span>
+            <img class="w-16" ngSrc="/logo.svg" width="472" height="472" alt="" priority="" />
+            <span class="ms-4 text-lg font-semibold">NyotsCo.</span>
           </div>
         </div>
         <div hlmSidebarContent>
@@ -77,7 +75,7 @@ import { HlmCollapsible, HlmCollapsibleContent, HlmCollapsibleTrigger } from '@n
                         class="flex w-full items-center justify-between"
                       >
                         <div class="flex items-center gap-2">
-                          <ng-icon [name]="item.icon" hlm size="18" />
+                          <ng-icon [name]="item.icon" hlm size="sm" />
                           <span>{{ item.title }}</span>
                         </div>
                         <ng-icon
@@ -90,7 +88,16 @@ import { HlmCollapsible, HlmCollapsibleContent, HlmCollapsibleTrigger } from '@n
                         <ul hlmSidebarMenuSub>
                           @for (subItem of item.items; track subItem.title) {
                             <li hlmSidebarMenuSubItem>
-                              <button hlmSidebarMenuSubButton class="w-full">
+                              <button
+                                hlmSidebarMenuSubButton
+                                class="flex w-full items-center gap-2"
+                              >
+                                <ng-icon
+                                  [name]="subItem.icon"
+                                  hlm
+                                  size="sm"
+                                  class="text-muted-foreground"
+                                />
                                 <span>{{ subItem.title }}</span>
                               </button>
                             </li>
@@ -124,7 +131,7 @@ import { HlmCollapsible, HlmCollapsibleContent, HlmCollapsibleTrigger } from '@n
       lucideHistory,
       lucideFileText,
       lucideChevronDown,
-      lucideChevronUp
+      lucideChevronUp,
     }),
   ],
 })
@@ -135,10 +142,10 @@ export class Dashboard {
       icon: 'lucideFolderOpen',
       defaultOpen: true,
       items: [
-        { title: 'Browse All Projects' },
-        { title: 'Active Projects' },
-        { title: 'Completed Projects' },
-        { title: 'Favorite Projects' },
+        { title: 'Browse All Projects', icon: 'lucideFolderOpen' },
+        { title: 'Active Projects', icon: 'lucideBarChart3' },
+        { title: 'Completed Projects', icon: 'lucideHistory' },
+        { title: 'Favorite Projects', icon: 'lucidePlus' },
       ],
     },
     {
@@ -146,11 +153,11 @@ export class Dashboard {
       icon: 'lucideWallet',
       defaultOpen: false,
       items: [
-        { title: 'Overview' },
-        { title: 'By Project' },
-        { title: 'By Date' },
-        { title: 'Recurring Contributions' },
-        { title: 'Pending Contributions' },
+        { title: 'Overview', icon: 'lucideBarChart3' },
+        { title: 'By Project', icon: 'lucideFolderOpen' },
+        { title: 'By Date', icon: 'lucideHistory' },
+        { title: 'Recurring Contributions', icon: 'lucideWallet' },
+        { title: 'Pending Contributions', icon: 'lucideFileText' },
       ],
     },
     {
@@ -158,10 +165,10 @@ export class Dashboard {
       icon: 'lucidePlus',
       defaultOpen: false,
       items: [
-        { title: 'One-time Contribution' },
-        { title: 'Set Up Recurring' },
-        { title: 'Quick Contribute' },
-        { title: 'Custom Amount' },
+        { title: 'One-time Contribution', icon: 'lucidePlus' },
+        { title: 'Set Up Recurring', icon: 'lucideWallet' },
+        { title: 'Quick Contribute', icon: 'lucideChevronRight' },
+        { title: 'Custom Amount', icon: 'lucideFileText' },
       ],
     },
     {
@@ -169,10 +176,10 @@ export class Dashboard {
       icon: 'lucideBarChart3',
       defaultOpen: false,
       items: [
-        { title: 'Contribution Summary' },
-        { title: 'Impact Dashboard' },
-        { title: 'Monthly Reports' },
-        { title: 'Tax Documents' },
+        { title: 'Contribution Summary', icon: 'lucideBarChart3' },
+        { title: 'Impact Dashboard', icon: 'lucideBarChart3' },
+        { title: 'Monthly Reports', icon: 'lucideFileText' },
+        { title: 'Tax Documents', icon: 'lucideFileText' },
       ],
     },
     {
@@ -180,9 +187,9 @@ export class Dashboard {
       icon: 'lucideHistory',
       defaultOpen: false,
       items: [
-        { title: 'Transaction History' },
-        { title: 'Receipts' },
-        { title: 'Export History' },
+        { title: 'Transaction History', icon: 'lucideHistory' },
+        { title: 'Receipts', icon: 'lucideFileText' },
+        { title: 'Export History', icon: 'lucideChevronDown' },
       ],
     },
   ];
