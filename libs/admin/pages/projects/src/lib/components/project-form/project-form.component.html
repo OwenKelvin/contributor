@@ -9,7 +9,8 @@
       [field]="projectForm().title"
       placeholder="Enter project title"
       [class.border-red-500]="projectForm().title().invalid() && projectForm().title().touched()"
-      [disabled]="isFormDisabled"
+      [class.pointer-events-none]="isFormDisabled"
+      [class.opacity-50]="isFormDisabled"
     />
     @if (projectForm().title().invalid() && projectForm().title().touched()) {
       <p class="text-sm text-red-500">
@@ -30,7 +31,8 @@
       [field]="projectForm().description"
       placeholder="Enter a brief description of the project"
       [class.border-red-500]="projectForm().description().invalid() && projectForm().description().touched()"
-      [disabled]="isFormDisabled"
+      [class.pointer-events-none]="isFormDisabled"
+      [class.opacity-50]="isFormDisabled"
       class="resize-none"
     ></textarea>
     @if (projectForm().description().invalid() && projectForm().description().touched()) {
@@ -52,12 +54,12 @@
         id="goalAmount"
         type="number"
         step="0.01"
-        min="0"
         [field]="projectForm().goalAmount"
         placeholder="0.00"
         class="pl-8"
         [class.border-red-500]="projectForm().goalAmount().invalid() && projectForm().goalAmount().touched()"
-        [disabled]="isFormDisabled"
+        [class.pointer-events-none]="isFormDisabled"
+        [class.opacity-50]="isFormDisabled"
       />
     </div>
     @if (projectForm().goalAmount().invalid() && projectForm().goalAmount().touched()) {
@@ -84,7 +86,8 @@
           (change)="onDateChange('startDate', $event)"
           class="pl-10"
           [class.border-red-500]="projectForm().startDate().invalid() && projectForm().startDate().touched()"
-          [disabled]="isFormDisabled"
+          [class.pointer-events-none]="isFormDisabled"
+          [class.opacity-50]="isFormDisabled"
         />
       </div>
       @if (projectForm().startDate().invalid() && projectForm().startDate().touched()) {
@@ -109,7 +112,8 @@
           (change)="onDateChange('endDate', $event)"
           class="pl-10"
           [class.border-red-500]="projectForm().endDate().invalid() && projectForm().endDate().touched()"
-          [disabled]="isFormDisabled"
+          [class.pointer-events-none]="isFormDisabled"
+          [class.opacity-50]="isFormDisabled"
         />
       </div>
       @if (projectForm().endDate().invalid() && projectForm().endDate().touched()) {
@@ -127,18 +131,19 @@
     <label hlmLabel for="category">Category <span class="text-red-500">*</span></label>
     <brn-select
       class="w-full"
+      [class.pointer-events-none]="isFormDisabled"
+      [class.opacity-50]="isFormDisabled"
       placeholder="Select a category"
       [field]="projectForm().categoryId"
-      [disabled]="isFormDisabled"
     >
       <hlm-select-trigger class="w-full">
         <hlm-select-value />
       </hlm-select-trigger>
       <hlm-select-content>
         @for (category of categories(); track category.id) {
-          <hlm-select-option [value]="category.id">
+          <hlm-option [value]="category.id">
             {{ category.name }}
-          </hlm-select-option>
+          </hlm-option>
         }
         @if (categories().length === 0) {
           <div class="px-2 py-1.5 text-sm text-slate-500">No categories available</div>
@@ -248,18 +253,19 @@
     <label hlmLabel for="status">Status <span class="text-red-500">*</span></label>
     <brn-select
       class="w-full"
+      [class.pointer-events-none]="isFormDisabled"
+      [class.opacity-50]="isFormDisabled"
       placeholder="Select project status"
       [field]="projectForm().status"
-      [disabled]="isFormDisabled"
     >
       <hlm-select-trigger class="w-full">
         <hlm-select-value />
       </hlm-select-trigger>
       <hlm-select-content>
         @for (status of statusOptions; track status.value) {
-          <hlm-select-option [value]="status.value">
+          <hlm-option [value]="status.value">
             {{ status.label }}
-          </hlm-select-option>
+          </hlm-option>
         }
       </hlm-select-content>
     </brn-select>
