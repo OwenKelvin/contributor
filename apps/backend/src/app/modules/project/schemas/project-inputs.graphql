@@ -6,7 +6,7 @@ input CreateProjectInput {
   startDate: DateTime!
   endDate: DateTime!
   categoryId: ID!
-  featuredImage: Upload
+  featuredImage: String
   status: ProjectStatus!
 }
 
@@ -18,7 +18,7 @@ input UpdateProjectInput {
   startDate: DateTime
   endDate: DateTime
   categoryId: ID
-  featuredImage: Upload
+  featuredImage: String
   status: ProjectStatus
 }
 
@@ -46,14 +46,4 @@ input PaginationInput {
 input BulkUpdateInput {
   status: ProjectStatus
   categoryId: ID
-}
-
-input CreateCategoryInput {
-  name: String!
-  description: String
-}
-
-input UpdateCategoryInput {
-  name: String
-  description: String
 }

@@ -8,6 +8,8 @@ import { PermissionModule } from './modules/permission/permission.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { EmailModule } from './modules/email/email.module';
 import { QueueModule } from './modules/queue/queue.module';
+import { ProjectModule } from './modules/project/project.module';
+import { CategoryModule } from './modules/category/category.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { QueueModule } from './modules/queue/queue.module';
     AuthModule,
     EmailModule,
     QueueModule,
+    ProjectModule,
+    CategoryModule,
   ],
 })
 export class AppModule {}

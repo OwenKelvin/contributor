@@ -19,6 +19,15 @@ type Query {
     filter: ArchivedProjectFilter
     pagination: PaginationInput
   ): ProjectConnection!
-  
-  getAllCategories: [Category!]!
+}
+
+type ProjectConnection {
+  projects: [Project!]!
+  pageInfo: PageInfo!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  cursor: String
 }

@@ -22,22 +22,4 @@ enum ProjectStatus {
   ARCHIVED
 }
 
-type ProjectConnection {
-  projects: [Project!]!
-  pageInfo: PageInfo!
-}
-
-type PageInfo {
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-  cursor: String
-}
-
-type BulkUpdateResult {
-  successCount: Int!
-  failureCount: Int!
-  errors: [String!]
-}
-
 scalar DateTime
-scalar Upload

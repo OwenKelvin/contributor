@@ -13,7 +13,6 @@ export type Scalars = {
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
   DateTime: { input: any; output: any; }
-  Upload: { input: any; output: any; }
 };
 
 export type IArchivedProjectFilter = {
@@ -56,7 +55,7 @@ export type ICreateProjectInput = {
   description: Scalars['String']['input'];
   detailedDescription: Scalars['String']['input'];
   endDate: Scalars['DateTime']['input'];
-  featuredImage?: InputMaybe<Scalars['Upload']['input']>;
+  featuredImage?: InputMaybe<Scalars['String']['input']>;
   goalAmount: Scalars['Float']['input'];
   startDate: Scalars['DateTime']['input'];
   status: IProjectStatus;
@@ -253,7 +252,7 @@ export type IUpdateProjectInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   detailedDescription?: InputMaybe<Scalars['String']['input']>;
   endDate?: InputMaybe<Scalars['DateTime']['input']>;
-  featuredImage?: InputMaybe<Scalars['Upload']['input']>;
+  featuredImage?: InputMaybe<Scalars['String']['input']>;
   goalAmount?: InputMaybe<Scalars['Float']['input']>;
   startDate?: InputMaybe<Scalars['DateTime']['input']>;
   status?: InputMaybe<IProjectStatus>;
