@@ -132,7 +132,7 @@ export class EditProjectComponent implements OnInit {
       ]);
     } else {
       toast.error('Invalid project ID');
-      await this.router.navigate(['/admin/projects']);
+      await this.router.navigate(['/dashboard/projects']);
     }
   }
 
@@ -144,10 +144,10 @@ export class EditProjectComponent implements OnInit {
     this.isLoadingProject.set(true);
     try {
       const project = await this.projectService.getProjectById(id);
-      
+
       if (!project) {
         toast.error('Project not found');
-        await this.router.navigate(['/admin/projects']);
+        await this.router.navigate(['/dashboard/projects']);
         return;
       }
 
@@ -165,7 +165,7 @@ export class EditProjectComponent implements OnInit {
       });
     } catch (error) {
       console.error('Error loading project:', error);
-      
+
       // Handle 404 error
       const message = getUserFriendlyErrorMessage(error);
       const httpError = error as HttpErrorResponse;
@@ -174,8 +174,8 @@ export class EditProjectComponent implements OnInit {
       } else {
         toast.error(message);
       }
-      
-      await this.router.navigate(['/admin/projects']);
+
+      await this.router.navigate(['/dashboard/projects']);
     } finally {
       this.isLoadingProject.set(false);
     }
@@ -211,12 +211,12 @@ export class EditProjectComponent implements OnInit {
 
     try {
       const formValue = projectForm().value();
-      
+
       // Validate required date fields
       if (!formValue.startDate || !formValue.endDate) {
         throw new Error('Start date and end date are required');
       }
-      
+
       // Transform form data to match GraphQL input
       const input: IUpdateProjectInput = {
         title: formValue.title,
@@ -232,7 +232,7 @@ export class EditProjectComponent implements OnInit {
 
       await this.projectService.updateProject(id, input);
       toast.success('Project updated successfully');
-      await this.router.navigate(['/admin/projects']);
+      await this.router.navigate(['/dashboard/projects']);
     } catch (e) {
       // Handle GraphQL validation errors
       const graphqlError = (e as { errors: GraphQLError[] }).errors;

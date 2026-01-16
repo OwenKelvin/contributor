@@ -65,11 +65,11 @@ export class ProjectCategoriesComponent {
   categories = signal<ICategory[]>([]);
   isLoading = signal(false);
   isSubmitting = signal(false);
-  
+
   // Form state
   isFormVisible = signal(false);
   editingCategoryId = signal<string | null>(null);
-  
+
   // Form model
   private categoryModel = signal<CategoryFormModel>({
     name: '',
@@ -87,10 +87,10 @@ export class ProjectCategoriesComponent {
 
   // Computed properties
   isEditing = computed(() => this.editingCategoryId() !== null);
-  formTitle = computed(() => 
+  formTitle = computed(() =>
     this.isEditing() ? 'Edit Category' : 'Add New Category'
   );
-  submitButtonLabel = computed(() => 
+  submitButtonLabel = computed(() =>
     this.isEditing() ? 'Update Category' : 'Create Category'
   );
 
@@ -165,7 +165,7 @@ export class ProjectCategoriesComponent {
   private async createCategory(categoryForm: FieldTree<CategoryFormModel>) {
     try {
       const formValue = categoryForm().value();
-      
+
       const input: ICreateCategoryInput = {
         name: formValue.name,
         description: formValue.description || undefined,
@@ -173,7 +173,7 @@ export class ProjectCategoriesComponent {
 
       await this.categoryService.createCategory(input);
       toast.success('Category created successfully');
-      
+
       // Refresh categories list and hide form
       await this.loadCategories();
       this.hideForm();
@@ -182,16 +182,16 @@ export class ProjectCategoriesComponent {
       const graphqlError = (e as { errors: GraphQLError[] }).errors;
       if (graphqlError?.length > 0) {
         // Check for uniqueness error
-        const uniquenessError = graphqlError.find(err => 
-          err.message.toLowerCase().includes('unique') || 
+        const uniquenessError = graphqlError.find(err =>
+          err.message.toLowerCase().includes('unique') ||
           err.message.toLowerCase().includes('already exists') ||
           err.message.toLowerCase().includes('duplicate')
         );
-        
+
         if (uniquenessError) {
           toast.error('A category with this name already exists');
         }
-        
+
         return mapGraphqlValidationErrors(graphqlError, categoryForm);
       }
 
@@ -228,7 +228,7 @@ export class ProjectCategoriesComponent {
 
     try {
       const formValue = categoryForm().value();
-      
+
       const input: IUpdateCategoryInput = {
         name: formValue.name,
         description: formValue.description || undefined,
@@ -236,7 +236,7 @@ export class ProjectCategoriesComponent {
 
       await this.categoryService.updateCategory(categoryId, input);
       toast.success('Category updated successfully');
-      
+
       // Refresh categories list and hide form
       await this.loadCategories();
       this.hideForm();
@@ -245,16 +245,16 @@ export class ProjectCategoriesComponent {
       const graphqlError = (e as { errors: GraphQLError[] }).errors;
       if (graphqlError?.length > 0) {
         // Check for uniqueness error
-        const uniquenessError = graphqlError.find(err => 
-          err.message.toLowerCase().includes('unique') || 
+        const uniquenessError = graphqlError.find(err =>
+          err.message.toLowerCase().includes('unique') ||
           err.message.toLowerCase().includes('already exists') ||
           err.message.toLowerCase().includes('duplicate')
         );
-        
+
         if (uniquenessError) {
           toast.error('A category with this name already exists');
         }
-        
+
         return mapGraphqlValidationErrors(graphqlError, categoryForm);
       }
 
@@ -283,7 +283,7 @@ export class ProjectCategoriesComponent {
    */
   async onSubmit() {
     this.isSubmitting.set(true);
-    
+
     await submit(this.categoryForm, async (fieldTree) => {
       if (this.isEditing()) {
         return await this.updateCategory(fieldTree);
@@ -291,7 +291,7 @@ export class ProjectCategoriesComponent {
         return await this.createCategory(fieldTree);
       }
     });
-    
+
     this.isSubmitting.set(false);
   }
 

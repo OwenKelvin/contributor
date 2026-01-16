@@ -102,15 +102,15 @@ export class ArchivedProjectsComponent {
   async loadArchivedProjects() {
     this.isLoading.set(true);
     this.hasError.set(false);
-    
+
     try {
       // Build filter object
       const filter: IArchivedProjectFilter = {};
-      
+
       if (this.archivedAfter()) {
         filter.archivedAfter = new Date(this.archivedAfter());
       }
-      
+
       if (this.archivedBefore()) {
         filter.archivedBefore = new Date(this.archivedBefore());
       }
@@ -173,7 +173,7 @@ export class ArchivedProjectsComponent {
     if (this.archivedAfter() && this.archivedBefore()) {
       const after = new Date(this.archivedAfter());
       const before = new Date(this.archivedBefore());
-      
+
       if (after > before) {
         toast.error('Start date must be before end date');
         return;
@@ -222,7 +222,7 @@ export class ArchivedProjectsComponent {
    * Handle project view action
    */
   onProjectView(projectId: string) {
-    this.router.navigate(['/admin/projects', projectId, 'view']);
+    this.router.navigate(['/dashboard/projects', projectId, 'view']);
   }
 
   /**
