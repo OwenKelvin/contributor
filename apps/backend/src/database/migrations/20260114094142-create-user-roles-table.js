@@ -7,6 +7,7 @@ module.exports = {
       user_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        primaryKey: true,
         references: {
           model: 'users',
           key: 'id',
@@ -17,6 +18,7 @@ module.exports = {
       role_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        primaryKey: true,
         references: {
           model: 'roles',
           key: 'id',
@@ -32,11 +34,6 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
-    });
-
-    await queryInterface.addConstraint('user_roles', {
-      fields: ['user_id', 'role_id'],
-      type: 'primary key',
     });
   },
 
