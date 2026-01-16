@@ -53,13 +53,13 @@ export class ProjectService {
     pagination?: IPaginationInput;
   }) {
     const response = await firstValueFrom(
-      this.getAllProjectsGQL.watch({
+      this.getAllProjectsGQL.fetch({
         variables: {
           search: params.search,
           filter: params.filters,
           pagination: params.pagination,
         },
-      }).valueChanges
+      })
     );
     return response.data?.getAllProjects;
   }
