@@ -267,3 +267,183 @@ export type IUser = {
   phoneNumber?: Maybe<Scalars['String']['output']>;
   roles?: Maybe<Array<IRole>>;
 };
+
+export type IAdminCreateContributionInput = {
+  amount: Scalars['Float']['input'];
+  notes?: InputMaybe<Scalars['String']['input']>;
+  paymentReference?: InputMaybe<Scalars['String']['input']>;
+  paymentStatus: IPaymentStatus;
+  projectId: Scalars['ID']['input'];
+  userId: Scalars['ID']['input'];
+};
+
+export type IBulkUpdateError = {
+  contributionId: Scalars['String']['output'];
+  error: Scalars['String']['output'];
+};
+
+export type IContribution = {
+  amount: Scalars['Float']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  failureReason?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  notes?: Maybe<Scalars['String']['output']>;
+  paidAt?: Maybe<Scalars['DateTime']['output']>;
+  paymentReference?: Maybe<Scalars['String']['output']>;
+  paymentStatus: IPaymentStatus;
+  project: IProject;
+  transactions: Array<ITransaction>;
+  updatedAt: Scalars['DateTime']['output'];
+  user: IUser;
+};
+
+export type IContributionBulkUpdateResult = {
+  errors: Array<IBulkUpdateError>;
+  failureCount: Scalars['Int']['output'];
+  successCount: Scalars['Int']['output'];
+};
+
+export type IContributionConnection = {
+  edges: Array<IContributionEdge>;
+  pageInfo: IPageInfo;
+  totalAmount: Scalars['Float']['output'];
+  totalCount: Scalars['Int']['output'];
+};
+
+export type IContributionEdge = {
+  cursor: Scalars['String']['output'];
+  node: IContribution;
+};
+
+export type IContributionFilter = {
+  endDate?: InputMaybe<Scalars['DateTime']['input']>;
+  maxAmount?: InputMaybe<Scalars['Float']['input']>;
+  minAmount?: InputMaybe<Scalars['Float']['input']>;
+  paymentStatus?: InputMaybe<IPaymentStatus>;
+  projectId?: InputMaybe<Scalars['ID']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  startDate?: InputMaybe<Scalars['DateTime']['input']>;
+  userId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+export type IContributionPaginationInput = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type IContributionReport = {
+  failedAmount: Scalars['Float']['output'];
+  failedCount: Scalars['Int']['output'];
+  paidAmount: Scalars['Float']['output'];
+  paidCount: Scalars['Int']['output'];
+  pendingAmount: Scalars['Float']['output'];
+  pendingCount: Scalars['Int']['output'];
+  refundedAmount: Scalars['Float']['output'];
+  refundedCount: Scalars['Int']['output'];
+  successRate: Scalars['Float']['output'];
+  timeSeriesData: Array<ITimeSeriesPoint>;
+  topContributors: Array<IUserContributionSummary>;
+  topProjects: Array<IProjectContributionSummary>;
+  totalAmount: Scalars['Float']['output'];
+  totalContributions: Scalars['Int']['output'];
+};
+
+export type ICreateContributionInput = {
+  amount: Scalars['Float']['input'];
+  notes?: InputMaybe<Scalars['String']['input']>;
+  projectId: Scalars['ID']['input'];
+};
+
+export type IPaymentDetailsInput = {
+  accountReference: Scalars['String']['input'];
+  phoneNumber: Scalars['String']['input'];
+  transactionDesc?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum IPaymentStatus {
+  Failed = 'FAILED',
+  Paid = 'PAID',
+  Pending = 'PENDING',
+  Refunded = 'REFUNDED'
+}
+
+export type IProjectContributionSummary = {
+  contributionCount: Scalars['Int']['output'];
+  projectId: Scalars['ID']['output'];
+  projectTitle: Scalars['String']['output'];
+  totalAmount: Scalars['Float']['output'];
+};
+
+export type IReportFilter = {
+  endDate?: InputMaybe<Scalars['DateTime']['input']>;
+  projectId?: InputMaybe<Scalars['ID']['input']>;
+  startDate?: InputMaybe<Scalars['DateTime']['input']>;
+  userId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+export enum IReportType {
+  ByProject = 'BY_PROJECT',
+  ByUser = 'BY_USER',
+  Summary = 'SUMMARY',
+  TimeSeries = 'TIME_SERIES'
+}
+
+export type ITimeSeriesPoint = {
+  contributionCount: Scalars['Int']['output'];
+  date: Scalars['String']['output'];
+  totalAmount: Scalars['Float']['output'];
+};
+
+export type ITransaction = {
+  amount: Scalars['Float']['output'];
+  contribution: IContribution;
+  createdAt: Scalars['DateTime']['output'];
+  errorCode?: Maybe<Scalars['String']['output']>;
+  errorMessage?: Maybe<Scalars['String']['output']>;
+  gatewayResponse?: Maybe<Scalars['String']['output']>;
+  gatewayTransactionId?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  status: ITransactionStatus;
+  transactionType: ITransactionType;
+};
+
+export type ITransactionConnection = {
+  edges: Array<ITransactionEdge>;
+  pageInfo: IPageInfo;
+  totalCount: Scalars['Int']['output'];
+};
+
+export type ITransactionEdge = {
+  cursor: Scalars['String']['output'];
+  node: ITransaction;
+};
+
+export type ITransactionFilterInput = {
+  contributionId?: InputMaybe<Scalars['String']['input']>;
+  endDate?: InputMaybe<Scalars['DateTime']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+  startDate?: InputMaybe<Scalars['DateTime']['input']>;
+  status?: InputMaybe<ITransactionStatus>;
+  transactionType?: InputMaybe<ITransactionType>;
+};
+
+export enum ITransactionStatus {
+  Failed = 'FAILED',
+  Pending = 'PENDING',
+  Success = 'SUCCESS'
+}
+
+export enum ITransactionType {
+  Payment = 'PAYMENT',
+  Refund = 'REFUND'
+}
+
+export type IUserContributionSummary = {
+  contributionCount: Scalars['Int']['output'];
+  totalAmount: Scalars['Float']['output'];
+  userEmail: Scalars['String']['output'];
+  userId: Scalars['ID']['output'];
+  userName: Scalars['String']['output'];
+};

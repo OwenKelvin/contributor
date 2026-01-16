@@ -1,0 +1,194 @@
+mutation CreateContribution($input: CreateContributionInput!) {
+  createContribution(input: $input) {
+    id
+    user {
+      id
+      firstName
+      lastName
+      email
+    }
+    project {
+      id
+      title
+      description
+      goalAmount
+      currentAmount
+      status
+    }
+    amount
+    paymentStatus
+    notes
+    paymentReference
+    failureReason
+    paidAt
+    createdAt
+    updatedAt
+  }
+}
+
+mutation AdminCreateContribution($input: AdminCreateContributionInput!) {
+  adminCreateContribution(input: $input) {
+    id
+    user {
+      id
+      firstName
+      lastName
+      email
+    }
+    project {
+      id
+      title
+      description
+      goalAmount
+      currentAmount
+      status
+    }
+    amount
+    paymentStatus
+    notes
+    paymentReference
+    failureReason
+    paidAt
+    createdAt
+    updatedAt
+  }
+}
+
+mutation ProcessContributionPayment(
+  $contributionId: String!
+  $paymentDetails: PaymentDetailsInput!
+) {
+  processContributionPayment(
+    contributionId: $contributionId
+    paymentDetails: $paymentDetails
+  ) {
+    id
+    user {
+      id
+      firstName
+      lastName
+      email
+    }
+    project {
+      id
+      title
+      description
+      goalAmount
+      currentAmount
+      status
+    }
+    amount
+    paymentStatus
+    notes
+    paymentReference
+    failureReason
+    paidAt
+    transactions {
+      id
+      transactionType
+      amount
+      status
+      gatewayTransactionId
+      gatewayResponse
+      errorCode
+      errorMessage
+      createdAt
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+mutation UpdateContributionStatus(
+  $contributionId: String!
+  $status: PaymentStatus!
+  $reason: String
+) {
+  updateContributionStatus(
+    contributionId: $contributionId
+    status: $status
+    reason: $reason
+  ) {
+    id
+    user {
+      id
+      firstName
+      lastName
+      email
+    }
+    project {
+      id
+      title
+      description
+      goalAmount
+      currentAmount
+      status
+    }
+    amount
+    paymentStatus
+    notes
+    paymentReference
+    failureReason
+    paidAt
+    createdAt
+    updatedAt
+  }
+}
+
+mutation ProcessContributionRefund($contributionId: String!, $reason: String!) {
+  processContributionRefund(contributionId: $contributionId, reason: $reason) {
+    id
+    user {
+      id
+      firstName
+      lastName
+      email
+    }
+    project {
+      id
+      title
+      description
+      goalAmount
+      currentAmount
+      status
+    }
+    amount
+    paymentStatus
+    notes
+    paymentReference
+    failureReason
+    paidAt
+    transactions {
+      id
+      transactionType
+      amount
+      status
+      gatewayTransactionId
+      gatewayResponse
+      errorCode
+      errorMessage
+      createdAt
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+mutation BulkUpdateContributionStatus(
+  $contributionIds: [String!]!
+  $status: PaymentStatus!
+  $reason: String
+) {
+  bulkUpdateContributionStatus(
+    contributionIds: $contributionIds
+    status: $status
+    reason: $reason
+  ) {
+    successCount
+    failureCount
+    errors {
+      contributionId
+      error
+    }
+  }
+}
