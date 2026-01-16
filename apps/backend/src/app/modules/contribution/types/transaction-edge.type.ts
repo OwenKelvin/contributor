@@ -6,6 +6,6 @@ export class TransactionEdge {
   @Field(() => Transaction)
   node: Transaction;
 
-  @Field()
+  @Field(() => String)
   cursor: string;
 }

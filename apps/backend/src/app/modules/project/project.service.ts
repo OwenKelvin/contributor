@@ -7,7 +7,8 @@ import { ProjectFilter } from './dto/project-filter.input';
 import { ArchivedProjectFilter } from './dto/archived-project-filter.input';
 import { PaginationInput } from './dto/pagination.input';
 import { BulkUpdateInput } from './dto/bulk-update.input';
-import { ProjectConnection, PageInfo } from './types/project-connection.type';
+import { ProjectConnection } from './types/project-connection.type';
+import { PageInfo } from '../../common/types/page-info.type';
 import { BulkUpdateResult } from './types/bulk-update-result.type';
 import { Op } from 'sequelize';
 import { Category } from '../category/category.model';
@@ -71,7 +72,8 @@ export class ProjectService {
     const pageInfo: PageInfo = {
       hasNextPage,
       hasPreviousPage,
-      cursor: hasNextPage ? String(offset + limit) : null,
+      startCursor: projects.length > 0 ? String(offset) : null,
+      endCursor: hasNextPage ? String(offset + limit) : null,
     };
 
     return {
@@ -137,7 +139,8 @@ export class ProjectService {
     const pageInfo: PageInfo = {
       hasNextPage,
       hasPreviousPage,
-      cursor: hasNextPage ? String(offset + limit) : null,
+      startCursor: projects.length > 0 ? String(offset) : null,
+      endCursor: hasNextPage ? String(offset + limit) : null,
     };
 
     return {

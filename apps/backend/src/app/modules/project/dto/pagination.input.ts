@@ -1,6 +1,6 @@
 import { InputType, Field, Int } from '@nestjs/graphql';
 
-@InputType()
+@InputType('ProjectPaginationInput')
 export class PaginationInput {
   @Field({ nullable: true })
   cursor?: string;

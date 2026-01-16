@@ -11,6 +11,8 @@ import { QueueModule } from './modules/queue/queue.module';
 import { ProjectModule } from './modules/project/project.module';
 import { CategoryModule } from './modules/category/category.module';
 import { FileModule } from './modules/file/file.module';
+import { PaymentModule } from './modules/payment/payment.module';
+import { ContributionModule } from './modules/contribution/contribution.module';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { FileModule } from './modules/file/file.module';
     ProjectModule,
     CategoryModule,
     FileModule,
+    PaymentModule,
+    ContributionModule,
   ],
 })
 export class AppModule {}

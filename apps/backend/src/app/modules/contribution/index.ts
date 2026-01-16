@@ -3,4 +3,7 @@ export * from './transaction.model';
 export * from './audit-log.model';
 export * from './contribution.service';
 export * from './transaction.service';
+export * from './contribution.resolver';
+export * from './contribution.module';
+export * from './contribution.event-listener';
 export * from './types';

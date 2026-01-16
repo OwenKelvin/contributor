@@ -6,7 +6,7 @@ import { TransactionFilterInput } from './dto/transaction-filter.input';
 import { PaginationInput } from './dto/pagination.input';
 import { TransactionConnection } from './types/transaction-connection.type';
 import { TransactionEdge } from './types/transaction-edge.type';
-import { PageInfo } from './types/page-info.type';
+import { PageInfo } from '../../common/types/page-info.type';
 import { Op } from 'sequelize';
 
 /**
@@ -333,8 +333,8 @@ export class TransactionService {
     const pageInfo: PageInfo = {
       hasNextPage,
       hasPreviousPage: offset > 0,
-      startCursor: edges.length > 0 ? edges[0].cursor : undefined,
-      endCursor: edges.length > 0 ? edges[edges.length - 1].cursor : undefined,
+      startCursor: edges.length > 0 ? edges[0].cursor : null,
+      endCursor: edges.length > 0 ? edges[edges.length - 1].cursor : null,
     };
 
     return {

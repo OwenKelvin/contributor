@@ -1,6 +1,6 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 
-@ObjectType()
+@ObjectType('ProjectBulkUpdateResult')
 export class BulkUpdateResult {
   @Field(() => Int)
   successCount: number;

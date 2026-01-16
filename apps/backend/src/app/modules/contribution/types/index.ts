@@ -1,4 +1,3 @@
-export * from './page-info.type';
 export * from './contribution-edge.type';
 export * from './contribution-connection.type';
 export * from './transaction-edge.type';

@@ -1,25 +1,18 @@
-import { InputType, Field, registerEnumType } from '@nestjs/graphql';
-import { IsNotEmpty, IsEnum } from 'class-validator';
-
-export enum PaymentMethod {
-  CREDIT_CARD = 'CREDIT_CARD',
-  DEBIT_CARD = 'DEBIT_CARD',
-  PAYPAL = 'PAYPAL',
-  BANK_TRANSFER = 'BANK_TRANSFER',
-}
-
-registerEnumType(PaymentMethod, {
-  name: 'PaymentMethod',
-});
+import { InputType, Field } from '@nestjs/graphql';
+import { IsNotEmpty, IsPhoneNumber, IsOptional } from 'class-validator';
 
 @InputType()
 export class PaymentDetailsInput {
-  @Field(() => PaymentMethod)
+  @Field()
   @IsNotEmpty()
-  @IsEnum(PaymentMethod)
-  paymentMethod: PaymentMethod;
+  @IsPhoneNumber()
+  phoneNumber: string;
 
   @Field()
   @IsNotEmpty()
-  paymentToken: string;
+  accountReference: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  transactionDesc?: string;
 }
