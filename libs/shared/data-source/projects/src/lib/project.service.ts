@@ -71,7 +71,7 @@ export class ProjectService {
    */
   async getProjectById(id: string) {
     const response = await firstValueFrom(
-      this.getProjectByIdGQL.watch({ variables: { id } }).valueChanges
+      this.getProjectByIdGQL.fetch({ variables: { id } })
     );
     return response.data?.getProjectById;
   }
@@ -83,7 +83,7 @@ export class ProjectService {
    */
   async getActiveProjects(pagination?: IPaginationInput) {
     const response = await firstValueFrom(
-      this.getActiveProjectsGQL.watch({ variables: { pagination } }).valueChanges
+      this.getActiveProjectsGQL.fetch({ variables: { pagination } })
     );
     return response.data?.getActiveProjects;
   }
@@ -95,7 +95,7 @@ export class ProjectService {
    */
   async getPendingProjects(pagination?: IPaginationInput) {
     const response = await firstValueFrom(
-      this.getPendingProjectsGQL.watch({ variables: { pagination } }).valueChanges
+      this.getPendingProjectsGQL.fetch({ variables: { pagination } })
     );
     return response.data?.getPendingProjects;
   }
@@ -110,12 +110,12 @@ export class ProjectService {
     pagination?: IPaginationInput;
   }) {
     const response = await firstValueFrom(
-      this.getArchivedProjectsGQL.watch({
+      this.getArchivedProjectsGQL.fetch({
         variables: {
           filter: params.filter,
           pagination: params.pagination,
         },
-      }).valueChanges
+      })
     );
     return response.data?.getArchivedProjects;
   }
