@@ -95,6 +95,15 @@ export class Project extends Model<Project> {
     type: DataType.ENUM(...Object.values(ProjectStatus)),
     allowNull: false,
     defaultValue: ProjectStatus.DRAFT,
+    get() {
+      const rawValue = this.getDataValue('status');
+      // Convert lowercase database value to uppercase enum key for GraphQL
+      return rawValue ? rawValue.toUpperCase() : rawValue;
+    },
+    set(value: string) {
+      // Convert uppercase GraphQL enum value to lowercase for database
+      this.setDataValue('status', value ? value.toLowerCase() : value);
+    },
   })
   status: ProjectStatus;
 
