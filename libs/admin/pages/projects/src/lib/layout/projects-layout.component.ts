@@ -44,7 +44,7 @@ import {
             <h1 class="text-2xl font-bold text-slate-900">Projects Management</h1>
             <a
               hlmBtn
-              routerLink="/projects/create"
+              [routerLink]="['/dashboard','projects','create']"
               class="inline-flex items-center gap-2"
             >
               <ng-icon hlmIcon name="lucidePlus" size="sm" />
@@ -59,7 +59,7 @@ import {
         <div class="container mx-auto px-4">
           <div class="flex gap-1 overflow-x-auto">
             <a
-              routerLink="/projects"
+              routerLink="/dashboard/projects"
               routerLinkActive="border-b-2 border-blue-600 text-blue-600"
               [routerLinkActiveOptions]="{ exact: true }"
               class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-900 whitespace-nowrap"
@@ -68,7 +68,7 @@ import {
               All Projects
             </a>
             <a
-              routerLink="/projects/active"
+              routerLink="/dashboard/projects/active"
               routerLinkActive="border-b-2 border-blue-600 text-blue-600"
               class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-900 whitespace-nowrap"
             >
@@ -76,7 +76,7 @@ import {
               Active
             </a>
             <a
-              routerLink="/projects/pending"
+              routerLink="/dashboard/projects/pending"
               routerLinkActive="border-b-2 border-blue-600 text-blue-600"
               class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-900 whitespace-nowrap"
             >
@@ -84,7 +84,7 @@ import {
               Pending
             </a>
             <a
-              routerLink="/projects/archived"
+              routerLink="/dashboard/projects/archived"
               routerLinkActive="border-b-2 border-blue-600 text-blue-600"
               class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-900 whitespace-nowrap"
             >
@@ -92,7 +92,7 @@ import {
               Archived
             </a>
             <a
-              routerLink="/projects/categories"
+              routerLink="/dashboard/projects/categories"
               routerLinkActive="border-b-2 border-blue-600 text-blue-600"
               class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-900 whitespace-nowrap"
             >

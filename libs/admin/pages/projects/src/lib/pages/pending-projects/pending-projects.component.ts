@@ -86,7 +86,7 @@ export class PendingProjectsComponent {
   async loadPendingProjects() {
     this.isLoading.set(true);
     this.hasError.set(false);
-    
+
     try {
       // Build pagination object
       const pagination: IPaginationInput = {
@@ -155,7 +155,7 @@ export class PendingProjectsComponent {
    * Handle project view action
    */
   onProjectView(projectId: string) {
-    this.router.navigate(['/admin/projects', projectId, 'view']);
+    this.router.navigate(['/dashboard/projects', projectId, 'view']);
   }
 
   /**

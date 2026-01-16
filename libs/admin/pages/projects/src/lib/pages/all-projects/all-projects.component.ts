@@ -89,7 +89,7 @@ export class AllProjectsComponent {
   debouncedSearchTerm = signal('');
   selectedProjects = signal<Set<string>>(new Set());
   categories = signal<ICategory[]>([]);
-  
+
   // Error state
   hasError = signal(false);
   errorMessage = signal<string>('');
@@ -188,19 +188,19 @@ export class AllProjectsComponent {
   async loadProjects() {
     this.isLoading.set(true);
     this.hasError.set(false);
-    
+
     try {
       // Build filter object
       const filter: IProjectFilter = {};
-      
+
       if (this.selectedStatus()) {
         filter.status = this.selectedStatus() as IProjectStatus;
       }
-      
+
       if (this.selectedCategoryId()) {
         filter.categoryId = this.selectedCategoryId();
       }
-      
+
       if (this.dateRangeStart() && this.dateRangeEnd()) {
         const start = this.dateRangeStart();
         const end = this.dateRangeEnd();
@@ -271,15 +271,15 @@ export class AllProjectsComponent {
   applyFilters() {
     // Update filters signal to trigger effect
     const filter: IProjectFilter = {};
-    
+
     if (this.selectedStatus()) {
       filter.status = this.selectedStatus() as IProjectStatus;
     }
-    
+
     if (this.selectedCategoryId()) {
       filter.categoryId = this.selectedCategoryId();
     }
-    
+
     if (this.dateRangeStart() && this.dateRangeEnd()) {
       const start = this.dateRangeStart();
       const end = this.dateRangeEnd();
@@ -336,7 +336,7 @@ export class AllProjectsComponent {
    * Handle project edit action
    */
   onProjectEdit(projectId: string) {
-    this.router.navigate(['/admin/projects', projectId, 'edit']);
+    this.router.navigate(['/dashboard/projects', projectId, 'edit']);
   }
 
   /**
@@ -372,7 +372,7 @@ export class AllProjectsComponent {
    * Handle project view action
    */
   onProjectView(projectId: string) {
-    this.router.navigate(['/admin/projects', projectId, 'view']);
+    this.router.navigate(['/dashboard/projects', projectId, 'view']);
   }
 
   /**
@@ -499,7 +499,7 @@ export class AllProjectsComponent {
    * Navigate to create project page
    */
   navigateToCreate() {
-    this.router.navigate(['/admin/projects/new']);
+    this.router.navigate(['/dashboard/projects/new']);
   }
 
   /**

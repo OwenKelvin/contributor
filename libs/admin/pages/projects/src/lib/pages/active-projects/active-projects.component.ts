@@ -83,7 +83,7 @@ export class ActiveProjectsComponent {
   async loadActiveProjects() {
     this.isLoading.set(true);
     this.hasError.set(false);
-    
+
     try {
       // Build pagination object
       const pagination: IPaginationInput = {
@@ -152,7 +152,7 @@ export class ActiveProjectsComponent {
    * Handle project edit action
    */
   onProjectEdit(projectId: string) {
-    this.router.navigate(['/admin/projects', projectId, 'edit']);
+    this.router.navigate(['/dashboard/projects', projectId, 'edit']);
   }
 
   /**
@@ -188,14 +188,14 @@ export class ActiveProjectsComponent {
    * Handle project view action
    */
   onProjectView(projectId: string) {
-    this.router.navigate(['/admin/projects', projectId, 'view']);
+    this.router.navigate(['/dashboard/projects', projectId, 'view']);
   }
 
   /**
    * Navigate to create project page
    */
   navigateToCreate() {
-    this.router.navigate(['/admin/projects/new']);
+    this.router.navigate(['/dashboard/projects/new']);
   }
 
   /**

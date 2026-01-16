@@ -30,7 +30,7 @@ export class CategoryService {
    */
   async getAllCategories() {
     const response = await firstValueFrom(
-      this.getAllCategoriesGQL.watch().valueChanges
+      this.getAllCategoriesGQL.fetch()
     );
     return response.data?.getAllCategories;
   }

@@ -137,12 +137,12 @@ export class CreateProjectComponent {
   async createProject(projectForm: FieldTree<ProjectFormModel>) {
     try {
       const formValue = projectForm().value();
-      
+
       // Validate required date fields
       if (!formValue.startDate || !formValue.endDate) {
         throw new Error('Start date and end date are required');
       }
-      
+
       // Transform form data to match GraphQL input
       const input: ICreateProjectInput = {
         title: formValue.title,
@@ -158,7 +158,7 @@ export class CreateProjectComponent {
 
       await this.projectService.createProject(input);
       toast.success('Project created successfully');
-      await this.router.navigate(['/admin/projects']);
+      await this.router.navigate(['/dashboard/projects']);
     } catch (e) {
       // Handle GraphQL validation errors
       const graphqlError = (e as { errors: GraphQLError[] }).errors;

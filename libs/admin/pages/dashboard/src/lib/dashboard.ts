@@ -37,6 +37,7 @@ import {
 } from '@ng-icons/lucide';
 import { HlmCollapsible, HlmCollapsibleContent, HlmCollapsibleTrigger } from '@nyots/ui/collapsible';
 import { NgOptimizedImage } from '@angular/common';
+import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   imports: [
@@ -60,13 +61,23 @@ import { NgOptimizedImage } from '@angular/common';
     HlmSidebarMenuSub,
     HlmSidebarMenuSubButton,
     NgOptimizedImage,
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
   ],
   template: `
     <div hlmSidebarWrapper>
       <hlm-sidebar>
         <div hlmSidebarHeader class="flex items-center gap-2 px-4 py-3">
           <div class="flex items-center w-full">
-            <img class="w-16" ngSrc="/logo.svg" width="472" height="472" alt="Admin Logo" priority="" />
+            <img
+              class="w-16"
+              ngSrc="/logo.svg"
+              width="472"
+              height="472"
+              alt="Admin Logo"
+              priority=""
+            />
             <span class="ms-4 text-lg font-semibold">NyotsCo. Admin</span>
           </div>
         </div>
@@ -99,7 +110,9 @@ import { NgOptimizedImage } from '@angular/common';
                         <ul hlmSidebarMenuSub>
                           @for (subItem of item.items; track subItem.title) {
                             <li hlmSidebarMenuSubItem>
-                              <button
+                              <a
+                                [routerLink]="subItem.route"
+                                routerLinkActive="bg-accent text-accent-foreground"
                                 hlmSidebarMenuSubButton
                                 class="flex w-full items-center gap-2"
                               >
@@ -110,7 +123,7 @@ import { NgOptimizedImage } from '@angular/common';
                                   class="text-muted-foreground"
                                 />
                                 <span>{{ subItem.title }}</span>
-                              </button>
+                              </a>
                             </li>
                           }
                         </ul>
@@ -132,6 +145,7 @@ import { NgOptimizedImage } from '@angular/common';
             <span class="text-sm font-medium">Admin Panel</span>
           </div>
         </header>
+        <router-outlet></router-outlet>
       </main>
     </div>
   `,
@@ -152,7 +166,7 @@ import { NgOptimizedImage } from '@angular/common';
       lucideDollarSign,
       lucideTrendingUp,
       lucideArchive,
-      lucideAlertCircle
+      lucideAlertCircle,
     }),
   ],
 })
@@ -163,9 +177,9 @@ export class Dashboard {
       icon: 'lucideBarChart3',
       defaultOpen: true,
       items: [
-        { title: 'Overview', icon: 'lucideBarChart3' },
-        { title: 'System Health', icon: 'lucideTrendingUp' },
-        { title: 'Recent Activity', icon: 'lucideHistory' },
+        { title: 'Overview', icon: 'lucideBarChart3', route: ['/dashboard/overview'] },
+        { title: 'System Health', icon: 'lucideTrendingUp', route: ['/dashboard/system-health'] },
+        { title: 'Recent Activity', icon: 'lucideHistory', route: ['/dashboard/recent-activity'] },
       ],
     },
     {
@@ -173,12 +187,12 @@ export class Dashboard {
       icon: 'lucideFolderOpen',
       defaultOpen: false,
       items: [
-        { title: 'Create New Project', icon: 'lucidePlus' },
-        { title: 'All Projects', icon: 'lucideFolderOpen' },
-        { title: 'Active Projects', icon: 'lucideTrendingUp' },
-        { title: 'Pending Approval', icon: 'lucideAlertCircle' },
-        { title: 'Archived Projects', icon: 'lucideArchive' },
-        { title: 'Project Categories', icon: 'lucideListChecks' },
+        { title: 'Create New Project', icon: 'lucidePlus', route: ['/dashboard/projects/create'] },
+        { title: 'All Projects', icon: 'lucideFolderOpen', route: ['/dashboard/projects'] },
+        { title: 'Active Projects', icon: 'lucideTrendingUp', route: ['/dashboard/projects/active'] },
+        { title: 'Pending Approval', icon: 'lucideAlertCircle', route: ['/dashboard/projects/pending'] },
+        { title: 'Archived Projects', icon: 'lucideArchive', route: ['/dashboard/projects/archived'] },
+        { title: 'Project Categories', icon: 'lucideListChecks', route: ['/dashboard/projects/categories'] },
       ],
     },
     {
@@ -186,11 +200,11 @@ export class Dashboard {
       icon: 'lucideUsers',
       defaultOpen: false,
       items: [
-        { title: 'All Users', icon: 'lucideUsers' },
-        { title: 'User Permissions', icon: 'lucideUserCheck' },
-        { title: 'User Activity', icon: 'lucideHistory' },
-        { title: 'Banned Users', icon: 'lucideShield' },
-        { title: 'Invite Users', icon: 'lucidePlus' },
+        { title: 'All Users', icon: 'lucideUsers', route: ['/dashboard/users'] },
+        { title: 'User Permissions', icon: 'lucideUserCheck', route: ['/dashboard/users/permissions'] },
+        { title: 'User Activity', icon: 'lucideHistory', route: ['/dashboard/users/activity'] },
+        { title: 'Banned Users', icon: 'lucideShield', route: ['/dashboard/users/banned'] },
+        { title: 'Invite Users', icon: 'lucidePlus', route: ['/dashboard/users/invite'] },
       ],
     },
     {
@@ -198,11 +212,11 @@ export class Dashboard {
       icon: 'lucideWallet',
       defaultOpen: false,
       items: [
-        { title: 'All Contributions', icon: 'lucideDollarSign' },
-        { title: 'Pending Contributions', icon: 'lucideAlertCircle' },
-        { title: 'Contribution Reports', icon: 'lucideFileText' },
-        { title: 'Refund Requests', icon: 'lucideHistory' },
-        { title: 'Transaction Logs', icon: 'lucideFileText' },
+        { title: 'All Contributions', icon: 'lucideDollarSign', route: ['/dashboard/contributions'] },
+        { title: 'Pending Contributions', icon: 'lucideAlertCircle', route: ['/dashboard/contributions/pending'] },
+        { title: 'Contribution Reports', icon: 'lucideFileText', route: ['/dashboard/contributions/reports'] },
+        { title: 'Refund Requests', icon: 'lucideHistory', route: ['/dashboard/contributions/refunds'] },
+        { title: 'Transaction Logs', icon: 'lucideFileText', route: ['/dashboard/contributions/transactions'] },
       ],
     },
     {
@@ -210,11 +224,11 @@ export class Dashboard {
       icon: 'lucideDollarSign',
       defaultOpen: false,
       items: [
-        { title: 'Revenue Overview', icon: 'lucideBarChart3' },
-        { title: 'Withdrawal Requests', icon: 'lucideWallet' },
-        { title: 'Tax Reports', icon: 'lucideFileText' },
-        { title: 'Financial Statements', icon: 'lucideFileText' },
-        { title: 'Payment Gateways', icon: 'lucideSettings' },
+        { title: 'Revenue Overview', icon: 'lucideBarChart3', route: ['/dashboard/financial/revenue'] },
+        { title: 'Withdrawal Requests', icon: 'lucideWallet', route: ['/dashboard/financial/withdrawals'] },
+        { title: 'Tax Reports', icon: 'lucideFileText', route: ['/dashboard/financial/tax'] },
+        { title: 'Financial Statements', icon: 'lucideFileText', route: ['/dashboard/financial/statements'] },
+        { title: 'Payment Gateways', icon: 'lucideSettings', route: ['/dashboard/financial/gateways'] },
       ],
     },
     {
@@ -222,11 +236,11 @@ export class Dashboard {
       icon: 'lucideTrendingUp',
       defaultOpen: false,
       items: [
-        { title: 'Project Analytics', icon: 'lucideBarChart3' },
-        { title: 'User Engagement', icon: 'lucideUsers' },
-        { title: 'Financial Reports', icon: 'lucideDollarSign' },
-        { title: 'Export Data', icon: 'lucideFileText' },
-        { title: 'Custom Reports', icon: 'lucidePlus' },
+        { title: 'Project Analytics', icon: 'lucideBarChart3', route: ['/dashboard/analytics/projects'] },
+        { title: 'User Engagement', icon: 'lucideUsers', route: ['/dashboard/analytics/engagement'] },
+        { title: 'Financial Reports', icon: 'lucideDollarSign', route: ['/dashboard/analytics/financial'] },
+        { title: 'Export Data', icon: 'lucideFileText', route: ['/dashboard/analytics/export'] },
+        { title: 'Custom Reports', icon: 'lucidePlus', route: ['/dashboard/analytics/custom'] },
       ],
     },
     {
@@ -234,12 +248,12 @@ export class Dashboard {
       icon: 'lucideSettings',
       defaultOpen: false,
       items: [
-        { title: 'General Settings', icon: 'lucideSettings' },
-        { title: 'Project Settings', icon: 'lucideFolderOpen' },
-        { title: 'Payment Settings', icon: 'lucideWallet' },
-        { title: 'Email Templates', icon: 'lucideFileText' },
-        { title: 'Security Settings', icon: 'lucideShield' },
-        { title: 'Backup & Restore', icon: 'lucideArchive' },
+        { title: 'General Settings', icon: 'lucideSettings', route: ['/dashboard/settings/general'] },
+        { title: 'Project Settings', icon: 'lucideFolderOpen', route: ['/dashboard/settings/projects'] },
+        { title: 'Payment Settings', icon: 'lucideWallet', route: ['/dashboard/settings/payment'] },
+        { title: 'Email Templates', icon: 'lucideFileText', route: ['/dashboard/settings/email'] },
+        { title: 'Security Settings', icon: 'lucideShield', route: ['/dashboard/settings/security'] },
+        { title: 'Backup & Restore', icon: 'lucideArchive', route: ['/dashboard/settings/backup'] },
       ],
     },
     {
@@ -247,10 +261,10 @@ export class Dashboard {
       icon: 'lucideHistory',
       defaultOpen: false,
       items: [
-        { title: 'System Logs', icon: 'lucideHistory' },
-        { title: 'User Actions', icon: 'lucideUsers' },
-        { title: 'Security Events', icon: 'lucideShield' },
-        { title: 'Export Logs', icon: 'lucideFileText' },
+        { title: 'System Logs', icon: 'lucideHistory', route: ['/dashboard/audit/system'] },
+        { title: 'User Actions', icon: 'lucideUsers', route: ['/dashboard/audit/user-actions'] },
+        { title: 'Security Events', icon: 'lucideShield', route: ['/dashboard/audit/security'] },
+        { title: 'Export Logs', icon: 'lucideFileText', route: ['/dashboard/audit/export'] },
       ],
     },
   ];
