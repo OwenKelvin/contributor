@@ -9,7 +9,7 @@ export type ILoginMutationVariables = Types.Exact<{
 }>;
 
 
-export type ILoginMutation = { login: { accessToken: string, user: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, roles?: Array<{ id: string, name: string }> | null } } };
+export type ILoginMutation = { login: { accessToken: string, user: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, roles: Array<{ id: string, name: string }> } } };
 
 export type IRegisterMutationVariables = Types.Exact<{
   email: Types.Scalars['String']['input'];
@@ -19,7 +19,7 @@ export type IRegisterMutationVariables = Types.Exact<{
 }>;
 
 
-export type IRegisterMutation = { register: { accessToken: string, user: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, roles?: Array<{ id: string, name: string }> | null } } };
+export type IRegisterMutation = { register: { accessToken: string, user: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, roles: Array<{ id: string, name: string }> } } };
 
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {

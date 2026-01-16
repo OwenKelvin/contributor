@@ -12,7 +12,8 @@ export interface PaginationInfo extends IPageInfo {
 }
 
 export interface PageChangeEvent {
-  cursor?: string;
+  endCursor?: string;
+  startCursor?: string;
   direction: 'next' | 'previous' | 'first' | 'last';
   pageSize?: number;
 }
@@ -40,7 +41,7 @@ export interface PageChangeEvent {
       <div class="text-sm text-muted-foreground">
         @if (pageInfo()?.totalCount !== undefined) {
           <span>
-            Showing 
+            Showing
             <span class="font-medium">{{ getCurrentPageStart() }}</span>
             -
             <span class="font-medium">{{ getCurrentPageEnd() }}</span>
@@ -66,7 +67,7 @@ export interface PageChangeEvent {
           [disabled]="!pageInfo()?.hasPreviousPage || loading()"
           [attr.aria-label]="'Go to first page'"
         >
-          <ng-icon name="lucideChevronsLeft" size="16" />
+          <ng-icon hlmIcon name="lucideChevronsLeft" size="base" />
         </button>
 
         <!-- Previous Page Button -->
@@ -78,7 +79,7 @@ export interface PageChangeEvent {
           [disabled]="!pageInfo()?.hasPreviousPage || loading()"
           [attr.aria-label]="'Go to previous page'"
         >
-          <ng-icon name="lucideChevronLeft" size="16" class="mr-1" />
+          <ng-icon hlmIcon name="lucideChevronLeft" size="base" class="mr-1" />
           Previous
         </button>
 
@@ -112,7 +113,7 @@ export interface PageChangeEvent {
           [attr.aria-label]="'Go to next page'"
         >
           Next
-          <ng-icon name="lucideChevronRight" size="16" class="ml-1" />
+          <ng-icon hlmIcon name="lucideChevronRight" size="base" class="ml-1" />
         </button>
 
         <!-- Last Page Button -->
@@ -124,7 +125,7 @@ export interface PageChangeEvent {
           [disabled]="!pageInfo()?.hasNextPage || loading()"
           [attr.aria-label]="'Go to last page'"
         >
-          <ng-icon name="lucideChevronsRight" size="16" />
+          <ng-icon hlmIcon name="lucideChevronsRight" size="base" />
         </button>
       </div>
     </div>
@@ -154,14 +155,14 @@ export class PaginationComponent {
   getCurrentPageStart(): number {
     const totalCount = this.pageInfo()?.totalCount || 0;
     const currentPageSize = this.pageInfo()?.currentPageSize || this.pageSize();
-    
+
     if (totalCount === 0) return 0;
-    
+
     // For cursor-based pagination, we estimate based on whether we have previous pages
     if (!this.pageInfo()?.hasPreviousPage) {
       return 1;
     }
-    
+
     // This is an approximation
     return Math.max(1, totalCount - currentPageSize);
   }
@@ -169,9 +170,9 @@ export class PaginationComponent {
   getCurrentPageEnd(): number {
     const totalCount = this.pageInfo()?.totalCount || 0;
     const currentPageSize = this.pageInfo()?.currentPageSize || this.pageSize();
-    
+
     if (totalCount === 0) return 0;
-    
+
     return Math.min(this.getCurrentPageStart() + currentPageSize - 1, totalCount);
   }
 
@@ -187,7 +188,7 @@ export class PaginationComponent {
   goToPreviousPage(): void {
     if (this.pageInfo()?.hasPreviousPage) {
       this.pageChange.emit({
-        cursor: this.pageInfo()?.cursor || undefined,
+        startCursor: this.pageInfo()?.startCursor || undefined,
         direction: 'previous',
         pageSize: this.pageSize(),
       });
@@ -197,7 +198,7 @@ export class PaginationComponent {
   goToNextPage(): void {
     if (this.pageInfo()?.hasNextPage) {
       this.pageChange.emit({
-        cursor: this.pageInfo()?.cursor || undefined,
+        endCursor: this.pageInfo()?.endCursor || undefined,
         direction: 'next',
         pageSize: this.pageSize(),
       });
@@ -216,7 +217,7 @@ export class PaginationComponent {
   onPageSizeChange(event: Event): void {
     const select = event.target as HTMLSelectElement;
     const newPageSize = parseInt(select.value, 10);
-    
+
     this.pageChange.emit({
       direction: 'first',
       pageSize: newPageSize,

@@ -8,7 +8,7 @@ import {
   IProjectFilter,
   IProjectStatus,
   ICategory,
-  IPaginationInput,
+  IProjectPaginationInput,
   IPageInfo,
 } from '@nyots/data-source';
 import { ProjectService } from '@nyots/data-source/projects';
@@ -106,7 +106,8 @@ export class AllProjectsComponent {
   pagination = signal<IPageInfo>({
     hasNextPage: false,
     hasPreviousPage: false,
-    cursor: null,
+    startCursor: null,
+    endCursor: null,
   });
   currentCursor = signal<string | null>(null);
 
@@ -213,7 +214,7 @@ export class AllProjectsComponent {
       }
 
       // Build pagination object
-      const pagination: IPaginationInput = {
+      const pagination: IProjectPaginationInput = {
         limit: 20,
         cursor: this.currentCursor() ?? undefined,
       };
@@ -241,7 +242,8 @@ export class AllProjectsComponent {
         const pageInfo: IPageInfo = {
           hasNextPage: result.pageInfo.hasNextPage ?? false,
           hasPreviousPage: result.pageInfo.hasPreviousPage ?? false,
-          cursor: result.pageInfo.cursor ?? null,
+          startCursor: result.pageInfo.startCursor ?? null,
+          endCursor: result.pageInfo.endCursor ?? null,
         };
         this.pagination.set(pageInfo);
       }
@@ -314,8 +316,8 @@ export class AllProjectsComponent {
    */
   async nextPage() {
     const pageInfo = this.pagination();
-    if (pageInfo.hasNextPage && pageInfo.cursor) {
-      this.currentCursor.set(pageInfo.cursor);
+    if (pageInfo.hasNextPage && pageInfo.endCursor) {
+      this.currentCursor.set(pageInfo.endCursor);
       await this.loadProjects();
     }
   }
