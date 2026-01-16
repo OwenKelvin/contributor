@@ -19,6 +19,7 @@ import {
   lucideArrowUpCircle,
   lucideAlertCircle,
 } from '@ng-icons/lucide';
+import { IGetContributionQuery } from '@nyots/data-source/contributions';
 
 /**
  * Component for displaying transaction history for a contribution.
@@ -179,7 +180,7 @@ export class TransactionHistoryComponent {
   /**
    * Array of transactions to display, sorted in chronological order
    */
-  transactions = input.required<ITransaction[]>();
+  transactions = input.required<IGetContributionQuery['getContribution']['transactions']>();
 
   /**
    * Get human-readable label for transaction type

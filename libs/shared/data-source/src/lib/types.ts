@@ -12,7 +12,17 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: { input: any; output: any; }
+};
+
+export type IAdminCreateContributionInput = {
+  amount: Scalars['Float']['input'];
+  notes?: InputMaybe<Scalars['String']['input']>;
+  paymentReference?: InputMaybe<Scalars['String']['input']>;
+  paymentStatus: IPaymentStatus;
+  projectId: Scalars['ID']['input'];
+  userId: Scalars['ID']['input'];
 };
 
 export type IArchivedProjectFilter = {
@@ -25,15 +35,14 @@ export type IAuthResponse = {
   user: IUser;
 };
 
+export type IBulkUpdateError = {
+  contributionId: Scalars['String']['output'];
+  error: Scalars['String']['output'];
+};
+
 export type IBulkUpdateInput = {
   categoryId?: InputMaybe<Scalars['ID']['input']>;
   status?: InputMaybe<IProjectStatus>;
-};
-
-export type IBulkUpdateResult = {
-  errors?: Maybe<Array<Scalars['String']['output']>>;
-  failureCount: Scalars['Int']['output'];
-  successCount: Scalars['Int']['output'];
 };
 
 export type ICategory = {
@@ -43,243 +52,6 @@ export type ICategory = {
   name: Scalars['String']['output'];
   projectCount: Scalars['Int']['output'];
   updatedAt: Scalars['DateTime']['output'];
-};
-
-export type ICreateCategoryInput = {
-  description?: InputMaybe<Scalars['String']['input']>;
-  name: Scalars['String']['input'];
-};
-
-export type ICreateProjectInput = {
-  categoryId: Scalars['ID']['input'];
-  description: Scalars['String']['input'];
-  detailedDescription: Scalars['String']['input'];
-  endDate: Scalars['DateTime']['input'];
-  featuredImage?: InputMaybe<Scalars['String']['input']>;
-  goalAmount: Scalars['Float']['input'];
-  startDate: Scalars['DateTime']['input'];
-  status: IProjectStatus;
-  title: Scalars['String']['input'];
-};
-
-export type IDateRangeInput = {
-  end: Scalars['DateTime']['input'];
-  start: Scalars['DateTime']['input'];
-};
-
-export type ILoginInput = {
-  email: Scalars['String']['input'];
-  password: Scalars['String']['input'];
-};
-
-export type IMutation = {
-  approveProject: IProject;
-  bulkUpdateProjects: IBulkUpdateResult;
-  createCategory: ICategory;
-  createProject: IProject;
-  deleteCategory: Scalars['Boolean']['output'];
-  deleteProject: Scalars['Boolean']['output'];
-  login: IAuthResponse;
-  register: IAuthResponse;
-  rejectProject: IProject;
-  updateCategory: ICategory;
-  updateProject: IProject;
-};
-
-
-export type IMutationApproveProjectArgs = {
-  id: Scalars['ID']['input'];
-  notes?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type IMutationBulkUpdateProjectsArgs = {
-  ids: Array<Scalars['ID']['input']>;
-  input: IBulkUpdateInput;
-};
-
-
-export type IMutationCreateCategoryArgs = {
-  input: ICreateCategoryInput;
-};
-
-
-export type IMutationCreateProjectArgs = {
-  input: ICreateProjectInput;
-};
-
-
-export type IMutationDeleteCategoryArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type IMutationDeleteProjectArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
-export type IMutationLoginArgs = {
-  loginInput: ILoginInput;
-};
-
-
-export type IMutationRegisterArgs = {
-  registerInput: IRegisterInput;
-};
-
-
-export type IMutationRejectProjectArgs = {
-  id: Scalars['ID']['input'];
-  reason: Scalars['String']['input'];
-};
-
-
-export type IMutationUpdateCategoryArgs = {
-  id: Scalars['ID']['input'];
-  input: IUpdateCategoryInput;
-};
-
-
-export type IMutationUpdateProjectArgs = {
-  id: Scalars['ID']['input'];
-  input: IUpdateProjectInput;
-};
-
-export type IPageInfo = {
-  cursor?: Maybe<Scalars['String']['output']>;
-  hasNextPage: Scalars['Boolean']['output'];
-  hasPreviousPage: Scalars['Boolean']['output'];
-};
-
-export type IPaginationInput = {
-  cursor?: InputMaybe<Scalars['String']['input']>;
-  limit: Scalars['Int']['input'];
-};
-
-export type IProject = {
-  category: ICategory;
-  createdAt: Scalars['DateTime']['output'];
-  currentAmount: Scalars['Float']['output'];
-  description: Scalars['String']['output'];
-  detailedDescription: Scalars['String']['output'];
-  endDate: Scalars['DateTime']['output'];
-  featuredImage?: Maybe<Scalars['String']['output']>;
-  goalAmount: Scalars['Float']['output'];
-  id: Scalars['ID']['output'];
-  startDate: Scalars['DateTime']['output'];
-  status: IProjectStatus;
-  title: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type IProjectConnection = {
-  pageInfo: IPageInfo;
-  projects: Array<IProject>;
-};
-
-export type IProjectFilter = {
-  categoryId?: InputMaybe<Scalars['ID']['input']>;
-  dateRange?: InputMaybe<IDateRangeInput>;
-  status?: InputMaybe<IProjectStatus>;
-};
-
-export enum IProjectStatus {
-  Active = 'ACTIVE',
-  Archived = 'ARCHIVED',
-  Completed = 'COMPLETED',
-  Draft = 'DRAFT',
-  Pending = 'PENDING'
-}
-
-export type IQuery = {
-  getActiveProjects: IProjectConnection;
-  getAllCategories: Array<ICategory>;
-  getAllProjects: IProjectConnection;
-  getArchivedProjects: IProjectConnection;
-  getPendingProjects: IProjectConnection;
-  getProjectById: IProject;
-  test?: Maybe<Scalars['String']['output']>;
-};
-
-
-export type IQueryGetActiveProjectsArgs = {
-  pagination?: InputMaybe<IPaginationInput>;
-};
-
-
-export type IQueryGetAllProjectsArgs = {
-  filter?: InputMaybe<IProjectFilter>;
-  pagination?: InputMaybe<IPaginationInput>;
-  search?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type IQueryGetArchivedProjectsArgs = {
-  filter?: InputMaybe<IArchivedProjectFilter>;
-  pagination?: InputMaybe<IPaginationInput>;
-};
-
-
-export type IQueryGetPendingProjectsArgs = {
-  pagination?: InputMaybe<IPaginationInput>;
-};
-
-
-export type IQueryGetProjectByIdArgs = {
-  id: Scalars['ID']['input'];
-};
-
-export type IRegisterInput = {
-  email: Scalars['String']['input'];
-  firstName: Scalars['String']['input'];
-  lastName: Scalars['String']['input'];
-  password: Scalars['String']['input'];
-};
-
-export type IRole = {
-  id: Scalars['ID']['output'];
-  name: Scalars['String']['output'];
-};
-
-export type IUpdateCategoryInput = {
-  description?: InputMaybe<Scalars['String']['input']>;
-  name?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type IUpdateProjectInput = {
-  categoryId?: InputMaybe<Scalars['ID']['input']>;
-  description?: InputMaybe<Scalars['String']['input']>;
-  detailedDescription?: InputMaybe<Scalars['String']['input']>;
-  endDate?: InputMaybe<Scalars['DateTime']['input']>;
-  featuredImage?: InputMaybe<Scalars['String']['input']>;
-  goalAmount?: InputMaybe<Scalars['Float']['input']>;
-  startDate?: InputMaybe<Scalars['DateTime']['input']>;
-  status?: InputMaybe<IProjectStatus>;
-  title?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type IUser = {
-  email: Scalars['String']['output'];
-  firstName?: Maybe<Scalars['String']['output']>;
-  id: Scalars['ID']['output'];
-  lastName?: Maybe<Scalars['String']['output']>;
-  phoneNumber?: Maybe<Scalars['String']['output']>;
-  roles?: Maybe<Array<IRole>>;
-};
-
-export type IAdminCreateContributionInput = {
-  amount: Scalars['Float']['input'];
-  notes?: InputMaybe<Scalars['String']['input']>;
-  paymentReference?: InputMaybe<Scalars['String']['input']>;
-  paymentStatus: IPaymentStatus;
-  projectId: Scalars['ID']['input'];
-  userId: Scalars['ID']['input'];
-};
-
-export type IBulkUpdateError = {
-  contributionId: Scalars['String']['output'];
-  error: Scalars['String']['output'];
 };
 
 export type IContribution = {
@@ -350,10 +122,160 @@ export type IContributionReport = {
   totalContributions: Scalars['Int']['output'];
 };
 
+export type ICreateCategoryInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+};
+
 export type ICreateContributionInput = {
   amount: Scalars['Float']['input'];
   notes?: InputMaybe<Scalars['String']['input']>;
   projectId: Scalars['ID']['input'];
+};
+
+export type ICreateProjectInput = {
+  categoryId: Scalars['ID']['input'];
+  description: Scalars['String']['input'];
+  detailedDescription: Scalars['String']['input'];
+  endDate: Scalars['DateTime']['input'];
+  featuredImage?: InputMaybe<Scalars['String']['input']>;
+  goalAmount: Scalars['Float']['input'];
+  startDate: Scalars['DateTime']['input'];
+  status: IProjectStatus;
+  title: Scalars['String']['input'];
+};
+
+export type IDateRangeInput = {
+  end: Scalars['DateTime']['input'];
+  start: Scalars['DateTime']['input'];
+};
+
+export type ILoginInput = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+export type IMutation = {
+  adminCreateContribution: IContribution;
+  approveProject: IProject;
+  bulkUpdateContributionStatus: IContributionBulkUpdateResult;
+  bulkUpdateProjects: IProjectBulkUpdateResult;
+  createCategory: ICategory;
+  createContribution: IContribution;
+  createProject: IProject;
+  deleteCategory: Scalars['Boolean']['output'];
+  deleteProject: Scalars['Boolean']['output'];
+  login: IAuthResponse;
+  processContributionPayment: IContribution;
+  processContributionRefund: IContribution;
+  register: IAuthResponse;
+  rejectProject: IProject;
+  updateCategory: ICategory;
+  updateContributionStatus: IContribution;
+  updateProject: IProject;
+};
+
+
+export type IMutationAdminCreateContributionArgs = {
+  input: IAdminCreateContributionInput;
+};
+
+
+export type IMutationApproveProjectArgs = {
+  id: Scalars['String']['input'];
+  notes?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type IMutationBulkUpdateContributionStatusArgs = {
+  contributionIds: Array<Scalars['String']['input']>;
+  reason?: InputMaybe<Scalars['String']['input']>;
+  status: IPaymentStatus;
+};
+
+
+export type IMutationBulkUpdateProjectsArgs = {
+  ids: Array<Scalars['String']['input']>;
+  input: IBulkUpdateInput;
+};
+
+
+export type IMutationCreateCategoryArgs = {
+  input: ICreateCategoryInput;
+};
+
+
+export type IMutationCreateContributionArgs = {
+  input: ICreateContributionInput;
+};
+
+
+export type IMutationCreateProjectArgs = {
+  input: ICreateProjectInput;
+};
+
+
+export type IMutationDeleteCategoryArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type IMutationDeleteProjectArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type IMutationLoginArgs = {
+  loginInput: ILoginInput;
+};
+
+
+export type IMutationProcessContributionPaymentArgs = {
+  contributionId: Scalars['String']['input'];
+  paymentDetails: IPaymentDetailsInput;
+};
+
+
+export type IMutationProcessContributionRefundArgs = {
+  contributionId: Scalars['String']['input'];
+  reason: Scalars['String']['input'];
+};
+
+
+export type IMutationRegisterArgs = {
+  registerInput: IRegisterInput;
+};
+
+
+export type IMutationRejectProjectArgs = {
+  id: Scalars['String']['input'];
+  reason: Scalars['String']['input'];
+};
+
+
+export type IMutationUpdateCategoryArgs = {
+  id: Scalars['String']['input'];
+  input: IUpdateCategoryInput;
+};
+
+
+export type IMutationUpdateContributionStatusArgs = {
+  contributionId: Scalars['String']['input'];
+  reason?: InputMaybe<Scalars['String']['input']>;
+  status: IPaymentStatus;
+};
+
+
+export type IMutationUpdateProjectArgs = {
+  id: Scalars['String']['input'];
+  input: IUpdateProjectInput;
+};
+
+export type IPageInfo = {
+  endCursor?: Maybe<Scalars['String']['output']>;
+  hasNextPage: Scalars['Boolean']['output'];
+  hasPreviousPage: Scalars['Boolean']['output'];
+  startCursor?: Maybe<Scalars['String']['output']>;
 };
 
 export type IPaymentDetailsInput = {
@@ -369,11 +291,156 @@ export enum IPaymentStatus {
   Refunded = 'REFUNDED'
 }
 
+export type IPermission = {
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  roles: Array<IRole>;
+};
+
+export type IProject = {
+  category: ICategory;
+  createdAt: Scalars['DateTime']['output'];
+  currentAmount: Scalars['Float']['output'];
+  description: Scalars['String']['output'];
+  detailedDescription: Scalars['String']['output'];
+  endDate: Scalars['DateTime']['output'];
+  featuredImage?: Maybe<Scalars['String']['output']>;
+  goalAmount: Scalars['Float']['output'];
+  id: Scalars['ID']['output'];
+  startDate: Scalars['DateTime']['output'];
+  status: IProjectStatus;
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type IProjectBulkUpdateResult = {
+  errors: Array<Scalars['String']['output']>;
+  failureCount: Scalars['Int']['output'];
+  successCount: Scalars['Int']['output'];
+};
+
+export type IProjectConnection = {
+  pageInfo: IPageInfo;
+  projects: Array<IProject>;
+};
+
 export type IProjectContributionSummary = {
   contributionCount: Scalars['Int']['output'];
   projectId: Scalars['ID']['output'];
   projectTitle: Scalars['String']['output'];
   totalAmount: Scalars['Float']['output'];
+};
+
+export type IProjectFilter = {
+  categoryId?: InputMaybe<Scalars['ID']['input']>;
+  dateRange?: InputMaybe<IDateRangeInput>;
+  status?: InputMaybe<IProjectStatus>;
+};
+
+export type IProjectPaginationInput = {
+  cursor?: InputMaybe<Scalars['String']['input']>;
+  limit: Scalars['Int']['input'];
+};
+
+export enum IProjectStatus {
+  Active = 'ACTIVE',
+  Archived = 'ARCHIVED',
+  Completed = 'COMPLETED',
+  Draft = 'DRAFT',
+  Pending = 'PENDING'
+}
+
+export type IQuery = {
+  getActiveProjects: IProjectConnection;
+  getAllCategories: Array<ICategory>;
+  getAllProjects: IProjectConnection;
+  getArchivedProjects: IProjectConnection;
+  getContribution: IContribution;
+  getContributionReport: IContributionReport;
+  getContributionTransactions: Array<ITransaction>;
+  getContributions: IContributionConnection;
+  getMyContributions: IContributionConnection;
+  getPendingProjects: IProjectConnection;
+  getProjectById: IProject;
+  getProjectContributions: IContributionConnection;
+  getTransactions: ITransactionConnection;
+};
+
+
+export type IQueryGetActiveProjectsArgs = {
+  pagination?: InputMaybe<IProjectPaginationInput>;
+};
+
+
+export type IQueryGetAllProjectsArgs = {
+  filter?: InputMaybe<IProjectFilter>;
+  pagination?: InputMaybe<IProjectPaginationInput>;
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type IQueryGetArchivedProjectsArgs = {
+  filter?: InputMaybe<IArchivedProjectFilter>;
+  pagination?: InputMaybe<IProjectPaginationInput>;
+};
+
+
+export type IQueryGetContributionArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type IQueryGetContributionReportArgs = {
+  filter?: InputMaybe<IReportFilter>;
+  reportType: IReportType;
+};
+
+
+export type IQueryGetContributionTransactionsArgs = {
+  contributionId: Scalars['String']['input'];
+};
+
+
+export type IQueryGetContributionsArgs = {
+  filter?: InputMaybe<IContributionFilter>;
+  pagination?: InputMaybe<IContributionPaginationInput>;
+};
+
+
+export type IQueryGetMyContributionsArgs = {
+  filter?: InputMaybe<IContributionFilter>;
+  pagination?: InputMaybe<IContributionPaginationInput>;
+};
+
+
+export type IQueryGetPendingProjectsArgs = {
+  pagination?: InputMaybe<IProjectPaginationInput>;
+};
+
+
+export type IQueryGetProjectByIdArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type IQueryGetProjectContributionsArgs = {
+  filter?: InputMaybe<IContributionFilter>;
+  pagination?: InputMaybe<IContributionPaginationInput>;
+  projectId: Scalars['String']['input'];
+};
+
+
+export type IQueryGetTransactionsArgs = {
+  filter?: InputMaybe<ITransactionFilterInput>;
+  pagination?: InputMaybe<IContributionPaginationInput>;
+};
+
+export type IRegisterInput = {
+  email: Scalars['String']['input'];
+  firstName: Scalars['String']['input'];
+  lastName: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  phoneNumber?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type IReportFilter = {
@@ -383,12 +450,20 @@ export type IReportFilter = {
   userId?: InputMaybe<Scalars['ID']['input']>;
 };
 
+/** Type of contribution report to generate */
 export enum IReportType {
   ByProject = 'BY_PROJECT',
   ByUser = 'BY_USER',
   Summary = 'SUMMARY',
   TimeSeries = 'TIME_SERIES'
 }
+
+export type IRole = {
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  permissions: Array<IPermission>;
+  users: Array<IUser>;
+};
 
 export type ITimeSeriesPoint = {
   contributionCount: Scalars['Int']['output'];
@@ -439,6 +514,32 @@ export enum ITransactionType {
   Payment = 'PAYMENT',
   Refund = 'REFUND'
 }
+
+export type IUpdateCategoryInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type IUpdateProjectInput = {
+  categoryId?: InputMaybe<Scalars['ID']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  detailedDescription?: InputMaybe<Scalars['String']['input']>;
+  endDate?: InputMaybe<Scalars['DateTime']['input']>;
+  featuredImage?: InputMaybe<Scalars['String']['input']>;
+  goalAmount?: InputMaybe<Scalars['Float']['input']>;
+  startDate?: InputMaybe<Scalars['DateTime']['input']>;
+  status?: InputMaybe<IProjectStatus>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type IUser = {
+  email: Scalars['String']['output'];
+  firstName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  lastName?: Maybe<Scalars['String']['output']>;
+  phoneNumber?: Maybe<Scalars['String']['output']>;
+  roles: Array<IRole>;
+};
 
 export type IUserContributionSummary = {
   contributionCount: Scalars['Int']['output'];

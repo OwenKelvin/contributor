@@ -18,7 +18,7 @@ import {
   IUpdateProjectInput,
   IProjectFilter,
   IArchivedProjectFilter,
-  IPaginationInput,
+  IProjectPaginationInput,
   IBulkUpdateInput,
 } from '@nyots/data-source';
 
@@ -50,7 +50,7 @@ export class ProjectService {
   async getAllProjects(params: {
     search?: string;
     filters?: IProjectFilter;
-    pagination?: IPaginationInput;
+    pagination?: IProjectPaginationInput;
   }) {
     const response = await firstValueFrom(
       this.getAllProjectsGQL.fetch({
@@ -81,7 +81,7 @@ export class ProjectService {
    * @param pagination - Pagination parameters
    * @returns Project connection with active projects
    */
-  async getActiveProjects(pagination?: IPaginationInput) {
+  async getActiveProjects(pagination?: IProjectPaginationInput) {
     const response = await firstValueFrom(
       this.getActiveProjectsGQL.fetch({ variables: { pagination } })
     );
@@ -93,7 +93,7 @@ export class ProjectService {
    * @param pagination - Pagination parameters
    * @returns Project connection with pending projects
    */
-  async getPendingProjects(pagination?: IPaginationInput) {
+  async getPendingProjects(pagination?: IProjectPaginationInput) {
     const response = await firstValueFrom(
       this.getPendingProjectsGQL.fetch({ variables: { pagination } })
     );
@@ -107,7 +107,7 @@ export class ProjectService {
    */
   async getArchivedProjects(params: {
     filter?: IArchivedProjectFilter;
-    pagination?: IPaginationInput;
+    pagination?: IProjectPaginationInput;
   }) {
     const response = await firstValueFrom(
       this.getArchivedProjectsGQL.fetch({

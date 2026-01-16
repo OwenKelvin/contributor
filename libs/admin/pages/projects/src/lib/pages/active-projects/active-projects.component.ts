@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { toast } from 'ngx-sonner';
 import {
   IProject,
-  IPaginationInput,
+  IProjectPaginationInput,
   IPageInfo,
 } from '@nyots/data-source';
 import { ProjectService } from '@nyots/data-source/projects';
@@ -68,7 +68,8 @@ export class ActiveProjectsComponent {
   pagination = signal<IPageInfo>({
     hasNextPage: false,
     hasPreviousPage: false,
-    cursor: null,
+    startCursor: null,
+    endCursor: null,
   });
   currentCursor = signal<string | null>(null);
 
@@ -86,7 +87,7 @@ export class ActiveProjectsComponent {
 
     try {
       // Build pagination object
-      const pagination: IPaginationInput = {
+      const pagination: IProjectPaginationInput = {
         limit: 20,
         cursor: this.currentCursor() ?? undefined,
       };
@@ -110,7 +111,8 @@ export class ActiveProjectsComponent {
         const pageInfo: IPageInfo = {
           hasNextPage: result.pageInfo.hasNextPage ?? false,
           hasPreviousPage: result.pageInfo.hasPreviousPage ?? false,
-          cursor: result.pageInfo.cursor ?? null,
+          startCursor: result.pageInfo.startCursor ?? null,
+          endCursor: result.pageInfo.endCursor ?? null,
         };
         this.pagination.set(pageInfo);
       }
@@ -130,8 +132,8 @@ export class ActiveProjectsComponent {
    */
   async nextPage() {
     const pageInfo = this.pagination();
-    if (pageInfo.hasNextPage && pageInfo.cursor) {
-      this.currentCursor.set(pageInfo.cursor);
+    if (pageInfo.hasNextPage && pageInfo.endCursor) {
+      this.currentCursor.set(pageInfo.endCursor);
       await this.loadActiveProjects();
     }
   }

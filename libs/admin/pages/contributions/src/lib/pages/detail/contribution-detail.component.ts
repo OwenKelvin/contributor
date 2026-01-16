@@ -3,7 +3,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { toast } from 'ngx-sonner';
 import { IContribution } from '@nyots/data-source';
-import { ContributionService } from '@nyots/data-source/contributions';
+import {
+  ContributionService,
+  ICreateContributionGQL,
+  ICreateContributionMutation, IGetContributionQuery
+} from '@nyots/data-source/contributions';
 import {
   PaymentStatusBadgeComponent,
   TransactionHistoryComponent,
@@ -32,7 +36,7 @@ import {
   HlmCardTitle,
 } from '@nyots/ui/card';
 import { HlmSeparator } from '@nyots/ui/separator';
-import { HlmBadge } from '@nyots/ui/badge';
+import { HlmBadge, BadgeVariants } from '@nyots/ui/badge';
 
 /**
  * Component for displaying detailed information about a single contribution.
@@ -47,11 +51,9 @@ import { HlmBadge } from '@nyots/ui/badge';
     PaymentStatusBadgeComponent,
     TransactionHistoryComponent,
     HlmButton,
-    HlmIcon,
     NgIcon,
     HlmCard,
     HlmCardContent,
-    HlmCardDescription,
     HlmCardHeader,
     HlmCardTitle,
     HlmSeparator,
@@ -337,7 +339,7 @@ import { HlmBadge } from '@nyots/ui/badge';
                   </div>
                   <div>
                     <p class="text-sm text-muted-foreground">Status</p>
-                    <span hlmBadge [variant]="getProjectStatusVariant(contribution()!.project.status)">
+                    <span hlmBadge [variant]="contributionStatusBadgeVariant()">
                       {{ contribution()!.project.status }}
                     </span>
                   </div>
@@ -372,7 +374,10 @@ export class ContributionDetailComponent implements OnInit {
   private readonly router = inject(Router);
 
   // State management
-  contribution = signal<IContribution | null>(null);
+  contribution = signal<IGetContributionQuery['getContribution'] | null>(null);
+  contributionStatusBadgeVariant = computed(() =>
+    this.getProjectStatusVariant(this.contribution()?.project.status)
+  )
   isLoading = signal(false);
   isProcessing = signal(false);
   error = signal<string | null>(null);
@@ -486,9 +491,9 @@ export class ContributionDetailComponent implements OnInit {
   /**
    * Get badge variant for project status
    */
-  getProjectStatusVariant(status: string): string {
-    switch (status.toUpperCase()) {
-      case 'ACTIVE':
+  getProjectStatusVariant(status?: string): BadgeVariants['variant'] {
+    switch (status?.toUpperCase()) {
+      case 'ACTIVE' :
         return 'default';
       case 'COMPLETED':
         return 'secondary';

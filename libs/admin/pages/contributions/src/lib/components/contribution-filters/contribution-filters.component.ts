@@ -28,155 +28,157 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     }),
   ],
   template: `
-    <div class="space-y-4">
-      <form [formGroup]="filterForm" class="space-y-4">
-        <!-- Search Input -->
-        <div class="relative">
-          <ng-icon
-            name="lucideSearch"
-            size="16"
-            class="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-          />
-          <input
-            hlmInput
-            type="text"
-            formControlName="search"
-            placeholder="Search by contributor name or email..."
-            class="pl-9 pr-9"
-            [attr.aria-label]="'Search contributions'"
-          />
-          @if (filterForm.get('search')?.value) {
-            <button
-              type="button"
-              class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              (click)="clearSearch()"
-              [attr.aria-label]="'Clear search'"
-            >
-              <ng-icon name="lucideX" size="16" />
-            </button>
-          }
-        </div>
-
-        <!-- Filter Row -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- Payment Status Filter -->
-          <div>
-            <label for="payment-status" class="text-sm font-medium mb-1.5 block">Status</label>
-            <select
-              id="payment-status"
-              hlmInput
-              formControlName="paymentStatus"
-              class="w-full"
-              [attr.aria-label]="'Filter by payment status'"
-            >
-              <option value="">All Statuses</option>
-              <option value="PENDING">Pending</option>
-              <option value="PAID">Paid</option>
-              <option value="FAILED">Failed</option>
-              <option value="REFUNDED">Refunded</option>
-            </select>
-          </div>
-
-          <!-- Project Filter -->
-          <div>
-            <label for="project-filter" class="text-sm font-medium mb-1.5 block">Project</label>
-            <select
-              id="project-filter"
-              hlmInput
-              formControlName="projectId"
-              class="w-full"
-              [attr.aria-label]="'Filter by project'"
-            >
-              <option value="">All Projects</option>
-              @for (project of projects(); track project.id) {
-                <option [value]="project.id">{{ project.title }}</option>
-              }
-            </select>
-          </div>
-
-          <!-- Min Amount Filter -->
-          <div>
-            <label for="min-amount" class="text-sm font-medium mb-1.5 block">Min Amount</label>
-            <input
-              id="min-amount"
-              hlmInput
-              type="number"
-              formControlName="minAmount"
-              placeholder="0.00"
-              step="0.01"
-              min="0"
-              class="w-full"
-              [attr.aria-label]="'Minimum amount'"
-            />
-          </div>
-
-          <!-- Max Amount Filter -->
-          <div>
-            <label for="max-amount" class="text-sm font-medium mb-1.5 block">Max Amount</label>
-            <input
-              id="max-amount"
-              hlmInput
-              type="number"
-              formControlName="maxAmount"
-              placeholder="0.00"
-              step="0.01"
-              min="0"
-              class="w-full"
-              [attr.aria-label]="'Maximum amount'"
-            />
-          </div>
-        </div>
-
-        <!-- Date Range Row -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Start Date Filter -->
-          <div>
-            <label for="start-date" class="text-sm font-medium mb-1.5 block">Start Date</label>
-            <input
-              id="start-date"
-              hlmInput
-              type="date"
-              formControlName="startDate"
-              class="w-full"
-              [attr.aria-label]="'Start date'"
-            />
-          </div>
-
-          <!-- End Date Filter -->
-          <div>
-            <label for="end-date" class="text-sm font-medium mb-1.5 block">End Date</label>
-            <input
-              id="end-date"
-              hlmInput
-              type="date"
-              formControlName="endDate"
-              class="w-full"
-              [attr.aria-label]="'End date'"
-            />
-          </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex gap-2">
+    <div class="space-y-4 p-4 bg-white rounded-lg border">
+      <!-- Search Bar -->
+      <div class="relative">
+        <ng-icon
+          hlmIcon
+          name="lucideSearch"
+          class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+          size="sm"
+        />
+        <input
+          hlmInput
+          type="text"
+          placeholder="Search contributions..."
+          class="pl-10 pr-10"
+          formControlName="search"
+          [formGroup]="filterForm"
+          [disabled]="loading()"
+        />
+        @if (filterForm.get('search')?.value) {
           <button
             hlmBtn
-            type="button"
-            variant="outline"
+            variant="ghost"
             size="sm"
-            (click)="clearFilters()"
-            [disabled]="!hasActiveFilters()"
+            class="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0"
+            (click)="clearSearch()"
+            type="button"
+            [disabled]="loading()"
           >
-            <ng-icon name="lucideX" size="16" class="mr-2" />
-            Clear Filters
+            <ng-icon hlmIcon name="lucideX" size="sm" />
           </button>
-          
-          @if (hasActiveFilters()) {
-            <span class="text-sm text-muted-foreground flex items-center">
-              {{ getActiveFilterCount() }} filter(s) active
-            </span>
-          }
+        }
+      </div>
+
+      <!-- Filter Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" [formGroup]="filterForm">
+        <!-- Status Filter -->
+        <div>
+          <label for="paymentStatus" class="text-sm font-medium mb-1.5 block">Status</label>
+          <select
+            id="paymentStatus"
+            hlmInput
+            formControlName="paymentStatus"
+            class="w-full"
+            [disabled]="loading()"
+          >
+            <option value="">All Statuses</option>
+            <option value="PENDING">Pending</option>
+            <option value="PAID">Paid</option>
+            <option value="FAILED">Failed</option>
+            <option value="REFUNDED">Refunded</option>
+          </select>
         </div>
-      </form>
+
+        <!-- Project Filter -->
+        <div>
+          <label for="projectId" class="text-sm font-medium mb-1.5 block">Project</label>
+          <select
+            id="projectId"
+            hlmInput
+            formControlName="projectId"
+            class="w-full"
+            [disabled]="loading()"
+          >
+            <option value="">All Projects</option>
+            @for (project of projects(); track project.id) {
+              <option [value]="project.id">{{ project.title }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Min Amount -->
+        <div>
+          <label for="minAmount" class="text-sm font-medium mb-1.5 block">Min Amount</label>
+          <input
+            id="minAmount"
+            hlmInput
+            type="number"
+            placeholder="0.00"
+            formControlName="minAmount"
+            class="w-full"
+            [disabled]="loading()"
+          />
+        </div>
+
+        <!-- Max Amount -->
+        <div>
+          <label for="maxAmount" class="text-sm font-medium mb-1.5 block">Max Amount</label>
+          <input
+            id="maxAmount"
+            hlmInput
+            type="number"
+            placeholder="0.00"
+            formControlName="maxAmount"
+            class="w-full"
+            [disabled]="loading()"
+          />
+        </div>
+
+        <!-- Start Date -->
+        <div>
+          <label for="startDate" class="text-sm font-medium mb-1.5 block">Start Date</label>
+          <input
+            id="startDate"
+            hlmInput
+            type="date"
+            formControlName="startDate"
+            class="w-full"
+            [disabled]="loading()"
+          />
+        </div>
+
+        <!-- End Date -->
+        <div>
+          <label for="endDate" class="text-sm font-medium mb-1.5 block">End Date</label>
+          <input
+            id="endDate"
+            hlmInput
+            type="date"
+            formControlName="endDate"
+            class="w-full"
+            [disabled]="loading()"
+          />
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center justify-between pt-2">
+        <button
+          hlmBtn
+          variant="outline"
+          size="sm"
+          (click)="clearFilters()"
+          type="button"
+          [disabled]="loading() || !hasActiveFilters()"
+        >
+          <ng-icon hlmIcon name="lucideX" size="sm" class="mr-2" />
+          Clear Filters
+        </button>
+
+        @if (hasActiveFilters()) {
+          <span class="text-sm text-gray-600">
+            {{ getActiveFilterCount() }} filter(s) active
+          </span>
+        }
+
+        @if (loading()) {
+          <span class="text-sm text-gray-500 italic">
+            Loading...
+          </span>
+        }
+      </div>
     </div>
   `,
   styles: [`
@@ -191,6 +193,7 @@ export class ContributionFiltersComponent {
   // Inputs
   filters = input<IContributionFilter>({});
   projects = input<IProject[]>([]);
+  loading = input<boolean>(false);
 
   // Outputs
   filtersChange = output<IContributionFilter>();
@@ -245,21 +248,27 @@ export class ContributionFiltersComponent {
     if (formValue.search) {
       filters.search = formValue.search;
     }
+
     if (formValue.paymentStatus) {
       filters.paymentStatus = formValue.paymentStatus as IPaymentStatus;
     }
+
     if (formValue.projectId) {
       filters.projectId = formValue.projectId;
     }
+
     if (formValue.minAmount !== null && formValue.minAmount !== '') {
       filters.minAmount = parseFloat(formValue.minAmount);
     }
+
     if (formValue.maxAmount !== null && formValue.maxAmount !== '') {
       filters.maxAmount = parseFloat(formValue.maxAmount);
     }
+
     if (formValue.startDate) {
       filters.startDate = new Date(formValue.startDate).toISOString();
     }
+
     if (formValue.endDate) {
       filters.endDate = new Date(formValue.endDate).toISOString();
     }
@@ -299,6 +308,7 @@ export class ContributionFiltersComponent {
   getActiveFilterCount(): number {
     const formValue = this.filterForm.value;
     let count = 0;
+
     if (formValue.search) count++;
     if (formValue.paymentStatus) count++;
     if (formValue.projectId) count++;
@@ -306,6 +316,7 @@ export class ContributionFiltersComponent {
     if (formValue.maxAmount !== null && formValue.maxAmount !== '') count++;
     if (formValue.startDate) count++;
     if (formValue.endDate) count++;
+
     return count;
   }
 

@@ -6,40 +6,40 @@ import * as Apollo from 'apollo-angular';
 export type IGetAllProjectsQueryVariables = Types.Exact<{
   search?: Types.InputMaybe<Types.Scalars['String']['input']>;
   filter?: Types.InputMaybe<Types.IProjectFilter>;
-  pagination?: Types.InputMaybe<Types.IPaginationInput>;
+  pagination?: Types.InputMaybe<Types.IProjectPaginationInput>;
 }>;
 
 
-export type IGetAllProjectsQuery = { getAllProjects: { projects: Array<{ id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, cursor?: string | null } } };
+export type IGetAllProjectsQuery = { getAllProjects: { projects: Array<{ id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
 
 export type IGetProjectByIdQueryVariables = Types.Exact<{
-  id: Types.Scalars['ID']['input'];
+  id: Types.Scalars['String']['input'];
 }>;
 
 
 export type IGetProjectByIdQuery = { getProjectById: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } } };
 
 export type IGetActiveProjectsQueryVariables = Types.Exact<{
-  pagination?: Types.InputMaybe<Types.IPaginationInput>;
+  pagination?: Types.InputMaybe<Types.IProjectPaginationInput>;
 }>;
 
 
-export type IGetActiveProjectsQuery = { getActiveProjects: { projects: Array<{ id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, cursor?: string | null } } };
+export type IGetActiveProjectsQuery = { getActiveProjects: { projects: Array<{ id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
 
 export type IGetPendingProjectsQueryVariables = Types.Exact<{
-  pagination?: Types.InputMaybe<Types.IPaginationInput>;
+  pagination?: Types.InputMaybe<Types.IProjectPaginationInput>;
 }>;
 
 
-export type IGetPendingProjectsQuery = { getPendingProjects: { projects: Array<{ id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, cursor?: string | null } } };
+export type IGetPendingProjectsQuery = { getPendingProjects: { projects: Array<{ id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
 
 export type IGetArchivedProjectsQueryVariables = Types.Exact<{
   filter?: Types.InputMaybe<Types.IArchivedProjectFilter>;
-  pagination?: Types.InputMaybe<Types.IPaginationInput>;
+  pagination?: Types.InputMaybe<Types.IProjectPaginationInput>;
 }>;
 
 
-export type IGetArchivedProjectsQuery = { getArchivedProjects: { projects: Array<{ id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, cursor?: string | null } } };
+export type IGetArchivedProjectsQuery = { getArchivedProjects: { projects: Array<{ id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
 
 export type ICreateProjectMutationVariables = Types.Exact<{
   input: Types.ICreateProjectInput;
@@ -49,7 +49,7 @@ export type ICreateProjectMutationVariables = Types.Exact<{
 export type ICreateProjectMutation = { createProject: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } } };
 
 export type IUpdateProjectMutationVariables = Types.Exact<{
-  id: Types.Scalars['ID']['input'];
+  id: Types.Scalars['String']['input'];
   input: Types.IUpdateProjectInput;
 }>;
 
@@ -57,22 +57,22 @@ export type IUpdateProjectMutationVariables = Types.Exact<{
 export type IUpdateProjectMutation = { updateProject: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } } };
 
 export type IDeleteProjectMutationVariables = Types.Exact<{
-  id: Types.Scalars['ID']['input'];
+  id: Types.Scalars['String']['input'];
 }>;
 
 
 export type IDeleteProjectMutation = { deleteProject: boolean };
 
 export type IBulkUpdateProjectsMutationVariables = Types.Exact<{
-  ids: Array<Types.Scalars['ID']['input']> | Types.Scalars['ID']['input'];
+  ids: Array<Types.Scalars['String']['input']> | Types.Scalars['String']['input'];
   input: Types.IBulkUpdateInput;
 }>;
 
 
-export type IBulkUpdateProjectsMutation = { bulkUpdateProjects: { successCount: number, failureCount: number, errors?: Array<string> | null } };
+export type IBulkUpdateProjectsMutation = { bulkUpdateProjects: { successCount: number, failureCount: number, errors: Array<string> } };
 
 export type IApproveProjectMutationVariables = Types.Exact<{
-  id: Types.Scalars['ID']['input'];
+  id: Types.Scalars['String']['input'];
   notes?: Types.InputMaybe<Types.Scalars['String']['input']>;
 }>;
 
@@ -80,7 +80,7 @@ export type IApproveProjectMutationVariables = Types.Exact<{
 export type IApproveProjectMutation = { approveProject: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } } };
 
 export type IRejectProjectMutationVariables = Types.Exact<{
-  id: Types.Scalars['ID']['input'];
+  id: Types.Scalars['String']['input'];
   reason: Types.Scalars['String']['input'];
 }>;
 
@@ -88,7 +88,7 @@ export type IRejectProjectMutationVariables = Types.Exact<{
 export type IRejectProjectMutation = { rejectProject: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } } };
 
 export const GetAllProjectsDocument = gql`
-    query GetAllProjects($search: String, $filter: ProjectFilter, $pagination: PaginationInput) {
+    query GetAllProjects($search: String, $filter: ProjectFilter, $pagination: ProjectPaginationInput) {
   getAllProjects(search: $search, filter: $filter, pagination: $pagination) {
     projects {
       id
@@ -112,7 +112,8 @@ export const GetAllProjectsDocument = gql`
     pageInfo {
       hasNextPage
       hasPreviousPage
-      cursor
+      startCursor
+      endCursor
     }
   }
 }
@@ -129,7 +130,7 @@ export const GetAllProjectsDocument = gql`
     }
   }
 export const GetProjectByIdDocument = gql`
-    query GetProjectById($id: ID!) {
+    query GetProjectById($id: String!) {
   getProjectById(id: $id) {
     id
     title
@@ -163,7 +164,7 @@ export const GetProjectByIdDocument = gql`
     }
   }
 export const GetActiveProjectsDocument = gql`
-    query GetActiveProjects($pagination: PaginationInput) {
+    query GetActiveProjects($pagination: ProjectPaginationInput) {
   getActiveProjects(pagination: $pagination) {
     projects {
       id
@@ -187,7 +188,8 @@ export const GetActiveProjectsDocument = gql`
     pageInfo {
       hasNextPage
       hasPreviousPage
-      cursor
+      startCursor
+      endCursor
     }
   }
 }
@@ -204,7 +206,7 @@ export const GetActiveProjectsDocument = gql`
     }
   }
 export const GetPendingProjectsDocument = gql`
-    query GetPendingProjects($pagination: PaginationInput) {
+    query GetPendingProjects($pagination: ProjectPaginationInput) {
   getPendingProjects(pagination: $pagination) {
     projects {
       id
@@ -228,7 +230,8 @@ export const GetPendingProjectsDocument = gql`
     pageInfo {
       hasNextPage
       hasPreviousPage
-      cursor
+      startCursor
+      endCursor
     }
   }
 }
@@ -245,7 +248,7 @@ export const GetPendingProjectsDocument = gql`
     }
   }
 export const GetArchivedProjectsDocument = gql`
-    query GetArchivedProjects($filter: ArchivedProjectFilter, $pagination: PaginationInput) {
+    query GetArchivedProjects($filter: ArchivedProjectFilter, $pagination: ProjectPaginationInput) {
   getArchivedProjects(filter: $filter, pagination: $pagination) {
     projects {
       id
@@ -269,7 +272,8 @@ export const GetArchivedProjectsDocument = gql`
     pageInfo {
       hasNextPage
       hasPreviousPage
-      cursor
+      startCursor
+      endCursor
     }
   }
 }
@@ -320,7 +324,7 @@ export const CreateProjectDocument = gql`
     }
   }
 export const UpdateProjectDocument = gql`
-    mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {
+    mutation UpdateProject($id: String!, $input: UpdateProjectInput!) {
   updateProject(id: $id, input: $input) {
     id
     title
@@ -354,7 +358,7 @@ export const UpdateProjectDocument = gql`
     }
   }
 export const DeleteProjectDocument = gql`
-    mutation DeleteProject($id: ID!) {
+    mutation DeleteProject($id: String!) {
   deleteProject(id: $id)
 }
     `;
@@ -370,7 +374,7 @@ export const DeleteProjectDocument = gql`
     }
   }
 export const BulkUpdateProjectsDocument = gql`
-    mutation BulkUpdateProjects($ids: [ID!]!, $input: BulkUpdateInput!) {
+    mutation BulkUpdateProjects($ids: [String!]!, $input: BulkUpdateInput!) {
   bulkUpdateProjects(ids: $ids, input: $input) {
     successCount
     failureCount
@@ -390,7 +394,7 @@ export const BulkUpdateProjectsDocument = gql`
     }
   }
 export const ApproveProjectDocument = gql`
-    mutation ApproveProject($id: ID!, $notes: String) {
+    mutation ApproveProject($id: String!, $notes: String) {
   approveProject(id: $id, notes: $notes) {
     id
     title
@@ -424,7 +428,7 @@ export const ApproveProjectDocument = gql`
     }
   }
 export const RejectProjectDocument = gql`
-    mutation RejectProject($id: ID!, $reason: String!) {
+    mutation RejectProject($id: String!, $reason: String!) {
   rejectProject(id: $id, reason: $reason) {
     id
     title

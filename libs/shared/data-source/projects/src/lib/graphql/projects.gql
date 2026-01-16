@@ -1,7 +1,7 @@
 query GetAllProjects(
   $search: String
   $filter: ProjectFilter
-  $pagination: PaginationInput
+  $pagination: ProjectPaginationInput
 ) {
   getAllProjects(search: $search, filter: $filter, pagination: $pagination) {
     projects {
@@ -26,12 +26,13 @@ query GetAllProjects(
     pageInfo {
       hasNextPage
       hasPreviousPage
-      cursor
+      startCursor
+      endCursor
     }
   }
 }
 
-query GetProjectById($id: ID!) {
+query GetProjectById($id: String!) {
   getProjectById(id: $id) {
     id
     title
@@ -53,7 +54,7 @@ query GetProjectById($id: ID!) {
   }
 }
 
-query GetActiveProjects($pagination: PaginationInput) {
+query GetActiveProjects($pagination: ProjectPaginationInput) {
   getActiveProjects(pagination: $pagination) {
     projects {
       id
@@ -77,12 +78,13 @@ query GetActiveProjects($pagination: PaginationInput) {
     pageInfo {
       hasNextPage
       hasPreviousPage
-      cursor
+      startCursor
+      endCursor
     }
   }
 }
 
-query GetPendingProjects($pagination: PaginationInput) {
+query GetPendingProjects($pagination: ProjectPaginationInput) {
   getPendingProjects(pagination: $pagination) {
     projects {
       id
@@ -106,14 +108,15 @@ query GetPendingProjects($pagination: PaginationInput) {
     pageInfo {
       hasNextPage
       hasPreviousPage
-      cursor
+      startCursor
+      endCursor
     }
   }
 }
 
 query GetArchivedProjects(
   $filter: ArchivedProjectFilter
-  $pagination: PaginationInput
+  $pagination: ProjectPaginationInput
 ) {
   getArchivedProjects(filter: $filter, pagination: $pagination) {
     projects {
@@ -138,7 +141,8 @@ query GetArchivedProjects(
     pageInfo {
       hasNextPage
       hasPreviousPage
-      cursor
+      startCursor
+      endCursor
     }
   }
 }
@@ -165,7 +169,7 @@ mutation CreateProject($input: CreateProjectInput!) {
   }
 }
 
-mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {
+mutation UpdateProject($id: String!, $input: UpdateProjectInput!) {
   updateProject(id: $id, input: $input) {
     id
     title
@@ -187,11 +191,11 @@ mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {
   }
 }
 
-mutation DeleteProject($id: ID!) {
+mutation DeleteProject($id: String!) {
   deleteProject(id: $id)
 }
 
-mutation BulkUpdateProjects($ids: [ID!]!, $input: BulkUpdateInput!) {
+mutation BulkUpdateProjects($ids: [String!]!, $input: BulkUpdateInput!) {
   bulkUpdateProjects(ids: $ids, input: $input) {
     successCount
     failureCount
@@ -199,7 +203,7 @@ mutation BulkUpdateProjects($ids: [ID!]!, $input: BulkUpdateInput!) {
   }
 }
 
-mutation ApproveProject($id: ID!, $notes: String) {
+mutation ApproveProject($id: String!, $notes: String) {
   approveProject(id: $id, notes: $notes) {
     id
     title
@@ -221,7 +225,7 @@ mutation ApproveProject($id: ID!, $notes: String) {
   }
 }
 
-mutation RejectProject($id: ID!, $reason: String!) {
+mutation RejectProject($id: String!, $reason: String!) {
   rejectProject(id: $id, reason: $reason) {
     id
     title

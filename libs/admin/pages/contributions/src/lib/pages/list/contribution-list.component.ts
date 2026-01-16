@@ -3,18 +3,16 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { toast } from 'ngx-sonner';
 import {
-  IContribution,
   IContributionFilter,
-  IContributionPaginationInput,
+  IContributionPaginationInput, IPaymentStatus
 } from '@nyots/data-source';
-import { ContributionService } from '@nyots/data-source/contributions';
+import { ContributionService, IGetContributionsQuery } from '@nyots/data-source/contributions';
 import {
   PaymentStatusBadgeComponent,
   ContributionFiltersComponent,
   PaginationComponent,
   PageChangeEvent,
   PaginationInfo,
-  ContributionFormDialogComponent,
 } from '../../components';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmIcon } from '@nyots/ui/icon';
@@ -93,7 +91,7 @@ import {
           </p>
         </div>
         <button hlmBtn (click)="navigateToCreate()">
-          <ng-icon name="lucidePlus" size="16" class="mr-2" />
+          <ng-icon hlmIcon name="lucidePlus" size="base" class="mr-2" />
           Record Contribution
         </button>
       </div>
@@ -129,7 +127,7 @@ import {
               (click)="handleBulkStatusChange()"
               [disabled]="isLoading()"
             >
-              <ng-icon name="lucideEdit" size="16" class="mr-2" />
+              <ng-icon hlmIcon name="lucideEdit" size="base" class="mr-2" />
               Update Status
             </button>
           </div>
@@ -154,8 +152,9 @@ import {
             <div class="flex items-center justify-center py-12">
               <div class="flex flex-col items-center gap-2">
                 <ng-icon
+                  hlmIcon
                   name="lucideRefreshCw"
-                  size="32"
+                  size="lg"
                   class="animate-spin text-muted-foreground"
                 />
                 <p class="text-sm text-muted-foreground">Loading contributions...</p>
@@ -168,7 +167,7 @@ import {
                 Try adjusting your filters or create a new contribution
               </p>
               <button hlmBtn variant="outline" class="mt-4" (click)="navigateToCreate()">
-                <ng-icon name="lucidePlus" size="16" class="mr-2" />
+                <ng-icon hlmIcon name="lucidePlus" size="base" class="mr-2" />
                 Record Contribution
               </button>
             </div>
@@ -182,7 +181,7 @@ import {
                       <hlm-checkbox
                         [checked]="allSelected()"
                         [indeterminate]="someSelected()"
-                        (changed)="toggleSelectAll()"
+                        (change)="toggleSelectAll()"
                         [attr.aria-label]="'Select all contributions'"
                       />
                     </th>
@@ -225,7 +224,7 @@ import {
                       <td hlmTd>
                         <hlm-checkbox
                           [checked]="isSelected(contribution.id)"
-                          (changed)="toggleSelection(contribution.id)"
+                          (change)="toggleSelection(contribution.id)"
                           [attr.aria-label]="'Select contribution'"
                         />
                       </td>
@@ -275,10 +274,10 @@ import {
                             (click)="viewDetails(contribution.id)"
                             [attr.aria-label]="'View contribution details'"
                           >
-                            <ng-icon name="lucideEye" size="16" />
+                            <ng-icon hlmIcon name="lucideEye" size="base" />
                           </button>
 
-                          @if (contribution.paymentStatus === 'PENDING') {
+                          @if (contribution.paymentStatus === IPaymentStatus.Pending) {
                             <button
                               hlmBtn
                               variant="ghost"
@@ -286,11 +285,11 @@ import {
                               (click)="processPayment(contribution.id)"
                               [attr.aria-label]="'Process payment'"
                             >
-                              <ng-icon name="lucideCreditCard" size="16" />
+                              <ng-icon hlmIcon name="lucideCreditCard" size="base" />
                             </button>
                           }
 
-                          @if (contribution.paymentStatus === 'PAID') {
+                          @if (contribution.paymentStatus === IPaymentStatus.Paid) {
                             <button
                               hlmBtn
                               variant="ghost"
@@ -298,7 +297,7 @@ import {
                               (click)="processRefund(contribution.id)"
                               [attr.aria-label]="'Process refund'"
                             >
-                              <ng-icon name="lucideRefreshCw" size="16" />
+                              <ng-icon hlmIcon name="lucideRefreshCw" size="base" />
                             </button>
                           }
 
@@ -310,30 +309,30 @@ import {
                             [hlmDropdownMenuTrigger]="actionsMenu"
                             [attr.aria-label]="'More actions'"
                           >
-                            <ng-icon name="lucideMoreVertical" size="16" />
+                            <ng-icon hlmIcon name="lucideMoreVertical" size="base" />
                           </button>
 
                           <ng-template #actionsMenu>
                             <hlm-dropdown-menu class="w-48">
                               <button hlmDropdownMenuItem (click)="viewDetails(contribution.id)">
-                                <ng-icon name="lucideEye" size="16" class="mr-2" />
+                                <ng-icon hlmIcon name="lucideEye" size="base" class="mr-2" />
                                 View Details
                               </button>
                               <button hlmDropdownMenuItem (click)="updateStatus(contribution.id)">
                                 <ng-icon name="lucideEdit" size="16" class="mr-2" />
                                 Update Status
                               </button>
-                              @if (contribution.paymentStatus === 'PENDING') {
+                              @if (contribution.paymentStatus === IPaymentStatus.Pending) {
                                 <hlm-dropdown-menu-separator />
                                 <button hlmDropdownMenuItem (click)="processPayment(contribution.id)">
-                                  <ng-icon name="lucideCreditCard" size="16" class="mr-2" />
+                                  <ng-icon hlmIcon name="lucideCreditCard" size="base" class="mr-2" />
                                   Process Payment
                                 </button>
                               }
-                              @if (contribution.paymentStatus === 'PAID') {
+                              @if (contribution.paymentStatus === IPaymentStatus.Paid) {
                                 <hlm-dropdown-menu-separator />
                                 <button hlmDropdownMenuItem (click)="processRefund(contribution.id)">
-                                  <ng-icon name="lucideRefreshCw" size="16" class="mr-2" />
+                                  <ng-icon hlmIcon name="lucideRefreshCw" size="base" class="mr-2" />
                                   Process Refund
                                 </button>
                               }
@@ -377,7 +376,8 @@ export class ContributionListComponent {
   private readonly router = inject(Router);
 
   // State management using signals
-  contributions = signal<IContribution[]>([]);
+  // contributions = signal<IContribution[]>([]);
+  contributions = signal<IGetContributionsQuery['getContributions']['edges'][number]['node'][]>([]);
   isLoading = signal(false);
   selectedContributions = signal<Set<string>>(new Set());
 
@@ -390,6 +390,8 @@ export class ContributionListComponent {
   totalAmount = signal<number | undefined>(undefined);
   paginationInfo = signal<PaginationInfo | null>(null);
   currentCursor = signal<string | null>(null);
+  // Add this signal
+  paginationDirection = signal<'forward' | 'backward'>('forward');
 
   // Sorting state
   sortField = signal<string | null>(null);
@@ -443,7 +445,8 @@ export class ContributionListComponent {
         const pageInfo: PaginationInfo = {
           hasNextPage: result.pageInfo.hasNextPage,
           hasPreviousPage: result.pageInfo.hasPreviousPage,
-          cursor: result.edges[result.edges.length - 1]?.cursor || null,
+          endCursor: result.pageInfo.endCursor || null,
+          startCursor: result.pageInfo.startCursor || null,
           totalCount: result.totalCount,
           currentPageSize: result.edges.length,
         };
@@ -477,11 +480,19 @@ export class ContributionListComponent {
 
     switch (event.direction) {
       case 'next':
-        this.currentCursor.set(event.cursor || null);
+        // Use endCursor for forward pagination (after parameter)
+        this.currentCursor.set(event.endCursor || null);
+        this.paginationDirection.set('forward');
         break;
       case 'previous':
+        // Use startCursor for backward pagination (before parameter)
+        this.currentCursor.set(event.startCursor || null);
+        this.paginationDirection.set('backward');
+        break;
       case 'first':
+        // Reset to first page
         this.currentCursor.set(null);
+        this.paginationDirection.set('forward');
         break;
       case 'last':
         // For last page, we'd need to implement reverse pagination
@@ -491,7 +502,6 @@ export class ContributionListComponent {
 
     this.loadContributions();
   }
-
   /**
    * Sort by field
    */
@@ -598,17 +608,17 @@ export class ContributionListComponent {
 
   /**
    * Navigate to create contribution page
-   * 
+   *
    * Alternative: Use dialog instead of navigation
    * To use the dialog approach, uncomment the following code and inject HlmDialogService:
-   * 
+   *
    * private dialogService = inject(HlmDialogService);
-   * 
+   *
    * openCreateDialog() {
    *   const dialogRef = this.dialogService.open(ContributionFormDialogComponent, {
    *     context: {},
    *   });
-   * 
+   *
    *   // Listen for successful creation
    *   dialogRef.closed$.subscribe((contribution) => {
    *     if (contribution) {
@@ -655,4 +665,6 @@ export class ContributionListComponent {
     console.log('Update status for contribution:', contributionId);
     toast.info('Status update coming soon');
   }
+
+  protected readonly IPaymentStatus = IPaymentStatus;
 }
