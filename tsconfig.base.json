@@ -83,6 +83,7 @@
       "@nyots/admin-pages/dashboard": ["libs/admin/pages/dashboard/src/index.ts"],
       "@nyots/admin-pages/login": ["libs/admin/pages/login/src/index.ts"],
       "@nyots/admin-pages/projects": ["libs/admin/pages/projects/src/index.ts"],
+      "@nyots/admin-pages/contributions": ["libs/admin/pages/contributions/src/index.ts"],
       "@nyots/admin-pages/register": [
         "libs/admin/pages/register/src/index.ts"
       ],
@@ -92,6 +93,7 @@
       "@nyots/data-source/auth": ["libs/shared/data-source/auth/src/index.ts"],
       "@nyots/data-source/user": ["libs/shared/data-source/user/src/index.ts"],
       "@nyots/data-source/projects": ["libs/shared/data-source/projects/src/index.ts"],
+      "@nyots/data-source/contributions": ["libs/shared/data-source/contributions/src/index.ts"],
       "@nyots/data-source/helpers": ["libs/shared/data-source/helpers/src/index.ts"]
     }
   },
