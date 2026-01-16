@@ -1,17 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 import { Project } from '../project.model';
-
-@ObjectType()
-export class PageInfo {
-  @Field()
-  hasNextPage: boolean;
-
-  @Field()
-  hasPreviousPage: boolean;
-
-  @Field({ nullable: true })
-  cursor?: string | null;
-}
+import { PageInfo } from '../../../common/types/page-info.type';
 
 @ObjectType()
 export class ProjectConnection {

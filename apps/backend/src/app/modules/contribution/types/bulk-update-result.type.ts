@@ -9,7 +9,7 @@ export class BulkUpdateError {
   error: string;
 }
 
-@ObjectType()
+@ObjectType('ContributionBulkUpdateResult')
 export class BulkUpdateResult {
   @Field(() => Int)
   successCount: number;

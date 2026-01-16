@@ -6,6 +6,6 @@ export class ContributionEdge {
   @Field(() => Contribution)
   node: Contribution;
 
-  @Field()
+  @Field(() => String)
   cursor: string;
 }

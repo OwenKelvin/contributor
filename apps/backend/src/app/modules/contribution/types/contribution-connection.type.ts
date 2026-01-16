@@ -1,6 +1,6 @@
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
 import { ContributionEdge } from './contribution-edge.type';
-import { PageInfo } from './page-info.type';
+import { PageInfo } from '../../../common/types/page-info.type';
 
 @ObjectType()
 export class ContributionConnection {
