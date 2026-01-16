@@ -7,6 +7,7 @@ module.exports = {
       role_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        primaryKey: true,
         references: {
           model: 'roles',
           key: 'id',
@@ -17,6 +18,7 @@ module.exports = {
       permission_id: {
         type: Sequelize.UUID,
         allowNull: false,
+        primaryKey: true,
         references: {
           model: 'permissions',
           key: 'id',
@@ -32,11 +34,6 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
-    });
-
-    await queryInterface.addConstraint('role_permissions', {
-      fields: ['role_id', 'permission_id'],
-      type: 'primary key',
     });
   },
 
