@@ -39,8 +39,10 @@ input DateRangeInput {
 }
 
 input ProjectPaginationInput {
-  cursor: String
-  limit: Int!
+  first: Int
+  after: String
+  last: Int
+  before: String
 }
 
 input BulkUpdateInput {

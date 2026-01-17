@@ -32,7 +32,7 @@ query GetAllProjects(
   }
 }
 
-query GetProjectById($id: String!) {
+query GetProjectById($id: ID!) {
   getProjectById(id: $id) {
     id
     title
@@ -169,7 +169,7 @@ mutation CreateProject($input: CreateProjectInput!) {
   }
 }
 
-mutation UpdateProject($id: String!, $input: UpdateProjectInput!) {
+mutation UpdateProject($id: ID!, $input: UpdateProjectInput!) {
   updateProject(id: $id, input: $input) {
     id
     title
@@ -191,11 +191,11 @@ mutation UpdateProject($id: String!, $input: UpdateProjectInput!) {
   }
 }
 
-mutation DeleteProject($id: String!) {
+mutation DeleteProject($id: ID!) {
   deleteProject(id: $id)
 }
 
-mutation BulkUpdateProjects($ids: [String!]!, $input: BulkUpdateInput!) {
+mutation BulkUpdateProjects($ids: [ID!]!, $input: BulkUpdateInput!) {
   bulkUpdateProjects(ids: $ids, input: $input) {
     successCount
     failureCount
@@ -203,7 +203,7 @@ mutation BulkUpdateProjects($ids: [String!]!, $input: BulkUpdateInput!) {
   }
 }
 
-mutation ApproveProject($id: String!, $notes: String) {
+mutation ApproveProject($id: ID!, $notes: String) {
   approveProject(id: $id, notes: $notes) {
     id
     title
@@ -225,7 +225,7 @@ mutation ApproveProject($id: String!, $notes: String) {
   }
 }
 
-mutation RejectProject($id: String!, $reason: String!) {
+mutation RejectProject($id: ID!, $reason: String!) {
   rejectProject(id: $id, reason: $reason) {
     id
     title

@@ -16,7 +16,7 @@ export type ICreateCategoryMutationVariables = Types.Exact<{
 export type ICreateCategoryMutation = { createCategory: { id: string, name: string, description?: string | null, projectCount: number, createdAt: any, updatedAt: any } };
 
 export type IUpdateCategoryMutationVariables = Types.Exact<{
-  id: Types.Scalars['String']['input'];
+  id: Types.Scalars['ID']['input'];
   input: Types.IUpdateCategoryInput;
 }>;
 
@@ -24,7 +24,7 @@ export type IUpdateCategoryMutationVariables = Types.Exact<{
 export type IUpdateCategoryMutation = { updateCategory: { id: string, name: string, description?: string | null, projectCount: number, createdAt: any, updatedAt: any } };
 
 export type IDeleteCategoryMutationVariables = Types.Exact<{
-  id: Types.Scalars['String']['input'];
+  id: Types.Scalars['ID']['input'];
 }>;
 
 
@@ -77,7 +77,7 @@ export const CreateCategoryDocument = gql`
     }
   }
 export const UpdateCategoryDocument = gql`
-    mutation UpdateCategory($id: String!, $input: UpdateCategoryInput!) {
+    mutation UpdateCategory($id: ID!, $input: UpdateCategoryInput!) {
   updateCategory(id: $id, input: $input) {
     id
     name
@@ -100,7 +100,7 @@ export const UpdateCategoryDocument = gql`
     }
   }
 export const DeleteCategoryDocument = gql`
-    mutation DeleteCategory($id: String!) {
+    mutation DeleteCategory($id: ID!) {
   deleteCategory(id: $id)
 }
     `;
