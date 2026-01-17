@@ -8,7 +8,6 @@ import {
   ForeignKey,
   BelongsTo,
 } from 'sequelize-typescript';
-import { ObjectType, Field, ID, Float, registerEnumType } from '@nestjs/graphql';
 import { Category } from '../category/category.model';
 
 export enum ProjectStatus {
@@ -19,37 +18,29 @@ export enum ProjectStatus {
   ARCHIVED = 'archived',
 }
 
-registerEnumType(ProjectStatus, {
-  name: 'ProjectStatus',
-});
 
-@ObjectType()
 @Table({
   tableName: 'projects',
   underscored: true,
 })
 export class Project extends Model<Project> {
-  @Field(() => ID)
   @PrimaryKey
   @Default(DataType.UUIDV4)
   @Column(DataType.UUID)
   id: string;
 
-  @Field()
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   title: string;
 
-  @Field()
   @Column({
     type: DataType.TEXT,
     allowNull: false,
   })
   description: string;
 
-  @Field()
   @Column({
     type: DataType.TEXT,
     allowNull: false,
@@ -57,7 +48,6 @@ export class Project extends Model<Project> {
   })
   detailedDescription: string;
 
-  @Field(() => Float)
   @Column({
     type: DataType.DECIMAL(10, 2),
     allowNull: false,
@@ -65,7 +55,6 @@ export class Project extends Model<Project> {
   })
   goalAmount: number;
 
-  @Field(() => Float)
   @Default(0)
   @Column({
     type: DataType.DECIMAL(10, 2),
@@ -74,7 +63,6 @@ export class Project extends Model<Project> {
   })
   currentAmount: number;
 
-  @Field()
   @Column({
     type: DataType.DATE,
     allowNull: false,
@@ -82,7 +70,6 @@ export class Project extends Model<Project> {
   })
   startDate: Date;
 
-  @Field()
   @Column({
     type: DataType.DATE,
     allowNull: false,
@@ -90,7 +77,6 @@ export class Project extends Model<Project> {
   })
   endDate: Date;
 
-  @Field(() => ProjectStatus)
   @Column({
     type: DataType.ENUM(...Object.values(ProjectStatus)),
     allowNull: false,
@@ -107,7 +93,6 @@ export class Project extends Model<Project> {
   })
   status: ProjectStatus;
 
-  @Field({ nullable: true })
   @Column({
     type: DataType.STRING,
     allowNull: true,
@@ -123,11 +108,9 @@ export class Project extends Model<Project> {
   })
   categoryId: string;
 
-  @Field(() => Category)
   @BelongsTo(() => Category)
   category: Category;
 
-  @Field()
   @Column({
     type: DataType.DATE,
     allowNull: false,
@@ -135,7 +118,6 @@ export class Project extends Model<Project> {
   })
   createdAt: Date;
 
-  @Field()
   @Column({
     type: DataType.DATE,
     allowNull: false,

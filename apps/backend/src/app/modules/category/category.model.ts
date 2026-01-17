@@ -7,22 +7,18 @@ import {
   DataType,
   HasMany,
 } from 'sequelize-typescript';
-import { ObjectType, Field, ID, Int } from '@nestjs/graphql';
 import { Project } from '../project/project.model';
 
-@ObjectType()
 @Table({
   tableName: 'categories',
   underscored: true,
 })
 export class Category extends Model<Category> {
-  @Field(() => ID)
   @PrimaryKey
   @Default(DataType.UUIDV4)
   @Column(DataType.UUID)
   id: string;
 
-  @Field()
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -30,7 +26,6 @@ export class Category extends Model<Category> {
   })
   name: string;
 
-  @Field({ nullable: true })
   @Column({
     type: DataType.TEXT,
     allowNull: true,
@@ -40,12 +35,10 @@ export class Category extends Model<Category> {
   @HasMany(() => Project)
   projects: Project[];
 
-  @Field(() => Int)
   get projectCount(): number {
     return this.projects?.length || 0;
   }
 
-  @Field()
   @Column({
     type: DataType.DATE,
     allowNull: false,
@@ -53,7 +46,6 @@ export class Category extends Model<Category> {
   })
   createdAt: Date;
 
-  @Field()
   @Column({
     type: DataType.DATE,
     allowNull: false,

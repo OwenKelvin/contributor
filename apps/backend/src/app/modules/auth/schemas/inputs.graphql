@@ -3,6 +3,7 @@ input RegisterInput {
   password: String!
   firstName: String!
   lastName: String!
+  phoneNumber: String
 }
 
 input LoginInput {

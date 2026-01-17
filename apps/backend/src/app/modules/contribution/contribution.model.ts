@@ -9,7 +9,6 @@ import {
   BelongsTo,
   HasMany,
 } from 'sequelize-typescript';
-import { ObjectType, Field, ID, Float, registerEnumType } from '@nestjs/graphql';
 import { User } from '../user/user.model';
 import { Project } from '../project/project.model';
 import { Transaction } from './transaction.model';
@@ -35,17 +34,12 @@ export enum PaymentStatus {
   REFUNDED = 'refunded',
 }
 
-registerEnumType(PaymentStatus, {
-  name: 'PaymentStatus',
-});
 
-@ObjectType()
 @Table({
   tableName: 'contributions',
   underscored: true,
 })
 export class Contribution extends Model<IContribution> {
-  @Field(() => ID)
   @PrimaryKey
   @Default(DataType.UUIDV4)
   @Column(DataType.UUID)
@@ -59,7 +53,6 @@ export class Contribution extends Model<IContribution> {
   })
   userId: string;
 
-  @Field(() => User)
   @BelongsTo(() => User)
   user: User;
 
@@ -71,11 +64,9 @@ export class Contribution extends Model<IContribution> {
   })
   projectId: string;
 
-  @Field(() => Project)
   @BelongsTo(() => Project)
   project: Project;
 
-  @Field(() => Float)
   @Column({
     type: DataType.DECIMAL(10, 2),
     allowNull: false,
@@ -85,7 +76,6 @@ export class Contribution extends Model<IContribution> {
   })
   amount: number;
 
-  @Field(() => PaymentStatus)
   @Column({
     type: DataType.ENUM(...Object.values(PaymentStatus)),
     allowNull: false,
@@ -94,14 +84,12 @@ export class Contribution extends Model<IContribution> {
   })
   paymentStatus: PaymentStatus;
 
-  @Field({ nullable: true })
   @Column({
     type: DataType.TEXT,
     allowNull: true,
   })
   notes?: string;
 
-  @Field({ nullable: true })
   @Column({
     type: DataType.STRING,
     allowNull: true,
@@ -109,7 +97,6 @@ export class Contribution extends Model<IContribution> {
   })
   paymentReference?: string;
 
-  @Field({ nullable: true })
   @Column({
     type: DataType.STRING,
     allowNull: true,
@@ -117,7 +104,6 @@ export class Contribution extends Model<IContribution> {
   })
   failureReason?: string;
 
-  @Field({ nullable: true })
   @Column({
     type: DataType.DATE,
     allowNull: true,
@@ -125,11 +111,9 @@ export class Contribution extends Model<IContribution> {
   })
   paidAt?: Date;
 
-  @Field(() => [Transaction])
   @HasMany(() => Transaction)
   transactions: Transaction[];
 
-  @Field()
   @Column({
     type: DataType.DATE,
     allowNull: false,
@@ -137,7 +121,6 @@ export class Contribution extends Model<IContribution> {
   })
   createdAt: Date;
 
-  @Field()
   @Column({
     type: DataType.DATE,
     allowNull: false,
