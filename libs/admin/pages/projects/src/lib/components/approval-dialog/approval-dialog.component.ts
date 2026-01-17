@@ -45,6 +45,7 @@ export interface ApprovalDialogContext {
       <div>
         <label hlmLabel for="notes">Approval Notes (Optional)</label>
         <textarea
+          hlmInput
           id="notes"
           [(ngModel)]="notes"
           placeholder="Add any notes about this approval..."

@@ -88,8 +88,8 @@ export class ActiveProjectsComponent {
     try {
       // Build pagination object
       const pagination: IProjectPaginationInput = {
-        limit: 20,
-        cursor: this.currentCursor() ?? undefined,
+        first: 20,
+        after: this.currentCursor() ?? undefined,
       };
 
       const result = await retryAsync(
@@ -107,7 +107,7 @@ export class ActiveProjectsComponent {
       );
 
       if (result && result.pageInfo) {
-        this.projects.set((result.projects || []).filter((p): p is IProject => p !== undefined));
+        this.projects.set(result.edges.map((edge) => edge.node).filter((p): p is IProject => !!p));
         const pageInfo: IPageInfo = {
           hasNextPage: result.pageInfo.hasNextPage ?? false,
           hasPreviousPage: result.pageInfo.hasPreviousPage ?? false,

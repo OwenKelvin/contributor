@@ -26,12 +26,11 @@ import { HlmIcon } from '@nyots/ui/icon';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideLoader2, lucideSave, lucideX } from '@ng-icons/lucide';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
-import { HlmSelectImports } from '@nyots/ui/select';
 import { toast } from 'ngx-sonner';
 import { UserAutocompleteComponent } from '../../components/user-autocomplete/user-autocomplete.component';
 import { ContributionService } from '@nyots/data-source/contributions';
-import { ProjectService } from '@nyots/data-source/projects';
-import { IPaymentStatus, IProject } from '@nyots/data-source';
+import { IGetAllProjectsQuery, ProjectService } from '@nyots/data-source/projects';
+import { IPaymentStatus } from '@nyots/data-source';
 
 @Component({
   selector: 'nyots-contribution-form',
@@ -50,7 +49,6 @@ import { IPaymentStatus, IProject } from '@nyots/data-source';
     HlmIcon,
     NgIcon,
     BrnSelectImports,
-    HlmSelectImports,
     UserAutocompleteComponent,
   ],
   providers: [
@@ -228,7 +226,7 @@ export class ContributionFormComponent implements OnInit {
   // Form state
   form: FormGroup;
   submitting = signal(false);
-  projects = signal<IProject[]>([]);
+  projects = signal<IGetAllProjectsQuery['getAllProjects']['edges'][number]['node'][]>([]);
   loadingProjects = signal(false);
 
   // Expose PaymentStatus enum to template
@@ -285,7 +283,7 @@ export class ContributionFormComponent implements OnInit {
     this.submitting.set(true);
     try {
       const formValue = this.form.value;
-      
+
       // Create contribution using admin endpoint
       await this.contributionService.adminCreateContribution({
         userId: formValue.userId,
@@ -304,12 +302,12 @@ export class ContributionFormComponent implements OnInit {
       await this.router.navigate(['/dashboard/contributions']);
     } catch (error: unknown) {
       console.error('Error creating contribution:', error);
-      
+
       // Extract error message from GraphQL error
-      const errorMessage = error && typeof error === 'object' && 'message' in error 
-        ? String(error.message) 
+      const errorMessage = error && typeof error === 'object' && 'message' in error
+        ? String(error.message)
         : 'An unexpected error occurred';
-      
+
       toast.error('Failed to create contribution', {
         description: errorMessage,
       });

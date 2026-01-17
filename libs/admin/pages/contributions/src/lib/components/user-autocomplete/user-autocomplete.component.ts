@@ -34,8 +34,9 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     <div class="relative">
       <div class="relative">
         <ng-icon
+          hlmIcon
           name="lucideSearch"
-          size="16"
+          size="base"
           class="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
         />
         <input
@@ -52,8 +53,9 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
         />
         @if (loading()) {
           <ng-icon
+            hlmIcon
             name="lucideLoader2"
-            size="16"
+            size="base"
             class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground animate-spin"
           />
         } @else if (selectedUser() && !disabled()) {
@@ -63,7 +65,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
             (click)="clearSelection()"
             [attr.aria-label]="'Clear selection'"
           >
-            <ng-icon name="lucideX" size="16" />
+            <ng-icon hlmIcon name="lucideX" size="base" />
           </button>
         }
       </div>
