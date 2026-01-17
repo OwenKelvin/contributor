@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Failed</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .error-icon {
+            width: 64px;
+            height: 64px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .error-icon::after {
+            content: "✕";
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+        }
+        h1 {
+            color: #1f2937;
+            font-size: 24px;
+            margin: 0 0 10px 0;
+        }
+        .subtitle {
+            color: #6b7280;
+            font-size: 16px;
+            margin: 0;
+        }
+        .error-details {
+            background-color: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .error-message {
+            color: #991b1b;
+            font-weight: 500;
+            margin: 0;
+        }
+        .contribution-details {
+            background-color: #f9fafb;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        .detail-label {
+            color: #6b7280;
+            font-weight: 500;
+        }
+        .detail-value {
+            color: #1f2937;
+            font-weight: 600;
+        }
+        .next-steps {
+            background-color: #eff6ff;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .next-steps h2 {
+            margin-top: 0;
+            font-size: 18px;
+            color: #1e40af;
+        }
+        .next-steps ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .next-steps li {
+            margin: 8px 0;
+            color: #4b5563;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #3b82f6;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            margin: 20px 0;
+            font-weight: 500;
+        }
+        .button-secondary {
+            background-color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="error-icon"></div>
+            <h1>Payment Failed</h1>
+            <p class="subtitle">We couldn't process your payment</p>
+        </div>
+
+        <p>Dear {{contributorName}},</p>
+        
+        <p>Unfortunately, we were unable to process your payment for the following contribution:</p>
+
+        <div class="contribution-details">
+            <div class="detail-row">
+                <span class="detail-label">Contribution ID:</span>
+                <span class="detail-value">{{contributionId}}</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Project:</span>
+                <span class="detail-value">{{projectTitle}}</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="detail-label">Amount:</span>
+                <span class="detail-value">{{amount}}</span>
+            </div>
+        </div>
+
+        <div class="error-details">
+            <p class="error-message">Error: {{errorMessage}}</p>
+        </div>
+
+        <div class="next-steps">
+            <h2>What to do next:</h2>
+            <ul>
+                <li><strong>Check your payment details:</strong> Ensure your payment method has sufficient funds and is valid.</li>
+                <li><strong>Verify your information:</strong> Make sure all payment information is entered correctly.</li>
+                <li><strong>Try again:</strong> You can retry the payment from your contributions dashboard.</li>
+                <li><strong>Use a different payment method:</strong> If the issue persists, try using an alternative payment method.</li>
+                <li><strong>Contact support:</strong> If you continue to experience issues, our support team is here to help.</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="{{retryPaymentUrl}}" class="button">Retry Payment</a>
+            <a href="{{supportUrl}}" class="button button-secondary">Contact Support</a>
+        </div>
+
+        <div class="footer">
+            <p>Your contribution is still pending. No charges have been made to your account.</p>
+            <p style="margin-top: 10px;">&copy; {{year}} {{organizationName}}. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

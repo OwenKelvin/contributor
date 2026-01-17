@@ -5,6 +5,7 @@ input AdminCreateContributionInput {
   paymentStatus: PaymentStatus!
   projectId: ID!
   userId: ID!
+  sendEmail: Boolean
 }
 
 input ContributionFilter {

@@ -9,6 +9,7 @@ import { createClient } from 'graphql-ws';
 import { contextSuccessAlert } from './success-alert.context';
 import { BACKEND_URL } from '@nyots/data-source/constants';
 import { contextAuthToken } from './auth-token.context';
+import { errorLink } from './error-link.context';
 
 export const apolloConfig = () => {
   const httpLink = inject(HttpLink)
@@ -41,6 +42,7 @@ export const apolloConfig = () => {
   );
 
   const link = ApolloLink.from([
+    errorLink(),
     contextSuccessAlert(),
     contextAuthToken(),
     splitLink,
