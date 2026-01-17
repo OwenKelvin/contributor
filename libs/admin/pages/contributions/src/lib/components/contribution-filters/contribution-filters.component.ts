@@ -6,7 +6,11 @@ import { HlmButton } from '@nyots/ui/button';
 import { HlmIcon } from '@nyots/ui/icon';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideSearch, lucideX, lucideFilter } from '@ng-icons/lucide';
-import { IContributionFilter, IPaymentStatus, IProject } from '@nyots/data-source';
+import {
+  IContributionFilter,
+  IPaymentStatus,
+  IProject,
+} from '@nyots/data-source';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
@@ -28,7 +32,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     }),
   ],
   template: `
-    <div class="space-y-4 p-4 bg-white rounded-lg border">
+    <form [formGroup]="filterForm" class="space-y-4 p-4 bg-white rounded-lg border">
       <!-- Search Bar -->
       <div class="relative">
         <ng-icon
@@ -43,8 +47,6 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
           placeholder="Search contributions..."
           class="pl-10 pr-10"
           formControlName="search"
-          [formGroup]="filterForm"
-          [disabled]="loading()"
         />
         @if (filterForm.get('search')?.value) {
           <button
@@ -54,7 +56,6 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
             class="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0"
             (click)="clearSearch()"
             type="button"
-            [disabled]="loading()"
           >
             <ng-icon hlmIcon name="lucideX" size="sm" />
           </button>
@@ -62,16 +63,19 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
       </div>
 
       <!-- Filter Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" [formGroup]="filterForm">
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+      >
         <!-- Status Filter -->
         <div>
-          <label for="paymentStatus" class="text-sm font-medium mb-1.5 block">Status</label>
+          <label for="paymentStatus" class="text-sm font-medium mb-1.5 block"
+          >Status</label
+          >
           <select
             id="paymentStatus"
             hlmInput
             formControlName="paymentStatus"
             class="w-full"
-            [disabled]="loading()"
           >
             <option value="">All Statuses</option>
             <option value="PENDING">Pending</option>
@@ -83,13 +87,14 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
         <!-- Project Filter -->
         <div>
-          <label for="projectId" class="text-sm font-medium mb-1.5 block">Project</label>
+          <label for="projectId" class="text-sm font-medium mb-1.5 block"
+          >Project</label
+          >
           <select
             id="projectId"
             hlmInput
             formControlName="projectId"
             class="w-full"
-            [disabled]="loading()"
           >
             <option value="">All Projects</option>
             @for (project of projects(); track project.id) {
@@ -100,7 +105,9 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
         <!-- Min Amount -->
         <div>
-          <label for="minAmount" class="text-sm font-medium mb-1.5 block">Min Amount</label>
+          <label for="minAmount" class="text-sm font-medium mb-1.5 block"
+          >Min Amount</label
+          >
           <input
             id="minAmount"
             hlmInput
@@ -108,13 +115,14 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
             placeholder="0.00"
             formControlName="minAmount"
             class="w-full"
-            [disabled]="loading()"
           />
         </div>
 
         <!-- Max Amount -->
         <div>
-          <label for="maxAmount" class="text-sm font-medium mb-1.5 block">Max Amount</label>
+          <label for="maxAmount" class="text-sm font-medium mb-1.5 block"
+          >Max Amount</label
+          >
           <input
             id="maxAmount"
             hlmInput
@@ -122,33 +130,33 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
             placeholder="0.00"
             formControlName="maxAmount"
             class="w-full"
-            [disabled]="loading()"
           />
         </div>
 
         <!-- Start Date -->
         <div>
-          <label for="startDate" class="text-sm font-medium mb-1.5 block">Start Date</label>
+          <label for="startDate" class="text-sm font-medium mb-1.5 block"
+          >Start Date</label>
           <input
             id="startDate"
             hlmInput
             type="date"
             formControlName="startDate"
             class="w-full"
-            [disabled]="loading()"
           />
         </div>
 
         <!-- End Date -->
         <div>
-          <label for="endDate" class="text-sm font-medium mb-1.5 block">End Date</label>
+          <label for="endDate" class="text-sm font-medium mb-1.5 block"
+          >End Date</label
+          >
           <input
             id="endDate"
             hlmInput
             type="date"
             formControlName="endDate"
             class="w-full"
-            [disabled]="loading()"
           />
         </div>
       </div>
@@ -174,18 +182,18 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
         }
 
         @if (loading()) {
-          <span class="text-sm text-gray-500 italic">
-            Loading...
-          </span>
+          <span class="text-sm text-gray-500 italic"> Loading... </span>
         }
       </div>
-    </div>
+    </form>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
-  `],
+  styles: [
+    `
+      :host {
+        display: block;
+      }
+    `,
+  ],
 })
 export class ContributionFiltersComponent {
   private fb = new FormBuilder();
@@ -199,44 +207,54 @@ export class ContributionFiltersComponent {
   filtersChange = output<IContributionFilter>();
 
   // Form
-  filterForm: FormGroup;
+  filterForm = this.fb.group({
+    search: [''],
+    paymentStatus: [''],
+    projectId: [''],
+    minAmount: [null as null | number | string],
+    maxAmount: [null as null | number | string],
+    startDate: [''],
+    endDate: [''],
+  });
 
   constructor() {
-    this.filterForm = this.fb.group({
-      search: [''],
-      paymentStatus: [''],
-      projectId: [''],
-      minAmount: [null],
-      maxAmount: [null],
-      startDate: [''],
-      endDate: [''],
-    });
-
     // Set up form value changes with debounce
     effect(() => {
       this.filterForm.valueChanges
-        .pipe(
-          debounceTime(300),
-          distinctUntilChanged()
-        )
+        .pipe(debounceTime(300), distinctUntilChanged())
         .subscribe(() => {
           this.emitFilters();
         });
+    });
+
+    effect(() => {
+      if (this.loading()) {
+        this.filterForm.disable({ emitEvent: false });
+      } else {
+        this.filterForm.enable({ emitEvent: false });
+      }
     });
 
     // Initialize form with input filters
     effect(() => {
       const filters = this.filters();
       if (filters) {
-        this.filterForm.patchValue({
-          search: filters.search || '',
-          paymentStatus: filters.paymentStatus || '',
-          projectId: filters.projectId || '',
-          minAmount: filters.minAmount || null,
-          maxAmount: filters.maxAmount || null,
-          startDate: filters.startDate ? this.formatDateForInput(filters.startDate) : '',
-          endDate: filters.endDate ? this.formatDateForInput(filters.endDate) : '',
-        }, { emitEvent: false });
+        this.filterForm.patchValue(
+          {
+            search: filters.search || '',
+            paymentStatus: filters.paymentStatus || '',
+            projectId: filters.projectId || '',
+            minAmount: filters.minAmount || null,
+            maxAmount: filters.maxAmount || null,
+            startDate: filters.startDate
+              ? this.formatDateForInput(filters.startDate)
+              : '',
+            endDate: filters.endDate
+              ? this.formatDateForInput(filters.endDate)
+              : '',
+          },
+          { emitEvent: false },
+        );
       }
     });
   }
@@ -258,11 +276,11 @@ export class ContributionFiltersComponent {
     }
 
     if (formValue.minAmount !== null && formValue.minAmount !== '') {
-      filters.minAmount = parseFloat(formValue.minAmount);
+      filters.minAmount = parseFloat(String(formValue.minAmount ?? ''));
     }
 
     if (formValue.maxAmount !== null && formValue.maxAmount !== '') {
-      filters.maxAmount = parseFloat(formValue.maxAmount);
+      filters.maxAmount = parseFloat(String(formValue.maxAmount));
     }
 
     if (formValue.startDate) {
