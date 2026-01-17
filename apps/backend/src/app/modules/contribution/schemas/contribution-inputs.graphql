@@ -1,0 +1,61 @@
+input AdminCreateContributionInput {
+  amount: Float!
+  notes: String
+  paymentReference: String
+  paymentStatus: PaymentStatus!
+  projectId: ID!
+  userId: ID!
+}
+
+input ContributionFilter {
+  endDate: DateTime
+  maxAmount: Float
+  minAmount: Float
+  paymentStatus: PaymentStatus
+  projectId: ID
+  search: String
+  startDate: DateTime
+  userId: ID
+}
+
+input ContributionPaginationInput {
+  after: String
+  before: String
+  first: Int
+  last: Int
+}
+
+input CreateContributionInput {
+  amount: Float!
+  notes: String
+  projectId: ID!
+}
+
+input PaymentDetailsInput {
+  accountReference: String!
+  phoneNumber: String!
+  transactionDesc: String
+}
+
+input ReportFilter {
+  endDate: DateTime
+  projectId: ID
+  startDate: DateTime
+  userId: ID
+}
+
+enum ReportType {
+  BY_PROJECT
+  BY_USER
+  SUMMARY
+  TIME_SERIES
+}
+
+input TransactionFilterInput {
+  contributionId: String
+  endDate: DateTime
+  search: String
+  startDate: DateTime
+  status: TransactionStatus
+  transactionType: TransactionType
+}

@@ -1,0 +1,21 @@
+type Contribution {
+  amount: Float!
+  createdAt: DateTime!
+  failureReason: String
+  id: ID!
+  notes: String
+  paidAt: DateTime
+  paymentReference: String
+  paymentStatus: PaymentStatus!
+  project: Project!
+  transactions: [Transaction!]!
+  updatedAt: DateTime!
+  user: User!
+}
+
+enum PaymentStatus {
+  FAILED
+  PAID
+  PENDING
+  REFUNDED
+}

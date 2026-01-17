@@ -1,0 +1,23 @@
+type Transaction {
+  amount: Float!
+  contribution: Contribution!
+  createdAt: DateTime!
+  errorCode: String
+  errorMessage: String
+  gatewayResponse: String
+  gatewayTransactionId: String
+  id: ID!
+  status: TransactionStatus!
+  transactionType: TransactionType!
+}
+
+enum TransactionStatus {
+  FAILED
+  PENDING
+  SUCCESS
+}
+
+enum TransactionType {
+  PAYMENT
+  REFUND
+}

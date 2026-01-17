@@ -1,0 +1,60 @@
+type ContributionConnection {
+  edges: [ContributionEdge!]!
+  pageInfo: PageInfo!
+  totalAmount: Float!
+  totalCount: Int!
+}
+
+type ContributionEdge {
+  cursor: String!
+  node: Contribution!
+}
+
+type ContributionReport {
+  failedAmount: Float!
+  failedCount: Int!
+  paidAmount: Float!
+  paidCount: Int!
+  pendingAmount: Float!
+  pendingCount: Int!
+  refundedAmount: Float!
+  refundedCount: Int!
+  successRate: Float!
+  timeSeriesData: [TimeSeriesPoint!]!
+  topContributors: [UserContributionSummary!]!
+  topProjects: [ProjectContributionSummary!]!
+  totalAmount: Float!
+  totalContributions: Int!
+}
+
+type ProjectContributionSummary {
+  contributionCount: Int!
+  projectId: ID!
+  projectTitle: String!
+  totalAmount: Float!
+}
+
+type TimeSeriesPoint {
+  contributionCount: Int!
+  date: String!
+  totalAmount: Float!
+}
+
+type TransactionConnection {
+  edges: [TransactionEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type TransactionEdge {
+  cursor: String!
+  node: Transaction!
+}
+
+type UserContributionSummary {
+  contributionCount: Int!
+  totalAmount: Float!
+  userEmail: String!
+  userId: ID!
+  userName: String!
+}
