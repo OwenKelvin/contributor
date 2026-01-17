@@ -7,4 +7,4 @@ export * from './top-projects-list/top-projects-list.component';
 export * from './top-contributors-list/top-contributors-list.component';
 export * from './contribution-form-dialog/contribution-form-dialog.component';
 export * from './transaction-history/transaction-history.component';
-
+export * from './confirmation-dialog/confirmation-dialog.component';

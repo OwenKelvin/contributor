@@ -12,6 +12,7 @@ import {
   PaymentStatusBadgeComponent,
   TransactionHistoryComponent,
 } from '../../components';
+import { ConfirmationDialogService } from '../../services/confirmation-dialog.service';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmIcon } from '@nyots/ui/icon';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -370,6 +371,7 @@ import { HlmBadge, BadgeVariants } from '@nyots/ui/badge';
 })
 export class ContributionDetailComponent implements OnInit {
   private readonly contributionService = inject(ContributionService);
+  private readonly confirmationService = inject(ConfirmationDialogService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
@@ -452,8 +454,15 @@ export class ContributionDetailComponent implements OnInit {
       return;
     }
 
-    // Confirm with user
-    if (!confirm(`Are you sure you want to process a refund for ${contribution.amount}? This action will reverse the payment and update the project amount.`)) {
+    // Confirm with user using confirmation dialog
+    const confirmed = await this.confirmationService.confirmDestructive({
+      title: 'Process Refund',
+      description: `Are you sure you want to process a refund for ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(contribution.amount)}? This action will reverse the payment and update the project amount.`,
+      confirmText: 'Process Refund',
+      cancelText: 'Cancel',
+    });
+
+    if (!confirmed) {
       return;
     }
 
