@@ -1,19 +1,19 @@
 import { Component, input, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { ITimeSeriesPoint } from '@nyots/data-source';
 
 /**
  * Contribution Chart Component
- * 
+ *
  * Displays time series data as a line chart with tooltips.
  * Uses SVG for rendering to avoid external chart library dependencies.
- * 
+ *
  * Requirements: 11.5
  */
 @Component({
   selector: 'nyots-contribution-chart',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CurrencyPipe, DatePipe],
   template: `
     @if (data() && data()!.length > 0) {
       <div class="relative w-full" style="height: 300px;">
@@ -36,11 +36,7 @@ import { ITimeSeriesPoint } from '@nyots/data-source';
           </g>
 
           <!-- Area fill -->
-          <path
-            [attr.d]="areaPath()"
-            fill="url(#gradient)"
-            opacity="0.2"
-          />
+          <path [attr.d]="areaPath()" fill="url(#gradient)" opacity="0.2" />
 
           <!-- Line path -->
           <path
@@ -91,11 +87,13 @@ import { ITimeSeriesPoint } from '@nyots/data-source';
 
         <!-- X-axis labels -->
         <div class="flex justify-between mt-2 text-xs text-muted-foreground">
-          @if (data()!.length > 0) {
-            <span>{{ data()![0].date | date: 'MMM d' }}</span>
-            @if (data()!.length > 1) {
-              <span>{{ data()![Math.floor(data()!.length / 2)].date | date: 'MMM d' }}</span>
-              <span>{{ data()![data()!.length - 1].date | date: 'MMM d' }}</span>
+          @if (axisLabels(); as labels) {
+            <span>{{ labels.first | date: 'MMM d' }}</span>
+            @if (labels.middle) {
+              <span>{{ labels.middle | date: 'MMM d' }}</span>
+            }
+            @if (labels.last) {
+              <span>{{ labels.last | date: 'MMM d' }}</span>
             }
           }
         </div>
@@ -138,6 +136,20 @@ export class ContributionChartComponent {
   private _tooltipY = 0;
 
   /**
+   * Calculate axis labels (first, middle, last dates)
+   */
+  axisLabels = computed(() => {
+    const dataPoints = this.data();
+    if (!dataPoints || dataPoints.length === 0) return null;
+
+    return {
+      first: dataPoints[0].date,
+      middle: dataPoints.length > 1 ? dataPoints[Math.floor(dataPoints.length / 2)].date : null,
+      last: dataPoints.length > 1 ? dataPoints[dataPoints.length - 1].date : null,
+    };
+  });
+
+  /**
    * Calculate chart points with proper scaling
    */
   chartPoints = computed(() => {
@@ -152,12 +164,12 @@ export class ContributionChartComponent {
       const x =
         this.padding +
         (index / (dataPoints.length - 1 || 1)) *
-          (this.chartWidth - 2 * this.padding);
+        (this.chartWidth - 2 * this.padding);
       const y =
         this.chartHeight -
         this.padding -
         ((point.totalAmount - minAmount) / range) *
-          (this.chartHeight - 2 * this.padding);
+        (this.chartHeight - 2 * this.padding);
 
       return { x, y, data: point };
     });
@@ -206,8 +218,7 @@ export class ContributionChartComponent {
     const numLines = 5;
     for (let i = 0; i <= numLines; i++) {
       const y =
-        this.padding +
-        (i / numLines) * (this.chartHeight - 2 * this.padding);
+        this.padding + (i / numLines) * (this.chartHeight - 2 * this.padding);
       lines.push(y);
     }
     return lines;

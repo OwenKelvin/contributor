@@ -10,7 +10,7 @@ export type IGetAllProjectsQueryVariables = Types.Exact<{
 }>;
 
 
-export type IGetAllProjectsQuery = { getAllProjects: { projects: Array<{ id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type IGetAllProjectsQuery = { getAllProjects: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
 
 export type IGetProjectByIdQueryVariables = Types.Exact<{
   id: Types.Scalars['ID']['input'];
@@ -24,14 +24,14 @@ export type IGetActiveProjectsQueryVariables = Types.Exact<{
 }>;
 
 
-export type IGetActiveProjectsQuery = { getActiveProjects: { projects: Array<{ id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type IGetActiveProjectsQuery = { getActiveProjects: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
 
 export type IGetPendingProjectsQueryVariables = Types.Exact<{
   pagination?: Types.InputMaybe<Types.IProjectPaginationInput>;
 }>;
 
 
-export type IGetPendingProjectsQuery = { getPendingProjects: { projects: Array<{ id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type IGetPendingProjectsQuery = { getPendingProjects: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
 
 export type IGetArchivedProjectsQueryVariables = Types.Exact<{
   filter?: Types.InputMaybe<Types.IArchivedProjectFilter>;
@@ -39,7 +39,7 @@ export type IGetArchivedProjectsQueryVariables = Types.Exact<{
 }>;
 
 
-export type IGetArchivedProjectsQuery = { getArchivedProjects: { projects: Array<{ id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type IGetArchivedProjectsQuery = { getArchivedProjects: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
 
 export type ICreateProjectMutationVariables = Types.Exact<{
   input: Types.ICreateProjectInput;
@@ -90,24 +90,27 @@ export type IRejectProjectMutation = { rejectProject: { id: string, title: strin
 export const GetAllProjectsDocument = gql`
     query GetAllProjects($search: String, $filter: ProjectFilter, $pagination: ProjectPaginationInput) {
   getAllProjects(search: $search, filter: $filter, pagination: $pagination) {
-    projects {
-      id
-      title
-      description
-      detailedDescription
-      goalAmount
-      currentAmount
-      startDate
-      endDate
-      status
-      category {
+    edges {
+      node {
         id
-        name
+        title
         description
+        detailedDescription
+        goalAmount
+        currentAmount
+        startDate
+        endDate
+        status
+        category {
+          id
+          name
+          description
+        }
+        featuredImage
+        createdAt
+        updatedAt
       }
-      featuredImage
-      createdAt
-      updatedAt
+      cursor
     }
     pageInfo {
       hasNextPage
@@ -115,6 +118,7 @@ export const GetAllProjectsDocument = gql`
       startCursor
       endCursor
     }
+    totalCount
   }
 }
     `;
@@ -166,24 +170,27 @@ export const GetProjectByIdDocument = gql`
 export const GetActiveProjectsDocument = gql`
     query GetActiveProjects($pagination: ProjectPaginationInput) {
   getActiveProjects(pagination: $pagination) {
-    projects {
-      id
-      title
-      description
-      detailedDescription
-      goalAmount
-      currentAmount
-      startDate
-      endDate
-      status
-      category {
+    edges {
+      node {
         id
-        name
+        title
         description
+        detailedDescription
+        goalAmount
+        currentAmount
+        startDate
+        endDate
+        status
+        category {
+          id
+          name
+          description
+        }
+        featuredImage
+        createdAt
+        updatedAt
       }
-      featuredImage
-      createdAt
-      updatedAt
+      cursor
     }
     pageInfo {
       hasNextPage
@@ -191,6 +198,7 @@ export const GetActiveProjectsDocument = gql`
       startCursor
       endCursor
     }
+    totalCount
   }
 }
     `;
@@ -208,24 +216,27 @@ export const GetActiveProjectsDocument = gql`
 export const GetPendingProjectsDocument = gql`
     query GetPendingProjects($pagination: ProjectPaginationInput) {
   getPendingProjects(pagination: $pagination) {
-    projects {
-      id
-      title
-      description
-      detailedDescription
-      goalAmount
-      currentAmount
-      startDate
-      endDate
-      status
-      category {
+    edges {
+      node {
         id
-        name
+        title
         description
+        detailedDescription
+        goalAmount
+        currentAmount
+        startDate
+        endDate
+        status
+        category {
+          id
+          name
+          description
+        }
+        featuredImage
+        createdAt
+        updatedAt
       }
-      featuredImage
-      createdAt
-      updatedAt
+      cursor
     }
     pageInfo {
       hasNextPage
@@ -233,6 +244,7 @@ export const GetPendingProjectsDocument = gql`
       startCursor
       endCursor
     }
+    totalCount
   }
 }
     `;
@@ -250,24 +262,27 @@ export const GetPendingProjectsDocument = gql`
 export const GetArchivedProjectsDocument = gql`
     query GetArchivedProjects($filter: ArchivedProjectFilter, $pagination: ProjectPaginationInput) {
   getArchivedProjects(filter: $filter, pagination: $pagination) {
-    projects {
-      id
-      title
-      description
-      detailedDescription
-      goalAmount
-      currentAmount
-      startDate
-      endDate
-      status
-      category {
+    edges {
+      node {
         id
-        name
+        title
         description
+        detailedDescription
+        goalAmount
+        currentAmount
+        startDate
+        endDate
+        status
+        category {
+          id
+          name
+          description
+        }
+        featuredImage
+        createdAt
+        updatedAt
       }
-      featuredImage
-      createdAt
-      updatedAt
+      cursor
     }
     pageInfo {
       hasNextPage
@@ -275,6 +290,7 @@ export const GetArchivedProjectsDocument = gql`
       startCursor
       endCursor
     }
+    totalCount
   }
 }
     `;

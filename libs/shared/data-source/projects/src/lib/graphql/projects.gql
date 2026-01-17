@@ -4,24 +4,27 @@ query GetAllProjects(
   $pagination: ProjectPaginationInput
 ) {
   getAllProjects(search: $search, filter: $filter, pagination: $pagination) {
-    projects {
-      id
-      title
-      description
-      detailedDescription
-      goalAmount
-      currentAmount
-      startDate
-      endDate
-      status
-      category {
+    edges {
+      node {
         id
-        name
+        title
         description
+        detailedDescription
+        goalAmount
+        currentAmount
+        startDate
+        endDate
+        status
+        category {
+          id
+          name
+          description
+        }
+        featuredImage
+        createdAt
+        updatedAt
       }
-      featuredImage
-      createdAt
-      updatedAt
+      cursor
     }
     pageInfo {
       hasNextPage
@@ -29,6 +32,7 @@ query GetAllProjects(
       startCursor
       endCursor
     }
+    totalCount
   }
 }
 
@@ -56,24 +60,27 @@ query GetProjectById($id: ID!) {
 
 query GetActiveProjects($pagination: ProjectPaginationInput) {
   getActiveProjects(pagination: $pagination) {
-    projects {
-      id
-      title
-      description
-      detailedDescription
-      goalAmount
-      currentAmount
-      startDate
-      endDate
-      status
-      category {
+    edges {
+      node {
         id
-        name
+        title
         description
+        detailedDescription
+        goalAmount
+        currentAmount
+        startDate
+        endDate
+        status
+        category {
+          id
+          name
+          description
+        }
+        featuredImage
+        createdAt
+        updatedAt
       }
-      featuredImage
-      createdAt
-      updatedAt
+      cursor
     }
     pageInfo {
       hasNextPage
@@ -81,29 +88,33 @@ query GetActiveProjects($pagination: ProjectPaginationInput) {
       startCursor
       endCursor
     }
+    totalCount
   }
 }
 
 query GetPendingProjects($pagination: ProjectPaginationInput) {
   getPendingProjects(pagination: $pagination) {
-    projects {
-      id
-      title
-      description
-      detailedDescription
-      goalAmount
-      currentAmount
-      startDate
-      endDate
-      status
-      category {
+    edges {
+      node {
         id
-        name
+        title
         description
+        detailedDescription
+        goalAmount
+        currentAmount
+        startDate
+        endDate
+        status
+        category {
+          id
+          name
+          description
+        }
+        featuredImage
+        createdAt
+        updatedAt
       }
-      featuredImage
-      createdAt
-      updatedAt
+      cursor
     }
     pageInfo {
       hasNextPage
@@ -111,6 +122,7 @@ query GetPendingProjects($pagination: ProjectPaginationInput) {
       startCursor
       endCursor
     }
+    totalCount
   }
 }
 
@@ -119,24 +131,27 @@ query GetArchivedProjects(
   $pagination: ProjectPaginationInput
 ) {
   getArchivedProjects(filter: $filter, pagination: $pagination) {
-    projects {
-      id
-      title
-      description
-      detailedDescription
-      goalAmount
-      currentAmount
-      startDate
-      endDate
-      status
-      category {
+    edges {
+      node {
         id
-        name
+        title
         description
+        detailedDescription
+        goalAmount
+        currentAmount
+        startDate
+        endDate
+        status
+        category {
+          id
+          name
+          description
+        }
+        featuredImage
+        createdAt
+        updatedAt
       }
-      featuredImage
-      createdAt
-      updatedAt
+      cursor
     }
     pageInfo {
       hasNextPage
@@ -144,6 +159,7 @@ query GetArchivedProjects(
       startCursor
       endCursor
     }
+    totalCount
   }
 }
 
