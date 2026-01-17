@@ -14,8 +14,8 @@ type Contribution {
 }
 
 enum PaymentStatus {
-  pending
-  paid
-  failed
-  refunded
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
 }

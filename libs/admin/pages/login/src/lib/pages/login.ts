@@ -11,7 +11,6 @@ import { provideIcons } from '@ng-icons/core';
 import { lucideLoader2, lucideMail, lucideLock } from '@ng-icons/lucide';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@nyots/data-source/auth';
-import { firstValueFrom } from 'rxjs';
 
 @Component({
   imports: [
@@ -34,7 +33,6 @@ import { firstValueFrom } from 'rxjs';
   templateUrl: 'login.html',
 })
 export class Login {
-  private http = inject(HttpClient);
   private authService = inject(AuthService);
   private router = inject(Router);
 

@@ -9,6 +9,7 @@ import {
   ContributionTrend,
   TopProject,
 } from './types/dashboard-stats.type';
+import { RoleList } from '../role/role-list';
 
 @Resolver()
 @UseGuards(GqlAuthGuard, RolesGuard)
@@ -16,7 +17,7 @@ export class DashboardResolver {
   constructor(private readonly dashboardService: DashboardService) {}
 
   @Query(() => DashboardStats)
-  @Roles('admin')
+  @Roles(RoleList.Admin)
   async dashboardStats(
     @Args('startDate', { type: () => Date, nullable: true }) startDate?: Date,
     @Args('endDate', { type: () => Date, nullable: true }) endDate?: Date,
@@ -25,7 +26,7 @@ export class DashboardResolver {
   }
 
   @Query(() => [ContributionTrend])
-  @Roles('admin')
+  @Roles(RoleList.Admin)
   async contributionTrends(
     @Args('startDate', { type: () => Date }) startDate: Date,
     @Args('endDate', { type: () => Date }) endDate: Date,
@@ -40,7 +41,7 @@ export class DashboardResolver {
   }
 
   @Query(() => [TopProject])
-  @Roles('admin')
+  @Roles(RoleList.Admin)
   async topProjects(
     @Args('limit', { type: () => Number, nullable: true, defaultValue: 10 })
     limit?: number,

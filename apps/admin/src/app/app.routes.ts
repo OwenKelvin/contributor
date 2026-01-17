@@ -8,7 +8,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'login',
-    loadComponent: () => import('@nyots/client-pages/login')
+    loadComponent: () => import('@nyots/admin-pages/login')
   },
   {
     path: 'dashboard',

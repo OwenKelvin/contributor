@@ -1,8 +1,8 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { ContributionService } from './contribution.service';
 import { TransactionService } from './transaction.service';
-import { Contribution } from './contribution.model';
+import { Contribution, PaymentStatus } from './contribution.model';
 import { Transaction } from './transaction.model';
 import { CreateContributionInput } from './dto/create-contribution.input';
 import { AdminCreateContributionInput } from './dto/admin-create-contribution.input';
@@ -16,12 +16,12 @@ import { ContributionConnection } from './types/contribution-connection.type';
 import { ContributionReport } from './types/contribution-report.type';
 import { TransactionConnection } from './types/transaction-connection.type';
 import { BulkUpdateResult } from './types/bulk-update-result.type';
-import { PaymentStatus } from './contribution.model';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { User } from '../user/user.model';
+import { RoleList } from '../role/role-list';
 
 /**
  * GraphQL Resolver for Contribution operations
@@ -112,7 +112,7 @@ export class ContributionResolver {
    * Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6
    */
   @Query(() => ContributionReport)
-  @Roles('admin')
+  @Roles(RoleList.Admin)
   @UseGuards(GqlAuthGuard, RolesGuard)
   async getContributionReport(
     @Args('reportType', { type: () => ReportType }) reportType: ReportType,
@@ -147,7 +147,7 @@ export class ContributionResolver {
    * Requirements: 9.1, 9.2, 9.3, 9.4, 9.6
    */
   @Query(() => TransactionConnection)
-  @Roles('admin')
+  @Roles(RoleList.Admin)
   @UseGuards(GqlAuthGuard, RolesGuard)
   async getTransactions(
     @Args('filter', { nullable: true }) filter?: TransactionFilterInput,
@@ -177,7 +177,7 @@ export class ContributionResolver {
    * Requirements: 5.1, 5.2
    */
   @Mutation(() => Contribution)
-  @Roles('admin')
+  @Roles(RoleList.Admin)
   @UseGuards(GqlAuthGuard, RolesGuard)
   async adminCreateContribution(
     @Args('input') input: AdminCreateContributionInput,
@@ -220,7 +220,7 @@ export class ContributionResolver {
    * Requirements: 6.1, 6.2, 6.3
    */
   @Mutation(() => Contribution)
-  @Roles('admin')
+  @Roles(RoleList.Admin)
   @UseGuards(GqlAuthGuard, RolesGuard)
   async updateContributionStatus(
     @Args('contributionId') contributionId: string,
@@ -235,7 +235,7 @@ export class ContributionResolver {
    * Requirements: 8.1
    */
   @Mutation(() => Contribution)
-  @Roles('admin')
+  @Roles(RoleList.Admin)
   @UseGuards(GqlAuthGuard, RolesGuard)
   async processContributionRefund(
     @Args('contributionId') contributionId: string,
@@ -249,7 +249,7 @@ export class ContributionResolver {
    * Requirements: 12.6
    */
   @Mutation(() => BulkUpdateResult)
-  @Roles('admin')
+  @Roles(RoleList.Admin)
   @UseGuards(GqlAuthGuard, RolesGuard)
   async bulkUpdateContributionStatus(
     @Args('contributionIds', { type: () => [String] }) contributionIds: string[],
