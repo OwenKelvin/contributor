@@ -11,14 +11,14 @@ import {
 import { Contribution } from './contribution.model';
 
 export enum TransactionType {
-  PAYMENT = 'payment',
-  REFUND = 'refund',
+  Payment = 'PAYMENT',
+  Refund = 'REFUND',
 }
 
 export enum TransactionStatus {
-  PENDING = 'pending',
-  SUCCESS = 'success',
-  FAILED = 'failed',
+  Pending = 'PENDING',
+  Success = 'SUCCESS',
+  Failed = 'FAILED',
 }
 
 
@@ -60,7 +60,7 @@ export class Transaction extends Model<Transaction> {
   @Column({
     type: DataType.ENUM(...Object.values(TransactionStatus)),
     allowNull: false,
-    defaultValue: TransactionStatus.PENDING,
+    defaultValue: TransactionStatus.Pending,
   })
   status: TransactionStatus;
 

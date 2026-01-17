@@ -38,11 +38,11 @@ export class DashboardService {
       this.contributionModel.count({ where: dateFilter }),
       this.getTotalRevenue(dateFilter),
       this.contributionModel.count({
-        where: { ...dateFilter, paymentStatus: PaymentStatus.PENDING },
+        where: { ...dateFilter, paymentStatus: PaymentStatus.Pending },
       }),
       this.getPendingContributionsAmount(dateFilter),
       this.projectModel.count({
-        where: { ...dateFilter, status: ProjectStatus.ACTIVE },
+        where: { ...dateFilter, status: ProjectStatus.Active },
       }),
       this.getProjectsByStatus(dateFilter),
       this.getContributionsByStatus(dateFilter),
@@ -71,7 +71,7 @@ export class DashboardService {
         createdAt: {
           [Op.between]: [startDate, endDate],
         },
-        paymentStatus: PaymentStatus.PAID,
+        paymentStatus: PaymentStatus.Paid,
       },
       attributes: ['createdAt', 'amount'],
       order: [['createdAt', 'ASC']],
@@ -97,7 +97,7 @@ export class DashboardService {
     const contributions = await this.contributionModel.findAll({
       where: {
         ...dateFilter,
-        paymentStatus: PaymentStatus.PAID,
+        paymentStatus: PaymentStatus.Paid,
       },
       include: [
         {
@@ -133,7 +133,7 @@ export class DashboardService {
     const result = await this.contributionModel.sum('amount', {
       where: {
         ...dateFilter,
-        paymentStatus: PaymentStatus.PAID,
+        paymentStatus: PaymentStatus.Paid,
       },
     });
     return result || 0;
@@ -143,7 +143,7 @@ export class DashboardService {
     const result = await this.contributionModel.sum('amount', {
       where: {
         ...dateFilter,
-        paymentStatus: PaymentStatus.PENDING,
+        paymentStatus: PaymentStatus.Pending,
       },
     });
     return result || 0;

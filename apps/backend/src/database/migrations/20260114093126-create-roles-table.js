@@ -16,6 +16,10 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
+      description: {
+        type: Sequelize.TEXT,
+        allowNull: false,
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
@@ -30,13 +34,15 @@ module.exports = {
     await queryInterface.bulkInsert('roles', [
       {
         id: uuidv4(),
-        name: 'admin',
+        name: 'ADMIN',
+        description: 'Full system access with all administrative privileges',
         created_at: new Date(),
         updated_at: new Date(),
       },
       {
         id: uuidv4(),
-        name: 'client',
+        name: 'CLIENT',
+        description: 'Regular user access for clients and contributors',
         created_at: new Date(),
         updated_at: new Date(),
       },

@@ -5,6 +5,7 @@ import {
   BadRequestException,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { GraphQLError } from 'graphql/error';
 import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { Op, WhereOptions } from 'sequelize';
@@ -29,6 +30,7 @@ import { ProjectContributionSummary } from './types/project-contribution-summary
 import { UserContributionSummary } from './types/user-contribution-summary.type';
 import { TimeSeriesPoint } from './types/time-series-point.type';
 import { BulkUpdateResult, BulkUpdateError } from './types/bulk-update-result.type';
+import { TransactionStatus, TransactionType } from './transaction.model';
 
 /**
  * Contribution Service
@@ -78,7 +80,7 @@ export class ContributionService {
         userId,
         projectId: input.projectId,
         amount: input.amount,
-        paymentStatus: PaymentStatus.PENDING,
+        paymentStatus: PaymentStatus.Pending,
         notes: input.notes,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -121,20 +123,32 @@ export class ContributionService {
   /**
    * Validate that a project exists and is active
    * @param projectId - Project ID to validate
-   * @throws NotFoundException if project not found
-   * @throws UnprocessableEntityException if project is not active
+   * @throws GraphQLError if project not found or not active
    */
   private async validateProject(projectId: string): Promise<void> {
     const project = await this.projectModel.findByPk(projectId);
 
     if (!project) {
-      throw new NotFoundException(`Project with ID ${projectId} not found`);
+      throw new GraphQLError('Validation failed', {
+        extensions: {
+          code: 'BAD_USER_INPUT',
+          validationErrors: {
+            projectId: `Project with ID ${projectId} not found`,
+          },
+        },
+      });
     }
 
-    if (project.status !== ProjectStatus.ACTIVE) {
-      throw new UnprocessableEntityException(
-        `Project ${projectId} is not active. Current status: ${project.status}`
-      );
+    if (project.status !== ProjectStatus.Active) {
+      console.log(project.status, ProjectStatus.Active)
+      throw new GraphQLError('Validation failed', {
+        extensions: {
+          code: 'BAD_USER_INPUT',
+          validationErrors: {
+            projectId: `Project "${project.title}" is not active. Current status: ${project.status}`,
+          },
+        },
+      });
     }
   }
 
@@ -188,7 +202,7 @@ export class ContributionService {
     const contribution = await this.getContributionById(contributionId);
 
     // Validate contribution is in pending status
-    if (contribution.paymentStatus !== PaymentStatus.PENDING) {
+    if (contribution.paymentStatus !== PaymentStatus.Pending) {
       throw new UnprocessableEntityException(
         `Cannot process payment for contribution with status ${contribution.paymentStatus}. Only pending contributions can be paid.`
       );
@@ -209,7 +223,7 @@ export class ContributionService {
         // Update contribution status to paid
         await contribution.update(
           {
-            paymentStatus: PaymentStatus.PAID,
+            paymentStatus: PaymentStatus.Paid,
             paidAt: new Date(),
             failureReason: undefined,
           },
@@ -245,7 +259,7 @@ export class ContributionService {
         // Payment failed - update contribution status
         await contribution.update(
           {
-            paymentStatus: PaymentStatus.FAILED,
+            paymentStatus: PaymentStatus.Failed,
             failureReason: transactionResult.errorMessage || 'Payment processing failed',
           },
           { transaction }
@@ -618,7 +632,7 @@ export class ContributionService {
           paymentStatus: input.paymentStatus,
           notes: input.notes,
           paymentReference: input.paymentReference,
-          paidAt: input.paymentStatus === PaymentStatus.PAID ? new Date() : undefined,
+          paidAt: input.paymentStatus === PaymentStatus.Paid ? new Date() : undefined,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -626,7 +640,7 @@ export class ContributionService {
       );
 
       // If status is paid, update project amount
-      if (input.paymentStatus === PaymentStatus.PAID) {
+      if (input.paymentStatus === PaymentStatus.Paid) {
         await this.updateProjectAmount(
           input.projectId,
           input.amount,
@@ -739,12 +753,12 @@ export class ContributionService {
       };
 
       // Set paidAt timestamp when transitioning to paid
-      if (newStatus === PaymentStatus.PAID && !contribution.paidAt) {
+      if (newStatus === PaymentStatus.Paid && !contribution.paidAt) {
         updateData.paidAt = new Date();
       }
 
       // Clear paidAt when transitioning away from paid
-      if (previousStatus === PaymentStatus.PAID && newStatus !== PaymentStatus.PAID) {
+      if (previousStatus === PaymentStatus.Paid && newStatus !== PaymentStatus.Paid) {
         updateData.paidAt = null;
       }
 
@@ -801,7 +815,7 @@ export class ContributionService {
     const contribution = await this.getContributionById(contributionId);
 
     // Validate contribution is in paid status
-    if (contribution.paymentStatus !== PaymentStatus.PAID) {
+    if (contribution.paymentStatus !== PaymentStatus.Paid) {
       throw new UnprocessableEntityException(
         `Cannot process refund for contribution with status ${contribution.paymentStatus}. Only paid contributions can be refunded.`
       );
@@ -813,7 +827,7 @@ export class ContributionService {
     );
 
     const originalPaymentTransaction = transactions.find(
-      (t) => t.transactionType === 'payment' && t.status === 'success'
+      (t) => t.transactionType === TransactionType.Payment && t.status === TransactionStatus.Success
     );
 
     if (!originalPaymentTransaction || !originalPaymentTransaction.gatewayTransactionId) {
@@ -838,7 +852,7 @@ export class ContributionService {
         // Update contribution status to refunded
         await contribution.update(
           {
-            paymentStatus: PaymentStatus.REFUNDED,
+            paymentStatus: PaymentStatus.Refunded,
             updatedAt: new Date(),
           },
           { transaction }
@@ -855,8 +869,8 @@ export class ContributionService {
         // Create audit log entry
         await this.createAuditLog(
           contributionId,
-          PaymentStatus.PAID,
-          PaymentStatus.REFUNDED,
+          PaymentStatus.Paid,
+          PaymentStatus.Refunded,
           reason,
           adminUserId,
           transaction
@@ -1017,24 +1031,24 @@ export class ContributionService {
     amount: number
   ): number {
     // Status transitions that increase project amount
-    if (previousStatus === PaymentStatus.PENDING && newStatus === PaymentStatus.PAID) {
+    if (previousStatus === PaymentStatus.Pending && newStatus === PaymentStatus.Paid) {
       return amount; // Add amount
     }
 
-    if (previousStatus === PaymentStatus.FAILED && newStatus === PaymentStatus.PAID) {
+    if (previousStatus === PaymentStatus.Failed && newStatus === PaymentStatus.Paid) {
       return amount; // Add amount
     }
 
     // Status transitions that decrease project amount
-    if (previousStatus === PaymentStatus.PAID && newStatus === PaymentStatus.REFUNDED) {
+    if (previousStatus === PaymentStatus.Paid && newStatus === PaymentStatus.Refunded) {
       return -amount; // Subtract amount
     }
 
-    if (previousStatus === PaymentStatus.PAID && newStatus === PaymentStatus.FAILED) {
+    if (previousStatus === PaymentStatus.Paid && newStatus === PaymentStatus.Failed) {
       return -amount; // Subtract amount
     }
 
-    if (previousStatus === PaymentStatus.PAID && newStatus === PaymentStatus.PENDING) {
+    if (previousStatus === PaymentStatus.Paid && newStatus === PaymentStatus.Pending) {
       return -amount; // Subtract amount
     }
 
@@ -1144,19 +1158,19 @@ export class ContributionService {
       totalAmount += amount;
 
       switch (group.paymentStatus) {
-        case PaymentStatus.PENDING:
+        case PaymentStatus.Pending:
           pendingCount = count;
           pendingAmount = amount;
           break;
-        case PaymentStatus.PAID:
+        case PaymentStatus.Paid:
           paidCount = count;
           paidAmount = amount;
           break;
-        case PaymentStatus.FAILED:
+        case PaymentStatus.Failed:
           failedCount = count;
           failedAmount = amount;
           break;
-        case PaymentStatus.REFUNDED:
+        case PaymentStatus.Refunded:
           refundedCount = count;
           refundedAmount = amount;
           break;

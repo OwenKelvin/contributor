@@ -11,11 +11,11 @@ import {
 import { Category } from '../category/category.model';
 
 export enum ProjectStatus {
-  DRAFT = 'draft',
-  ACTIVE = 'active',
-  PENDING = 'pending',
-  COMPLETED = 'completed',
-  ARCHIVED = 'archived',
+  Draft = 'DRAFT',
+  Active = 'ACTIVE',
+  Pending = 'PENDING',
+  Completed = 'COMPLETED',
+  Archived = 'ARCHIVED',
 }
 
 
@@ -80,7 +80,7 @@ export class Project extends Model<Project> {
   @Column({
     type: DataType.ENUM(...Object.values(ProjectStatus)),
     allowNull: false,
-    defaultValue: ProjectStatus.DRAFT,
+    defaultValue: ProjectStatus.Draft,
     get() {
       const rawValue = this.getDataValue('status');
       // Convert lowercase database value to uppercase enum key for GraphQL

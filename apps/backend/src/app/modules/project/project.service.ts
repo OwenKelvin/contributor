@@ -101,18 +101,18 @@ export class ProjectService {
   }
 
   async getActiveProjects(pagination?: PaginationInput): Promise<ProjectConnection> {
-    return this.getAllProjects(undefined, { status: ProjectStatus.ACTIVE }, pagination);
+    return this.getAllProjects(undefined, { status: ProjectStatus.Active }, pagination);
   }
 
   async getPendingProjects(pagination?: PaginationInput): Promise<ProjectConnection> {
-    return this.getAllProjects(undefined, { status: ProjectStatus.PENDING }, pagination);
+    return this.getAllProjects(undefined, { status: ProjectStatus.Pending }, pagination);
   }
 
   async getArchivedProjects(
     filter?: ArchivedProjectFilter,
     pagination?: PaginationInput,
   ): Promise<ProjectConnection> {
-    const where: any = { status: ProjectStatus.ARCHIVED };
+    const where: any = { status: ProjectStatus.Archived };
 
     if (filter?.archivedAfter) {
       where.updatedAt = { [Op.gte]: filter.archivedAfter };
@@ -215,12 +215,12 @@ export class ProjectService {
   async approveProject(id: string, notes?: string): Promise<Project> {
     const project = await this.getProjectById(id);
 
-    if (project.status !== ProjectStatus.PENDING) {
+    if (project.status !== ProjectStatus.Pending) {
       throw new Error('Only pending projects can be approved');
     }
 
     await project.update({
-      status: ProjectStatus.ACTIVE,
+      status: ProjectStatus.Active,
       // TODO: Store approval notes if needed
     });
 
@@ -230,12 +230,12 @@ export class ProjectService {
   async rejectProject(id: string, reason: string): Promise<Project> {
     const project = await this.getProjectById(id);
 
-    if (project.status !== ProjectStatus.PENDING) {
+    if (project.status !== ProjectStatus.Pending) {
       throw new Error('Only pending projects can be rejected');
     }
 
     await project.update({
-      status: ProjectStatus.DRAFT,
+      status: ProjectStatus.Draft,
       // TODO: Store rejection reason if needed
     });
 

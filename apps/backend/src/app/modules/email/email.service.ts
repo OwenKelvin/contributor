@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-import { Contribution } from '../contribution/contribution.model';
+import { Contribution, PaymentStatus } from '../contribution/contribution.model';
 
 @Injectable()
 export class EmailService {
@@ -84,7 +84,7 @@ export class EmailService {
       projectTitle: contribution.project.title,
       contributorName: `${contribution.user.firstName} ${contribution.user.lastName}`,
       createdAt: contribution.createdAt,
-      isPaid: contribution.paymentStatus === 'paid',
+      isPaid: contribution.paymentStatus === PaymentStatus.Paid,
       paymentReference: contribution.paymentReference,
       notes: contribution.notes,
     });

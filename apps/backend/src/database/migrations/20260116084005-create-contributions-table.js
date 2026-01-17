@@ -38,9 +38,9 @@ module.exports = {
         },
       },
       payment_status: {
-        type: Sequelize.ENUM('pending', 'paid', 'failed', 'refunded'),
+        type: Sequelize.ENUM('PENDING', 'PAID', 'FAILED', 'REFUNDED'),
         allowNull: false,
-        defaultValue: 'pending',
+        defaultValue: 'PENDING',
       },
       notes: {
         type: Sequelize.TEXT,

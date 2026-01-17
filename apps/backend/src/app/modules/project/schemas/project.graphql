@@ -15,11 +15,11 @@ type Project {
 }
 
 enum ProjectStatus {
-  DRAFT
-  ACTIVE
-  PENDING
-  COMPLETED
-  ARCHIVED
+  draft
+  active
+  pending
+  completed
+  archived
 }
 
 scalar DateTime

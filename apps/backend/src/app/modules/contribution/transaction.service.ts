@@ -95,9 +95,9 @@ export class TransactionService {
     // Create initial pending transaction
     const transaction = await this.createTransaction({
       contributionId,
-      transactionType: TransactionType.PAYMENT,
+      transactionType: TransactionType.Payment,
       amount,
-      status: TransactionStatus.PENDING,
+      status: TransactionStatus.Pending,
     });
 
     try {
@@ -110,7 +110,7 @@ export class TransactionService {
       // Update transaction with gateway response
       if (paymentResult.success) {
         await transaction.update({
-          status: TransactionStatus.SUCCESS,
+          status: TransactionStatus.Success,
           gatewayTransactionId: paymentResult.checkoutRequestId,
           gatewayResponse: JSON.stringify(paymentResult),
         });
@@ -124,7 +124,7 @@ export class TransactionService {
         };
       } else {
         await transaction.update({
-          status: TransactionStatus.FAILED,
+          status: TransactionStatus.Failed,
           errorCode: paymentResult.errorCode,
           errorMessage: paymentResult.errorMessage,
           gatewayResponse: JSON.stringify(paymentResult),
@@ -142,7 +142,7 @@ export class TransactionService {
     } catch (error) {
       // Update transaction with error
       await transaction.update({
-        status: TransactionStatus.FAILED,
+        status: TransactionStatus.Failed,
         errorCode: 'GATEWAY_ERROR',
         errorMessage: error.message,
       });
@@ -181,9 +181,9 @@ export class TransactionService {
     // Create initial pending refund transaction
     const transaction = await this.createTransaction({
       contributionId,
-      transactionType: TransactionType.REFUND,
+      transactionType: TransactionType.Refund,
       amount,
-      status: TransactionStatus.PENDING,
+      status: TransactionStatus.Pending,
     });
 
     try {
@@ -198,7 +198,7 @@ export class TransactionService {
       // Update transaction with gateway response
       if (refundResult.success) {
         await transaction.update({
-          status: TransactionStatus.SUCCESS,
+          status: TransactionStatus.Success,
           gatewayTransactionId: refundResult.conversationId,
           gatewayResponse: JSON.stringify(refundResult),
         });
@@ -212,7 +212,7 @@ export class TransactionService {
         };
       } else {
         await transaction.update({
-          status: TransactionStatus.FAILED,
+          status: TransactionStatus.Failed,
           errorCode: refundResult.errorCode,
           errorMessage: refundResult.errorMessage,
           gatewayResponse: JSON.stringify(refundResult),
@@ -230,7 +230,7 @@ export class TransactionService {
     } catch (error) {
       // Update transaction with error
       await transaction.update({
-        status: TransactionStatus.FAILED,
+        status: TransactionStatus.Failed,
         errorCode: 'GATEWAY_ERROR',
         errorMessage: error.message,
       });
