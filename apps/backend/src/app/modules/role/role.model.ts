@@ -13,6 +13,7 @@ import { User } from '../user/user.model';
 import { UserRole } from './user-role.model';
 
 interface IRole {
+  id?: string;
   name: string;
 }
 

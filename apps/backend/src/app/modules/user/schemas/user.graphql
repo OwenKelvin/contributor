@@ -5,4 +5,8 @@ type User {
   lastName: String
   phoneNumber: String
   roles: [Role!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
+
+scalar DateTime

@@ -33,6 +33,7 @@ import { ContributionModule } from './modules/contribution/contribution.module';
     FileModule,
     PaymentModule,
     ContributionModule,
+    UserModule
   ],
 })
 export class AppModule {}
