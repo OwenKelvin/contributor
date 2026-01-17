@@ -6,6 +6,7 @@ import { ContributionFormComponent } from './pages/form/contribution-form.compon
 import { ContributionDetailComponent } from './pages/detail/contribution-detail.component';
 import { PendingContributionsComponent } from './pages/pending/pending-contributions.component';
 import { ContributionReportsComponent } from './pages/reports/contribution-reports.component';
+import { TransactionLogsComponent } from './pages/transactions/transaction-logs.component';
 
 /**
  * Routes for the contributions management module.
@@ -52,11 +53,10 @@ export const contributionsRoutes: Routes = [
         component: ContributionListComponent,
         data: { filter: { paymentStatus: 'REFUNDED' } },
       },
-      // Transaction logs route (placeholder - will be implemented in task 25)
+      // Transaction logs route
       {
         path: 'transactions',
-        component: ContributionListComponent, // Temporary - will be replaced with TransactionLogsComponent
-        data: { isTransactionsView: true },
+        component: TransactionLogsComponent,
       },
       // View contribution detail (must be last to avoid conflicts)
       {
