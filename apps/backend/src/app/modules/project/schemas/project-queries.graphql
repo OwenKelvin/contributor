@@ -11,8 +11,14 @@ extend type Query {
 }
 
 type ProjectConnection {
-  projects: [Project!]!
+  edges: [ProjectEdge!]!
   pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type ProjectEdge {
+  cursor: String!
+  node: Project!
 }
 
 type PageInfo {

@@ -1,6 +1,6 @@
-import { Component, input } from '@angular/core';
+import { Component, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ITransaction, ITransactionStatus, ITransactionType } from '@nyots/data-source';
+import { ITransactionStatus, ITransactionType } from '@nyots/data-source';
 import {
   HlmCard,
   HlmCardContent,
@@ -8,7 +8,7 @@ import {
   HlmCardHeader,
   HlmCardTitle,
 } from '@nyots/ui/card';
-import { HlmBadge } from '@nyots/ui/badge';
+import { BadgeVariants, HlmBadge } from '@nyots/ui/badge';
 import { HlmIcon } from '@nyots/ui/icon';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
@@ -75,7 +75,7 @@ import { IGetContributionQuery } from '@nyots/data-source/contributions';
           </div>
         } @else {
           <div class="space-y-4">
-            @for (transaction of transactions(); track transaction.id) {
+            @for (transaction of transactionsWithMetadata(); track transaction.id) {
               <div class="flex gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors">
                 <!-- Transaction Icon -->
                 <div class="flex-shrink-0">
@@ -83,8 +83,9 @@ import { IGetContributionQuery } from '@nyots/data-source/contributions';
                     @case ('PAYMENT') {
                       <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center">
                         <ng-icon
+                          hlmIcon
                           name="lucideArrowDownCircle"
-                          size="20"
+                          size="lg"
                           class="text-blue-600 dark:text-blue-400"
                         />
                       </div>
@@ -92,8 +93,9 @@ import { IGetContributionQuery } from '@nyots/data-source/contributions';
                     @case ('REFUND') {
                       <div class="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center">
                         <ng-icon
+                          hlmIcon
                           name="lucideArrowUpCircle"
-                          size="20"
+                          size="lg"
                           class="text-orange-600 dark:text-orange-400"
                         />
                       </div>
@@ -106,7 +108,7 @@ import { IGetContributionQuery } from '@nyots/data-source/contributions';
                   <div class="flex items-start justify-between gap-2 mb-2">
                     <div>
                       <h4 class="font-medium">
-                        {{ getTransactionTypeLabel(transaction.transactionType) }}
+                        {{ transaction.typeLabel }}
                       </h4>
                       <p class="text-sm text-muted-foreground">
                         {{ transaction.createdAt | date: 'medium' }}
@@ -116,8 +118,8 @@ import { IGetContributionQuery } from '@nyots/data-source/contributions';
                       <span class="text-lg font-semibold">
                         {{ transaction.amount | currency }}
                       </span>
-                      <span hlmBadge [variant]="getStatusVariant(transaction.status)">
-                        {{ getStatusLabel(transaction.status) }}
+                      <span hlmBadge [variant]="transaction.statusVariant">
+                        {{ transaction.statusLabel }}
                       </span>
                     </div>
                   </div>
@@ -139,12 +141,13 @@ import { IGetContributionQuery } from '@nyots/data-source/contributions';
                   }
 
                   <!-- Error Details (for failed transactions) -->
-                  @if (transaction.status === 'FAILED' && (transaction.errorCode || transaction.errorMessage)) {
+                  @if (transaction.status === ITransactionStatus.Failed && (transaction.errorCode || transaction.errorMessage)) {
                     <div class="mt-3 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
                       <div class="flex items-start gap-2">
                         <ng-icon
+                          hlmIcon
                           name="lucideXCircle"
-                          size="16"
+                          size="base"
                           class="text-destructive mt-0.5"
                         />
                         <div class="flex-1 min-w-0">
@@ -183,9 +186,21 @@ export class TransactionHistoryComponent {
   transactions = input.required<IGetContributionQuery['getContribution']['transactions']>();
 
   /**
+   * Computed property that enriches transactions with metadata
+   */
+  transactionsWithMetadata = computed(() => {
+    return this.transactions().map(transaction => ({
+      ...transaction,
+      typeLabel: this.getTransactionTypeLabel(transaction.transactionType),
+      statusLabel: this.getStatusLabel(transaction.status),
+      statusVariant: this.getStatusVariant(transaction.status),
+    }));
+  });
+
+  /**
    * Get human-readable label for transaction type
    */
-  getTransactionTypeLabel(type: ITransactionType): string {
+  private getTransactionTypeLabel(type: ITransactionType): string {
     switch (type) {
       case 'PAYMENT':
         return 'Payment';
@@ -199,7 +214,7 @@ export class TransactionHistoryComponent {
   /**
    * Get human-readable label for transaction status
    */
-  getStatusLabel(status: ITransactionStatus): string {
+  private getStatusLabel(status: ITransactionStatus): string {
     switch (status) {
       case 'SUCCESS':
         return 'Success';
@@ -215,7 +230,7 @@ export class TransactionHistoryComponent {
   /**
    * Get badge variant for transaction status
    */
-  getStatusVariant(status: ITransactionStatus): string {
+  private getStatusVariant(status: ITransactionStatus): BadgeVariants['variant'] {
     switch (status) {
       case 'SUCCESS':
         return 'default'; // Green
@@ -227,4 +242,6 @@ export class TransactionHistoryComponent {
         return 'outline';
     }
   }
+
+  protected readonly ITransactionStatus = ITransactionStatus;
 }

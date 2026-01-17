@@ -319,8 +319,9 @@ export type IProject = {
 };
 
 export type IProjectConnection = {
+  edges: Array<IProjectEdge>;
   pageInfo: IPageInfo;
-  projects: Array<IProject>;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type IProjectContributionSummary = {
@@ -328,6 +329,11 @@ export type IProjectContributionSummary = {
   projectId: Scalars['ID']['output'];
   projectTitle: Scalars['String']['output'];
   totalAmount: Scalars['Float']['output'];
+};
+
+export type IProjectEdge = {
+  cursor: Scalars['String']['output'];
+  node: IProject;
 };
 
 export type IProjectFilter = {

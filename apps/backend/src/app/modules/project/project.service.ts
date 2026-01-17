@@ -69,16 +69,22 @@ export class ProjectService {
       projects.pop();
     }
 
+    const edges = projects.map((project, index) => ({
+      node: project,
+      cursor: Buffer.from((offset + index).toString()).toString('base64'),
+    }));
+
     const pageInfo: PageInfo = {
       hasNextPage,
       hasPreviousPage,
-      startCursor: projects.length > 0 ? Buffer.from(offset.toString()).toString('base64') : null,
-      endCursor: hasNextPage ? Buffer.from((offset + limit - 1).toString()).toString('base64') : null,
+      startCursor: edges.length > 0 ? edges[0].cursor : null,
+      endCursor: edges.length > 0 ? edges[edges.length - 1].cursor : null,
     };
 
     return {
-      projects,
+      edges,
       pageInfo,
+      totalCount: count,
     };
   }
 
@@ -121,7 +127,7 @@ export class ProjectService {
     const limit = pagination?.first || 20;
     const offset = pagination?.after ? parseInt(Buffer.from(pagination.after, 'base64').toString('ascii')) + 1 : 0;
 
-    const { rows: projects } = await this.projectModel.findAndCountAll({
+    const { rows: projects, count } = await this.projectModel.findAndCountAll({
       where,
       include: [Category],
       limit: limit + 1,
@@ -136,16 +142,22 @@ export class ProjectService {
       projects.pop();
     }
 
+    const edges = projects.map((project, index) => ({
+        node: project,
+        cursor: Buffer.from((offset + index).toString()).toString('base64'),
+    }));
+
     const pageInfo: PageInfo = {
       hasNextPage,
       hasPreviousPage,
-      startCursor: projects.length > 0 ? Buffer.from(offset.toString()).toString('base64') : null,
-      endCursor: hasNextPage ? Buffer.from((offset + limit - 1).toString()).toString('base64') : null,
+      startCursor: edges.length > 0 ? edges[0].cursor : null,
+      endCursor: edges.length > 0 ? edges[edges.length - 1].cursor : null,
     };
 
     return {
-      projects,
+      edges,
       pageInfo,
+      totalCount: count,
     };
   }
 

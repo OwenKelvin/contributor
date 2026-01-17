@@ -18,13 +18,12 @@ import { HlmIcon } from '@nyots/ui/icon';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideLoader2, lucideSave, lucideX } from '@ng-icons/lucide';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
-import { HlmSelectImports } from '@nyots/ui/select';
 import { BrnDialogRef, injectBrnDialogContext } from '@spartan-ng/brain/dialog';
 import { toast } from 'ngx-sonner';
 import { UserAutocompleteComponent } from '../user-autocomplete/user-autocomplete.component';
-import { ContributionService } from '@nyots/data-source/contributions';
-import { ProjectService } from '@nyots/data-source/projects';
-import { IPaymentStatus, IProject, IContribution } from '@nyots/data-source';
+import { ContributionService, IAdminCreateContributionMutation } from '@nyots/data-source/contributions';
+import { IGetAllProjectsQuery, ProjectService } from '@nyots/data-source/projects';
+import { IPaymentStatus } from '@nyots/data-source';
 
 // Context type for the dialog - can be extended with properties as needed
 export type ContributionFormDialogContext = Record<string, never>;
@@ -41,7 +40,6 @@ export type ContributionFormDialogContext = Record<string, never>;
     HlmIcon,
     NgIcon,
     BrnSelectImports,
-    HlmSelectImports,
     UserAutocompleteComponent,
   ],
   providers: [
@@ -217,12 +215,12 @@ export class ContributionFormDialogComponent {
   private dialogContext = injectBrnDialogContext<ContributionFormDialogContext>({ optional: true });
 
   // Output event for successful creation
-  contributionCreated = output<IContribution>();
+  contributionCreated = output<IAdminCreateContributionMutation['adminCreateContribution']>();
 
   // Form state
   form: FormGroup;
   submitting = signal(false);
-  projects = signal<IProject[]>([]);
+  projects = signal<IGetAllProjectsQuery['getAllProjects']['edges'][number]['node'][]>([]);
   loadingProjects = signal(false);
 
   // Expose PaymentStatus enum to template
@@ -278,7 +276,7 @@ export class ContributionFormDialogComponent {
     this.submitting.set(true);
     try {
       const formValue = this.form.value;
-      
+
       // Create contribution using admin endpoint
       const contribution = await this.contributionService.adminCreateContribution({
         userId: formValue.userId,
@@ -302,12 +300,12 @@ export class ContributionFormDialogComponent {
       this.dialogRef.close(contribution);
     } catch (error: unknown) {
       console.error('Error creating contribution:', error);
-      
+
       // Extract error message from GraphQL error
-      const errorMessage = error && typeof error === 'object' && 'message' in error 
-        ? String(error.message) 
+      const errorMessage = error && typeof error === 'object' && 'message' in error
+        ? String(error.message)
         : 'An unexpected error occurred';
-      
+
       toast.error('Failed to create contribution', {
         description: errorMessage,
       });
