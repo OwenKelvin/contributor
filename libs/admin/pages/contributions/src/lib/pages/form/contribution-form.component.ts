@@ -31,6 +31,12 @@ import { UserAutocompleteComponent } from '../../components/user-autocomplete/us
 import { ContributionService } from '@nyots/data-source/contributions';
 import { IGetAllProjectsQuery, ProjectService } from '@nyots/data-source/projects';
 import { IPaymentStatus } from '@nyots/data-source';
+import { extractErrorMessage } from '@nyots/data-source/helpers';
+import { 
+  amountValidator, 
+  projectExistsValidator, 
+  getValidationErrorMessage 
+} from '../../validators/contribution.validators';
 
 @Component({
   selector: 'nyots-contribution-form',
@@ -78,8 +84,8 @@ import { IPaymentStatus } from '@nyots/data-source';
                 formControlName="userId"
                 placeholder="Search for user by name or email..."
               />
-              @if (form.get('userId')?.hasError('required') && form.get('userId')?.touched) {
-                <p class="text-sm text-destructive">User is required</p>
+              @if (form.get('userId')?.invalid && form.get('userId')?.touched) {
+                <p class="text-sm text-destructive">{{ getErrorMessage('userId') }}</p>
               }
             </div>
 
@@ -100,8 +106,14 @@ import { IPaymentStatus } from '@nyots/data-source';
                   <option [value]="project.id">{{ project.title }}</option>
                 }
               </select>
-              @if (form.get('projectId')?.hasError('required') && form.get('projectId')?.touched) {
-                <p class="text-sm text-destructive">Project is required</p>
+              @if (form.get('projectId')?.invalid && form.get('projectId')?.touched) {
+                <p class="text-sm text-destructive">{{ getErrorMessage('projectId') }}</p>
+              }
+              @if (form.get('projectId')?.pending) {
+                <p class="text-sm text-muted-foreground">
+                  <ng-icon name="lucideLoader2" hlm size="sm" class="inline animate-spin mr-1" />
+                  Validating project...
+                </p>
               }
             </div>
 
@@ -120,12 +132,12 @@ import { IPaymentStatus } from '@nyots/data-source';
                 min="0.01"
                 [attr.aria-label]="'Contribution amount'"
               />
-              @if (form.get('amount')?.hasError('required') && form.get('amount')?.touched) {
-                <p class="text-sm text-destructive">Amount is required</p>
+              @if (form.get('amount')?.invalid && form.get('amount')?.touched) {
+                <p class="text-sm text-destructive">{{ getErrorMessage('amount') }}</p>
               }
-              @if (form.get('amount')?.hasError('min') && form.get('amount')?.touched) {
-                <p class="text-sm text-destructive">Amount must be greater than 0</p>
-              }
+              <p class="text-sm text-muted-foreground">
+                Enter amount with up to 2 decimal places (e.g., 100.50)
+              </p>
             </div>
 
             <!-- Payment Status -->
@@ -237,11 +249,17 @@ export class ContributionFormComponent implements OnInit {
     this.form = this.fb.group({
       userId: ['', Validators.required],
       projectId: ['', Validators.required],
-      amount: [null, [Validators.required, Validators.min(0.01)]],
+      amount: [null, [Validators.required, amountValidator()]],
       paymentStatus: [IPaymentStatus.Pending, Validators.required],
       paymentReference: [''],
       notes: [''],
     });
+
+    // Add async validator for project after form is created
+    const projectControl = this.form.get('projectId');
+    if (projectControl) {
+      projectControl.setAsyncValidators([projectExistsValidator(this.projectService)]);
+    }
   }
 
   async ngOnInit() {
@@ -303,10 +321,8 @@ export class ContributionFormComponent implements OnInit {
     } catch (error: unknown) {
       console.error('Error creating contribution:', error);
 
-      // Extract error message from GraphQL error
-      const errorMessage = error && typeof error === 'object' && 'message' in error
-        ? String(error.message)
-        : 'An unexpected error occurred';
+      // Extract user-friendly error message
+      const errorMessage = extractErrorMessage(error);
 
       toast.error('Failed to create contribution', {
         description: errorMessage,
@@ -321,5 +337,13 @@ export class ContributionFormComponent implements OnInit {
    */
   onCancel() {
     this.router.navigate(['/dashboard/contributions']);
+  }
+
+  /**
+   * Get validation error message for a form control
+   */
+  getErrorMessage(controlName: string): string | null {
+    const control = this.form.get(controlName);
+    return getValidationErrorMessage(control);
   }
 }

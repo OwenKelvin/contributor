@@ -26,6 +26,7 @@ export class EmailService {
       projectTitle: contribution.project.title,
       contributorName: `${contribution.user.firstName} ${contribution.user.lastName}`,
       paidAt: contribution.paidAt,
+      paymentReference: contribution.paymentReference,
     });
   }
 
@@ -63,7 +64,29 @@ export class EmailService {
       amount: contribution.amount,
       projectTitle: contribution.project.title,
       contributorName: `${contribution.user.firstName} ${contribution.user.lastName}`,
+      paidAt: contribution.paidAt,
+      refundDate: new Date(),
       reason: reason || 'Refund processed',
+    });
+  }
+
+  /**
+   * Send admin contribution confirmation email to contributor
+   * @param contribution - Contribution with user and project relationships loaded
+   */
+  async sendAdminContributionConfirmationEmail(
+    contribution: Contribution
+  ): Promise<void> {
+    await this.emailQueue.add('sendAdminContributionConfirmationEmail', {
+      to: contribution.user.email,
+      contributionId: contribution.id,
+      amount: contribution.amount,
+      projectTitle: contribution.project.title,
+      contributorName: `${contribution.user.firstName} ${contribution.user.lastName}`,
+      createdAt: contribution.createdAt,
+      isPaid: contribution.paymentStatus === 'paid',
+      paymentReference: contribution.paymentReference,
+      notes: contribution.notes,
     });
   }
 }

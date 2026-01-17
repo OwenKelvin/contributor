@@ -651,7 +651,21 @@ export class ContributionService {
       this.logger.log(`Admin contribution ${contribution.id} created successfully`);
 
       // Load relationships for return
-      return await this.getContributionById(contribution.id);
+      const createdContribution = await this.getContributionById(contribution.id);
+
+      // Send confirmation email if requested
+      if (input.sendEmail) {
+        this.emailService
+          .sendAdminContributionConfirmationEmail(createdContribution)
+          .catch((error) => {
+            this.logger.error(
+              `Failed to send admin contribution confirmation email: ${error.message}`,
+              error.stack
+            );
+          });
+      }
+
+      return createdContribution;
     } catch (error) {
       // Rollback transaction on any error
       await transaction.rollback();

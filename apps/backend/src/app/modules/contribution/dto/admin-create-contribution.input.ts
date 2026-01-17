@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsPositive, IsOptional, IsUUID, Min, IsEnum } from 'class-validator';
+import { IsNotEmpty, IsPositive, IsOptional, IsUUID, Min, IsEnum, IsBoolean } from 'class-validator';
 import { PaymentStatus } from '../contribution.model';
 
 export class AdminCreateContributionInput {
@@ -24,4 +24,8 @@ export class AdminCreateContributionInput {
 
   @IsOptional()
   paymentReference?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  sendEmail?: boolean;
 }
