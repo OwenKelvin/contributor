@@ -6,11 +6,13 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule,
-} from '@angular/forms';
+  form,
+  Field,
+  required,
+  submit,
+  validate,
+  FieldTree,
+} from '@angular/forms/signals';
 import { Router } from '@angular/router';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmInput } from '@nyots/ui/input';
@@ -25,25 +27,21 @@ import {
 import { HlmIcon } from '@nyots/ui/icon';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideLoader2, lucideSave, lucideX } from '@ng-icons/lucide';
-import { BrnSelectImports } from '@spartan-ng/brain/select';
 import { toast } from 'ngx-sonner';
 import { UserAutocompleteComponent } from '../../components/user-autocomplete/user-autocomplete.component';
 import { ContributionService } from '@nyots/data-source/contributions';
 import { IGetAllProjectsQuery, ProjectService } from '@nyots/data-source/projects';
-import { IPaymentStatus } from '@nyots/data-source';
-import { extractErrorMessage } from '@nyots/data-source/helpers';
-import { 
-  amountValidator, 
-  projectExistsValidator, 
-  getValidationErrorMessage 
-} from '../../validators/contribution.validators';
+import { IPaymentStatus, IAdminCreateContributionInput } from '@nyots/data-source';
+import { mapGraphqlValidationErrors } from '@nyots/data-source/helpers';
+import { GraphQLError } from 'graphql/error';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'nyots-contribution-form',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
+    Field,
     HlmButton,
     HlmInput,
     HlmLabel,
@@ -54,7 +52,6 @@ import {
     HlmCardTitle,
     HlmIcon,
     NgIcon,
-    BrnSelectImports,
     UserAutocompleteComponent,
   ],
   providers: [
@@ -74,18 +71,18 @@ import {
           </p>
         </div>
         <div hlmCardContent>
-          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+          <form (submit)="onSubmit($event)" class="space-y-6">
             <!-- User Selection -->
             <div class="space-y-2">
               <label hlmLabel for="userId">
                 User <span class="text-destructive">*</span>
               </label>
               <nyots-user-autocomplete
-                formControlName="userId"
+                [field]="contributionForm.userId"
                 placeholder="Search for user by name or email..."
               />
-              @if (form.get('userId')?.invalid && form.get('userId')?.touched) {
-                <p class="text-sm text-destructive">{{ getErrorMessage('userId') }}</p>
+              @if (contributionForm.userId().errors().length > 0) {
+                <p class="text-sm text-destructive">{{ contributionForm.userId().errors()[0].message }}</p>
               }
             </div>
 
@@ -97,7 +94,7 @@ import {
               <select
                 hlmInput
                 id="projectId"
-                formControlName="projectId"
+                [field]="contributionForm.projectId"
                 class="w-full"
                 [attr.aria-label]="'Select project'"
               >
@@ -106,14 +103,8 @@ import {
                   <option [value]="project.id">{{ project.title }}</option>
                 }
               </select>
-              @if (form.get('projectId')?.invalid && form.get('projectId')?.touched) {
-                <p class="text-sm text-destructive">{{ getErrorMessage('projectId') }}</p>
-              }
-              @if (form.get('projectId')?.pending) {
-                <p class="text-sm text-muted-foreground">
-                  <ng-icon name="lucideLoader2" hlm size="sm" class="inline animate-spin mr-1" />
-                  Validating project...
-                </p>
+              @if (contributionForm.projectId().errors().length > 0) {
+                <p class="text-sm text-destructive">{{ contributionForm.projectId().errors()[0].message }}</p>
               }
             </div>
 
@@ -126,14 +117,12 @@ import {
                 hlmInput
                 type="number"
                 id="amount"
-                formControlName="amount"
+                [field]="contributionForm.amount"
                 placeholder="0.00"
-                step="0.01"
-                min="0.01"
                 [attr.aria-label]="'Contribution amount'"
               />
-              @if (form.get('amount')?.invalid && form.get('amount')?.touched) {
-                <p class="text-sm text-destructive">{{ getErrorMessage('amount') }}</p>
+              @if (contributionForm.amount().errors().length > 0) {
+                <p class="text-sm text-destructive">{{ contributionForm.amount().errors()[0].message }}</p>
               }
               <p class="text-sm text-muted-foreground">
                 Enter amount with up to 2 decimal places (e.g., 100.50)
@@ -148,7 +137,7 @@ import {
               <select
                 hlmInput
                 id="paymentStatus"
-                formControlName="paymentStatus"
+                [field]="contributionForm.paymentStatus"
                 class="w-full"
                 [attr.aria-label]="'Payment status'"
               >
@@ -156,6 +145,9 @@ import {
                 <option [value]="PaymentStatus.Paid">Paid</option>
                 <option [value]="PaymentStatus.Failed">Failed</option>
               </select>
+              @if (contributionForm.paymentStatus().errors().length > 0) {
+                <p class="text-sm text-destructive">{{ contributionForm.paymentStatus().errors()[0].message }}</p>
+              }
             </div>
 
             <!-- Payment Reference (Optional) -->
@@ -167,10 +159,13 @@ import {
                 hlmInput
                 type="text"
                 id="paymentReference"
-                formControlName="paymentReference"
+                [field]="contributionForm.paymentReference"
                 placeholder="e.g., Check #1234, Bank Transfer Ref"
                 [attr.aria-label]="'Payment reference'"
               />
+              @if (contributionForm.paymentReference().errors().length > 0) {
+                <p class="text-sm text-destructive">{{ contributionForm.paymentReference().errors()[0].message }}</p>
+              }
               <p class="text-sm text-muted-foreground">
                 Enter a reference number for offline payments (check number, bank transfer reference, etc.)
               </p>
@@ -184,12 +179,15 @@ import {
               <textarea
                 hlmInput
                 id="notes"
-                formControlName="notes"
+                [field]="contributionForm.notes"
                 rows="3"
                 placeholder="Additional notes about this contribution..."
                 class="resize-none"
                 [attr.aria-label]="'Contribution notes'"
               ></textarea>
+              @if (contributionForm.notes().errors().length > 0) {
+                <p class="text-sm text-destructive">{{ contributionForm.notes().errors()[0].message }}</p>
+              }
             </div>
 
             <!-- Form Actions -->
@@ -207,7 +205,7 @@ import {
               <button
                 hlmBtn
                 type="submit"
-                [disabled]="form.invalid || submitting()"
+                [disabled]="!contributionForm().valid() || submitting()"
               >
                 @if (submitting()) {
                   <ng-icon name="lucideLoader2" hlm size="sm" class="mr-2 animate-spin" />
@@ -230,13 +228,11 @@ import {
   `],
 })
 export class ContributionFormComponent implements OnInit {
-  private fb = inject(FormBuilder);
   private contributionService = inject(ContributionService);
   private projectService = inject(ProjectService);
   private router = inject(Router);
 
   // Form state
-  form: FormGroup;
   submitting = signal(false);
   projects = signal<IGetAllProjectsQuery['getAllProjects']['edges'][number]['node'][]>([]);
   loadingProjects = signal(false);
@@ -244,23 +240,41 @@ export class ContributionFormComponent implements OnInit {
   // Expose PaymentStatus enum to template
   PaymentStatus = IPaymentStatus;
 
-  constructor() {
-    // Initialize form with validation
-    this.form = this.fb.group({
-      userId: ['', Validators.required],
-      projectId: ['', Validators.required],
-      amount: [null, [Validators.required, amountValidator()]],
-      paymentStatus: [IPaymentStatus.Pending, Validators.required],
-      paymentReference: [''],
-      notes: [''],
-    });
+  // Form model
+  private contributionModel = signal({
+    userId: '',
+    projectId: '',
+    amount: 0,
+    paymentStatus: IPaymentStatus.Pending,
+    paymentReference: '',
+    notes: '',
+  });
 
-    // Add async validator for project after form is created
-    const projectControl = this.form.get('projectId');
-    if (projectControl) {
-      projectControl.setAsyncValidators([projectExistsValidator(this.projectService)]);
-    }
-  }
+  // Create form with validation schema
+  protected contributionForm = form(this.contributionModel, (form) => {
+    required(form.userId, { message: 'User is required' });
+    required(form.projectId, { message: 'Project is required' });
+    required(form.amount, { message: 'Amount is required' });
+    validate(form.amount, ({ value }) => {
+      const amount = value();
+      if (amount === null || amount === undefined || amount <= 0) {
+        return {
+          kind: 'min',
+          message: 'Amount must be greater than 0',
+        };
+      }
+      // Check for max 2 decimal places
+      const decimalPlaces = (amount.toString().split('.')[1] || '').length;
+      if (decimalPlaces > 2) {
+        return {
+          kind: 'decimal',
+          message: 'Amount can have at most 2 decimal places',
+        };
+      }
+      return null;
+    });
+    required(form.paymentStatus, { message: 'Payment status is required' });
+  });
 
   async ngOnInit() {
     await this.loadProjects();
@@ -287,26 +301,23 @@ export class ContributionFormComponent implements OnInit {
   }
 
   /**
-   * Handle form submission
+   * Create contribution with error handling
    */
-  async onSubmit() {
-    if (this.form.invalid) {
-      // Mark all fields as touched to show validation errors
-      Object.keys(this.form.controls).forEach((key) => {
-        this.form.get(key)?.markAsTouched();
-      });
-      return;
-    }
-
-    this.submitting.set(true);
+  async createContribution(contributionForm: FieldTree<{
+    userId: string;
+    projectId: string;
+    amount: number;
+    paymentStatus: IPaymentStatus;
+    paymentReference: string;
+    notes: string;
+  }>) {
     try {
-      const formValue = this.form.value;
+      const formValue = contributionForm().value();
 
-      // Create contribution using admin endpoint
       await this.contributionService.adminCreateContribution({
         userId: formValue.userId,
         projectId: formValue.projectId,
-        amount: parseFloat(formValue.amount),
+        amount: parseFloat(formValue.amount.toString()),
         paymentStatus: formValue.paymentStatus,
         paymentReference: formValue.paymentReference || undefined,
         notes: formValue.notes || undefined,
@@ -318,18 +329,38 @@ export class ContributionFormComponent implements OnInit {
 
       // Navigate back to contributions list
       await this.router.navigate(['/dashboard/contributions']);
-    } catch (error: unknown) {
-      console.error('Error creating contribution:', error);
-
-      // Extract user-friendly error message
-      const errorMessage = extractErrorMessage(error);
-
-      toast.error('Failed to create contribution', {
-        description: errorMessage,
-      });
-    } finally {
-      this.submitting.set(false);
+    } catch (e) {
+      const graphqlError = (e as { errors: GraphQLError[] }).errors;
+      console.log(graphqlError);
+      if (graphqlError?.length > 0) {
+        return mapGraphqlValidationErrors(graphqlError, contributionForm);
+      }
+      console.error('Error creating contribution:', e);
+      return [
+        {
+          kind: 'server',
+          message:
+            (e as HttpErrorResponse)?.error?.message ??
+            (e as Error).message ??
+            'An unknown error occurred.',
+          fieldTree: contributionForm,
+        },
+      ];
     }
+
+    return null;
+  }
+
+  /**
+   * Handle form submission
+   */
+  async onSubmit(e: Event) {
+    e.preventDefault();
+    this.submitting.set(true);
+    await submit(this.contributionForm, async (fieldTree) =>
+      this.createContribution(fieldTree),
+    );
+    this.submitting.set(false);
   }
 
   /**
@@ -337,13 +368,5 @@ export class ContributionFormComponent implements OnInit {
    */
   onCancel() {
     this.router.navigate(['/dashboard/contributions']);
-  }
-
-  /**
-   * Get validation error message for a form control
-   */
-  getErrorMessage(controlName: string): string | null {
-    const control = this.form.get(controlName);
-    return getValidationErrorMessage(control);
   }
 }

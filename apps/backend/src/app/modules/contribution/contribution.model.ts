@@ -28,10 +28,10 @@ export class IContribution {
 
 
 export enum PaymentStatus {
-  PENDING = 'pending',
-  PAID = 'paid',
-  FAILED = 'failed',
-  REFUNDED = 'refunded',
+  Pending = 'PENDING',
+  Paid = 'PAID',
+  Failed = 'FAILED',
+  Refunded = 'REFUNDED',
 }
 
 
@@ -79,7 +79,7 @@ export class Contribution extends Model<IContribution> {
   @Column({
     type: DataType.ENUM(...Object.values(PaymentStatus)),
     allowNull: false,
-    defaultValue: PaymentStatus.PENDING,
+    defaultValue: PaymentStatus.Pending,
     field: 'payment_status',
   })
   paymentStatus: PaymentStatus;

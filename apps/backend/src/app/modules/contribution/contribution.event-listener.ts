@@ -52,7 +52,7 @@ export class ContributionEventListener {
       }
 
       // Update contribution status
-      contribution.paymentStatus = PaymentStatus.PAID;
+      contribution.paymentStatus = PaymentStatus.Paid;
       contribution.paidAt = new Date(event.transactionDate);
       await contribution.save();
 
@@ -105,7 +105,7 @@ export class ContributionEventListener {
       }
 
       // Update contribution status
-      contribution.paymentStatus = PaymentStatus.FAILED;
+      contribution.paymentStatus = PaymentStatus.Failed;
       contribution.failureReason = `${event.resultDesc} (Code: ${event.resultCode})`;
       await contribution.save();
 

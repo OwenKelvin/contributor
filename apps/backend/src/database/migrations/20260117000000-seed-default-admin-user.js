@@ -10,7 +10,7 @@ module.exports = {
 
     // Get the admin role ID
     const [adminRole] = await queryInterface.sequelize.query(
-      `SELECT id FROM roles WHERE name = 'admin' LIMIT 1;`,
+      `SELECT id FROM roles WHERE name = 'ADMIN' LIMIT 1;`,
       { type: Sequelize.QueryTypes.SELECT }
     );
 

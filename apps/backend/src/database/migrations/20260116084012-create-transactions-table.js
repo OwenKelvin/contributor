@@ -21,7 +21,7 @@ module.exports = {
         onUpdate: 'CASCADE',
       },
       transaction_type: {
-        type: Sequelize.ENUM('payment', 'refund'),
+        type: Sequelize.ENUM('PAYMENT', 'REFUND'),
         allowNull: false,
       },
       amount: {
@@ -29,9 +29,9 @@ module.exports = {
         allowNull: false,
       },
       status: {
-        type: Sequelize.ENUM('pending', 'success', 'failed'),
+        type: Sequelize.ENUM('PENDING', 'SUCCESS', 'FAILED'),
         allowNull: false,
-        defaultValue: 'pending',
+        defaultValue: 'PENDING',
       },
       gateway_transaction_id: {
         type: Sequelize.STRING(255),
