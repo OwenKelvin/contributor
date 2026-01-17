@@ -1,0 +1,104 @@
+query GetDashboardStats(
+  $startDate: DateTime
+  $endDate: DateTime
+) {
+  dashboardStats(startDate: $startDate, endDate: $endDate) {
+    totalUsers
+    totalProjects
+    totalContributions
+    totalRevenue
+    pendingContributions
+    pendingContributionsAmount
+    activeProjects
+    projectsByStatus {
+      status
+      count
+    }
+    contributionsByStatus {
+      status
+      count
+      amount
+    }
+  }
+}
+
+query GetContributionTrends(
+  $startDate: DateTime!
+  $endDate: DateTime!
+  $groupBy: String
+) {
+  contributionTrends(startDate: $startDate, endDate: $endDate, groupBy: $groupBy) {
+    date
+    amount
+    count
+  }
+}
+
+query GetTopProjects($limit: Int, $startDate: DateTime, $endDate: DateTime) {
+  topProjects(limit: $limit, startDate: $startDate, endDate: $endDate) {
+    project {
+      id
+      title
+      featuredImage
+      status
+    }
+    totalAmount
+    contributionCount
+  }
+}
+
+query GetRecentContributions($limit: Int) {
+  getContributions(pagination: { first: $limit }) {
+    edges {
+      node {
+        id
+        amount
+        paymentStatus
+        createdAt
+        user {
+          id
+          email
+          firstName
+          lastName
+        }
+        project {
+          id
+          title
+        }
+      }
+    }
+  }
+}
+
+query GetRecentProjects($limit: Int) {
+  getAllProjects(pagination: { first: $limit }) {
+    edges {
+      node {
+        id
+        title
+        status
+        goalAmount
+        currentAmount
+        createdAt
+        category {
+          id
+          name
+        }
+      }
+    }
+  }
+}
+
+query GetRecentUsers($limit: Int) {
+  getAllUsers(pagination: { first: $limit }) {
+    edges {
+      node {
+        id
+        email
+        firstName
+        lastName
+        createdAt
+      }
+    }
+  }
+}

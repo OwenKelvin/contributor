@@ -1,0 +1,42 @@
+type DashboardStats {
+  totalUsers: Int!
+  totalProjects: Int!
+  totalContributions: Int!
+  totalRevenue: Float!
+  pendingContributions: Int!
+  pendingContributionsAmount: Float!
+  activeProjects: Int!
+  projectsByStatus: [ProjectStatusCount!]!
+  contributionsByStatus: [ContributionStatusCount!]!
+}
+
+type ProjectStatusCount {
+  status: String!
+  count: Int!
+}
+
+type ContributionStatusCount {
+  status: String!
+  count: Int!
+  amount: Float!
+}
+
+type ContributionTrend {
+  date: String!
+  amount: Float!
+  count: Int!
+}
+
+type TopProject {
+  project: Project!
+  totalAmount: Float!
+  contributionCount: Int!
+}
+
+extend type Query {
+  dashboardStats(startDate: DateTime, endDate: DateTime): DashboardStats!
+  contributionTrends(startDate: DateTime!, endDate: DateTime!, groupBy: String): [ContributionTrend!]!
+  topProjects(limit: Int, startDate: DateTime, endDate: DateTime): [TopProject!]!
+}
+
+scalar DateTime
