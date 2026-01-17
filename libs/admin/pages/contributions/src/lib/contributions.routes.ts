@@ -5,6 +5,7 @@ import { ContributionListComponent } from './pages/list/contribution-list.compon
 import { ContributionFormComponent } from './pages/form/contribution-form.component';
 import { ContributionDetailComponent } from './pages/detail/contribution-detail.component';
 import { PendingContributionsComponent } from './pages/pending/pending-contributions.component';
+import { ContributionReportsComponent } from './pages/reports/contribution-reports.component';
 
 /**
  * Routes for the contributions management module.
@@ -40,11 +41,10 @@ export const contributionsRoutes: Routes = [
         path: 'pending',
         component: PendingContributionsComponent,
       },
-      // Reports route (placeholder - will be implemented in task 24)
+      // Reports route
       {
         path: 'reports',
-        component: ContributionDashboardComponent, // Temporary - will be replaced with ReportsComponent
-        data: { isReportsView: true },
+        component: ContributionReportsComponent,
       },
       // Refunds route (placeholder - will be implemented later)
       {
