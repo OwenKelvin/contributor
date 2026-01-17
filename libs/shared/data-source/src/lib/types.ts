@@ -21,6 +21,7 @@ export type IAdminCreateContributionInput = {
   paymentReference?: InputMaybe<Scalars['String']['input']>;
   paymentStatus: IPaymentStatus;
   projectId: Scalars['ID']['input'];
+  sendEmail?: InputMaybe<Scalars['Boolean']['input']>;
   userId: Scalars['ID']['input'];
 };
 
@@ -291,10 +292,10 @@ export type IPaymentDetailsInput = {
 };
 
 export enum IPaymentStatus {
-  Failed = 'FAILED',
-  Paid = 'PAID',
-  Pending = 'PENDING',
-  Refunded = 'REFUNDED'
+  Failed = 'failed',
+  Paid = 'paid',
+  Pending = 'pending',
+  Refunded = 'refunded'
 }
 
 export type IPermission = {

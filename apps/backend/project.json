@@ -80,6 +80,13 @@
       "options": {
         "commands": ["graphql-codegen --config ./apps/backend/codegen.ts"]
       }
+    },
+    "db:migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sequelize-cli db:migrate",
+        "cwd": "apps/backend"
+      }
     }
   }
 }
