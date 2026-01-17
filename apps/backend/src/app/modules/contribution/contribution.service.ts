@@ -1216,7 +1216,7 @@ export class ContributionService {
         },
       ],
       group: ['projectId', 'project.id', 'project.title'],
-      order: [[Sequelize.literal('totalAmount'), 'DESC']],
+      order: [[Sequelize.literal('"totalAmount"'), 'DESC']],
       limit,
       raw: false,
     });
@@ -1264,8 +1264,8 @@ export class ContributionService {
           attributes: ['firstName', 'lastName', 'email'],
         },
       ],
-      group: ['userId', 'user.id', 'user.firstName', 'user.lastName', 'user.email'],
-      order: [[Sequelize.literal('totalAmount'), 'DESC']],
+      group: ['userId', 'user.id', 'user.first_name', 'user.last_name', 'user.email'],
+      order: [[Sequelize.literal('"totalAmount"'), 'DESC']],
       limit,
       raw: false,
     });

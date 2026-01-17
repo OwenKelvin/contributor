@@ -18,10 +18,15 @@ import { RoleModule } from '../role/role.module';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '60s' }, // TODO: Make configurable
-      }),
+      useFactory: (configService: ConfigService) => {
+        const expiresIn = configService.get<string>('JWT_EXPIRES_IN', '1h');
+        return {
+          secret: configService.get<string>('JWT_SECRET'),
+          signOptions: {
+            expiresIn: expiresIn as any
+          },
+        };
+      },
     }),
   ],
   providers: [AuthService, AuthResolver, JwtStrategy],

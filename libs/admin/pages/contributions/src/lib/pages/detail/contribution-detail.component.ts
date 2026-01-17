@@ -1,43 +1,29 @@
-import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { toast } from 'ngx-sonner';
-import { IContribution } from '@nyots/data-source';
-import {
-  ContributionService,
-  ICreateContributionGQL,
-  ICreateContributionMutation, IGetContributionQuery
-} from '@nyots/data-source/contributions';
-import {
-  PaymentStatusBadgeComponent,
-  TransactionHistoryComponent,
-} from '../../components';
+import { IPaymentStatus } from '@nyots/data-source';
+import { ContributionService, IGetContributionQuery } from '@nyots/data-source/contributions';
+import { PaymentStatusBadgeComponent, TransactionHistoryComponent } from '../../components';
 import { ConfirmationDialogService } from '../../services/confirmation-dialog.service';
 import { HlmButton } from '@nyots/ui/button';
-import { HlmIcon } from '@nyots/ui/icon';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
-  lucideArrowLeft,
-  lucideCreditCard,
-  lucideRefreshCw,
-  lucideEdit,
-  lucideUser,
-  lucideFolder,
-  lucideCalendar,
-  lucideDollarSign,
-  lucideFileText,
   lucideAlertCircle,
+  lucideArrowLeft,
+  lucideCalendar,
   lucideCheckCircle,
+  lucideCreditCard,
+  lucideDollarSign,
+  lucideEdit,
+  lucideFileText,
+  lucideFolder,
+  lucideRefreshCw,
+  lucideUser
 } from '@ng-icons/lucide';
-import {
-  HlmCard,
-  HlmCardContent,
-  HlmCardDescription,
-  HlmCardHeader,
-  HlmCardTitle,
-} from '@nyots/ui/card';
+import { HlmCard, HlmCardContent, HlmCardHeader, HlmCardTitle } from '@nyots/ui/card';
 import { HlmSeparator } from '@nyots/ui/separator';
-import { HlmBadge, BadgeVariants } from '@nyots/ui/badge';
+import { BadgeVariants, HlmBadge } from '@nyots/ui/badge';
 
 /**
  * Component for displaying detailed information about a single contribution.
@@ -103,7 +89,7 @@ import { HlmBadge, BadgeVariants } from '@nyots/ui/badge';
         <!-- Action Buttons -->
         @if (contribution()) {
           <div class="flex items-center gap-2">
-            @if (contribution()!.paymentStatus === 'PENDING') {
+            @if (contribution()!.paymentStatus === IPaymentStatus.Pending) {
               <button
                 hlmBtn
                 variant="default"
@@ -115,7 +101,7 @@ import { HlmBadge, BadgeVariants } from '@nyots/ui/badge';
               </button>
             }
 
-            @if (contribution()!.paymentStatus === 'PAID') {
+            @if (contribution()!.paymentStatus === IPaymentStatus.Paid) {
               <button
                 hlmBtn
                 variant="destructive"
@@ -433,7 +419,7 @@ export class ContributionDetailComponent implements OnInit {
     const contribution = this.contribution();
     if (!contribution) return;
 
-    if (contribution.paymentStatus !== 'PENDING') {
+    if (contribution.paymentStatus !== IPaymentStatus.Pending) {
       toast.error('Only pending contributions can be processed for payment');
       return;
     }
@@ -449,7 +435,7 @@ export class ContributionDetailComponent implements OnInit {
     const contribution = this.contribution();
     if (!contribution) return;
 
-    if (contribution.paymentStatus !== 'PAID') {
+    if (contribution.paymentStatus !== IPaymentStatus.Paid) {
       toast.error('Only paid contributions can be refunded');
       return;
     }
@@ -512,4 +498,6 @@ export class ContributionDetailComponent implements OnInit {
         return 'outline';
     }
   }
+
+  protected readonly IPaymentStatus = IPaymentStatus;
 }
