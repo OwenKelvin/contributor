@@ -1,5 +1,5 @@
 import { Component, inject, signal, computed, effect } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { toast } from 'ngx-sonner';
@@ -63,6 +63,7 @@ import { retryAsync, getUserFriendlyErrorMessage, isNetworkError } from '../../u
     HlmCardTitle,
     HlmIcon,
     NgIcon,
+    RouterLink,
   ],
   providers: [
     provideIcons({
@@ -173,9 +174,11 @@ export class AllProjectsComponent {
           onRetry: (attempt) => {
             console.log(`Retrying category load (attempt ${attempt})...`);
           },
-        }
+        },
       );
-      this.categories.set((categories || []).filter((c): c is ICategory => c !== undefined));
+      this.categories.set(
+        (categories || []).filter((c): c is ICategory => c !== undefined),
+      );
     } catch (error) {
       console.error('Error loading categories:', error);
       const message = getUserFriendlyErrorMessage(error);
@@ -215,16 +218,17 @@ export class AllProjectsComponent {
 
       // Build pagination object
       const pagination: IProjectPaginationInput = {
-        limit: 20,
-        cursor: this.currentCursor() ?? undefined,
+        first: 20,
+        after: this.currentCursor() ?? undefined,
       };
 
       const result = await retryAsync(
-        () => this.projectService.getAllProjects({
-          search: this.debouncedSearchTerm() || undefined,
-          filters: Object.keys(filter).length > 0 ? filter : undefined,
-          pagination,
-        }),
+        () =>
+          this.projectService.getAllProjects({
+            search: this.debouncedSearchTerm() || undefined,
+            filters: Object.keys(filter).length > 0 ? filter : undefined,
+            pagination,
+          }),
         {
           maxAttempts: 3,
           delayMs: 1000,
@@ -234,11 +238,15 @@ export class AllProjectsComponent {
               toast.info('Retrying connection...');
             }
           },
-        }
+        },
       );
 
       if (result && result.pageInfo) {
-        this.projects.set((result.projects || []).filter((p): p is IProject => p !== undefined));
+        this.projects.set(
+          result.edges
+            .map((edge) => edge.node)
+            .filter((p): p is IProject => !!p),
+        );
         const pageInfo: IPageInfo = {
           hasNextPage: result.pageInfo.hasNextPage ?? false,
           hasPreviousPage: result.pageInfo.hasPreviousPage ?? false,
@@ -347,7 +355,7 @@ export class AllProjectsComponent {
   async onProjectDelete(projectId: string) {
     const confirmed = await this.showDeleteConfirmation(
       'Delete Project',
-      'Are you sure you want to delete this project? This action cannot be undone.'
+      'Are you sure you want to delete this project? This action cannot be undone.',
     );
 
     if (confirmed) {
@@ -413,20 +421,24 @@ export class AllProjectsComponent {
   private async handleBulkDelete(projectIds: string[]) {
     const confirmed = await this.showDeleteConfirmation(
       'Delete Projects',
-      `Are you sure you want to delete ${projectIds.length} project(s)? This action cannot be undone.`
+      `Are you sure you want to delete ${projectIds.length} project(s)? This action cannot be undone.`,
     );
 
     if (confirmed) {
       try {
         // Use bulk delete by deleting projects individually
         // Note: In a real implementation, you might want to add a bulkDelete mutation
-        const deletePromises = projectIds.map(id =>
-          this.projectService.deleteProject(id)
+        const deletePromises = projectIds.map((id) =>
+          this.projectService.deleteProject(id),
         );
         const results = await Promise.allSettled(deletePromises);
 
-        const successCount = results.filter(r => r.status === 'fulfilled').length;
-        const failureCount = results.filter(r => r.status === 'rejected').length;
+        const successCount = results.filter(
+          (r) => r.status === 'fulfilled',
+        ).length;
+        const failureCount = results.filter(
+          (r) => r.status === 'rejected',
+        ).length;
 
         if (successCount > 0) {
           toast.success(`Successfully deleted ${successCount} project(s)`);
@@ -435,7 +447,7 @@ export class AllProjectsComponent {
         if (failureCount > 0) {
           const errors = results
             .filter((r): r is PromiseRejectedResult => r.status === 'rejected')
-            .map(r => getUserFriendlyErrorMessage(r.reason))
+            .map((r) => getUserFriendlyErrorMessage(r.reason))
             .join(', ');
           toast.error(`Failed to delete ${failureCount} project(s): ${errors}`);
         }
@@ -456,26 +468,32 @@ export class AllProjectsComponent {
   private async handleBulkStatusChange(projectIds: string[]) {
     const newStatus = await this.showStatusSelectionDialog(
       'Change Project Status',
-      `Select a new status for ${projectIds.length} project(s)`
+      `Select a new status for ${projectIds.length} project(s)`,
     );
 
     if (newStatus) {
       try {
-        const result = await this.projectService.bulkUpdateProjects(projectIds, {
-          status: newStatus,
-        });
+        const result = await this.projectService.bulkUpdateProjects(
+          projectIds,
+          {
+            status: newStatus,
+          },
+        );
 
         if (result) {
           if (result.successCount > 0) {
             toast.success(
-              `Successfully updated ${result.successCount} project(s) to ${newStatus}`
+              `Successfully updated ${result.successCount} project(s) to ${newStatus}`,
             );
           }
 
           if (result.failureCount > 0) {
-            const errorMessages = result.errors?.map(e => getUserFriendlyErrorMessage(e)).join(', ') || 'Unknown errors';
+            const errorMessages =
+              result.errors
+                ?.map((e) => getUserFriendlyErrorMessage(e))
+                .join(', ') || 'Unknown errors';
             toast.error(
-              `Failed to update ${result.failureCount} project(s): ${errorMessages}`
+              `Failed to update ${result.failureCount} project(s): ${errorMessages}`,
             );
           }
         }
@@ -495,13 +513,6 @@ export class AllProjectsComponent {
    */
   onClearSelection() {
     this.selectedProjects.set(new Set());
-  }
-
-  /**
-   * Navigate to create project page
-   */
-  navigateToCreate() {
-    this.router.navigate(['/dashboard/projects/new']);
   }
 
   /**
@@ -525,7 +536,7 @@ export class AllProjectsComponent {
    */
   private async showDeleteConfirmation(
     title: string,
-    message: string
+    message: string,
   ): Promise<boolean> {
     const dialogRef = this.dialogService.open(ConfirmationDialogComponent, {
       context: {
@@ -546,7 +557,7 @@ export class AllProjectsComponent {
    */
   private async showStatusSelectionDialog(
     title: string,
-    message: string
+    message: string,
   ): Promise<IProjectStatus | null> {
     const dialogRef = this.dialogService.open(StatusSelectionDialogComponent, {
       context: {
