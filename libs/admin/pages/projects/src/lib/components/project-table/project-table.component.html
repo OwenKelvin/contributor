@@ -91,17 +91,17 @@
                 />
               </td>
             }
-            
+
             <!-- ID column -->
             <td hlm class="font-mono text-xs text-muted-foreground">
               {{ project.id.substring(0, 8) }}...
             </td>
-            
+
             <!-- Title column -->
             <td hlm class="font-medium">
               {{ project.title }}
             </td>
-            
+
             <!-- Status column -->
             <td hlm>
               <span
@@ -111,22 +111,22 @@
                 {{ getStatusLabel(project.status) }}
               </span>
             </td>
-            
+
             <!-- Goal Amount column -->
             <td hlm class="text-right font-medium">
               {{ formatCurrency(project.goalAmount) }}
             </td>
-            
+
             <!-- Current Amount column -->
             <td hlm class="text-right">
               {{ formatCurrency(project.currentAmount) }}
             </td>
-            
+
             <!-- Created Date column -->
             <td hlm class="text-muted-foreground">
               {{ formatDate(project.createdAt) }}
             </td>
-            
+
             <!-- Actions column -->
             <td hlm>
               <div class="flex justify-center gap-1">
@@ -138,7 +138,7 @@
                   [attr.aria-label]="'View project ' + project.title"
                   class="h-8 w-8"
                 >
-                  <ng-icon name="lucideEye" size="16" />
+                  <ng-icon hlmIcon name="lucideEye" size="base" />
                 </button>
                 <button
                   hlmBtn
