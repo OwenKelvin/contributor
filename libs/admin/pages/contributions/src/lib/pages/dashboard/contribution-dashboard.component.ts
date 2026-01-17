@@ -51,11 +51,40 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
 
       @if (loading()) {
         <div class="flex items-center justify-center py-12">
-          <hlm-spinner />
+          <div class="flex flex-col items-center gap-2">
+            <hlm-spinner />
+            <p class="text-sm text-muted-foreground">Loading dashboard data...</p>
+          </div>
         </div>
       } @else if (error()) {
-        <div class="rounded-lg border border-destructive bg-destructive/10 p-4">
-          <p class="text-sm text-destructive">{{ error() }}</p>
+        <div hlmCard>
+          <div hlmCardContent class="py-12">
+            <div class="flex flex-col items-center justify-center text-center">
+              <div class="rounded-full bg-destructive/10 p-3 mb-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="text-destructive"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+              </div>
+              <h3 class="text-lg font-semibold mb-2">Failed to Load Dashboard</h3>
+              <p class="text-sm text-muted-foreground mb-4">{{ error() }}</p>
+              <button hlmBtn variant="outline" (click)="loadReport()">
+                Try Again
+              </button>
+            </div>
+          </div>
         </div>
       } @else if (report()) {
         <!-- Summary Cards -->

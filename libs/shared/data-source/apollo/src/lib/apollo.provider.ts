@@ -12,8 +12,8 @@ import { contextAuthToken } from './auth-token.context';
 import { errorLink } from './error-link.context';
 
 export const apolloConfig = () => {
-  const httpLink = inject(HttpLink)
-  const backendUrl = inject(BACKEND_URL)
+  const httpLink = inject(HttpLink);
+  const backendUrl = inject(BACKEND_URL);
 
   const http = httpLink.create({
     uri: `${backendUrl ?? ''}/graphql`,

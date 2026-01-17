@@ -81,16 +81,16 @@ import {
     }),
   ],
   template: `
-    <div class="space-y-6">
+    <div class="space-y-4 md:space-y-6">
       <!-- Header -->
-      <div class="flex justify-between items-center">
+      <div class="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
         <div>
-          <h2 class="text-3xl font-bold tracking-tight">Contributions</h2>
-          <p class="text-muted-foreground">
+          <h2 class="text-2xl md:text-3xl font-bold tracking-tight">Contributions</h2>
+          <p class="text-sm md:text-base text-muted-foreground">
             Manage and track all contributions
           </p>
         </div>
-        <button hlmBtn (click)="navigateToCreate()">
+        <button hlmBtn (click)="navigateToCreate()" class="w-full sm:w-auto">
           <ng-icon hlmIcon name="lucidePlus" size="base" class="mr-2" />
           Record Contribution
         </button>
@@ -172,8 +172,8 @@ import {
               </button>
             </div>
           } @else {
-            <!-- Table -->
-            <div class="relative overflow-x-auto">
+            <!-- Desktop Table View (hidden on mobile) -->
+            <div class="hidden md:block relative overflow-x-auto">
               <table hlmTable>
                 <thead hlmTHead>
                   <tr hlmTr>
@@ -344,6 +344,90 @@ import {
                   }
                 </tbody>
               </table>
+            </div>
+
+            <!-- Mobile Card View (visible on mobile) -->
+            <div class="md:hidden space-y-4">
+              @for (contribution of contributions(); track contribution.id) {
+                <div class="border rounded-lg p-4 space-y-3">
+                  <!-- Header with checkbox and status -->
+                  <div class="flex items-start justify-between">
+                    <div class="flex items-start gap-3 flex-1">
+                      <hlm-checkbox
+                        [checked]="isSelected(contribution.id)"
+                        (change)="toggleSelection(contribution.id)"
+                        [attr.aria-label]="'Select contribution'"
+                        class="mt-1"
+                      />
+                      <div class="flex-1 min-w-0">
+                        <p class="font-medium truncate">
+                          {{ contribution.user.firstName }} {{ contribution.user.lastName }}
+                        </p>
+                        <p class="text-sm text-muted-foreground truncate">
+                          {{ contribution.user.email }}
+                        </p>
+                      </div>
+                    </div>
+                    <nyots-payment-status-badge [status]="contribution.paymentStatus" />
+                  </div>
+
+                  <!-- Project and Amount -->
+                  <div class="space-y-2">
+                    <div>
+                      <p class="text-xs text-muted-foreground">Project</p>
+                      <p class="text-sm font-medium">{{ contribution.project.title }}</p>
+                    </div>
+                    <div class="flex justify-between items-center">
+                      <div>
+                        <p class="text-xs text-muted-foreground">Amount</p>
+                        <p class="text-lg font-bold">{{ contribution.amount | currency }}</p>
+                      </div>
+                      <div class="text-right">
+                        <p class="text-xs text-muted-foreground">Date</p>
+                        <p class="text-sm">{{ contribution.createdAt | date: 'short' }}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Actions -->
+                  <div class="flex gap-2 pt-2 border-t">
+                    <button
+                      hlmBtn
+                      variant="outline"
+                      size="sm"
+                      (click)="viewDetails(contribution.id)"
+                      class="flex-1"
+                    >
+                      <ng-icon hlmIcon name="lucideEye" size="base" class="mr-2" />
+                      View
+                    </button>
+                    @if (contribution.paymentStatus === IPaymentStatus.Pending) {
+                      <button
+                        hlmBtn
+                        variant="default"
+                        size="sm"
+                        (click)="processPayment(contribution.id)"
+                        class="flex-1"
+                      >
+                        <ng-icon hlmIcon name="lucideCreditCard" size="base" class="mr-2" />
+                        Pay
+                      </button>
+                    }
+                    @if (contribution.paymentStatus === IPaymentStatus.Paid) {
+                      <button
+                        hlmBtn
+                        variant="destructive"
+                        size="sm"
+                        (click)="processRefund(contribution.id)"
+                        class="flex-1"
+                      >
+                        <ng-icon hlmIcon name="lucideRefreshCw" size="base" class="mr-2" />
+                        Refund
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
             </div>
 
             <!-- Pagination -->
