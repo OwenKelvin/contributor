@@ -1,4 +1,4 @@
-import { Component, forwardRef, inject, signal, effect } from '@angular/core';
+import { Component, forwardRef, inject, signal, effect, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { HlmInput } from '@nyots/ui/input';
@@ -6,7 +6,9 @@ import { HlmIcon } from '@nyots/ui/icon';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideSearch, lucideX, lucideLoader2 } from '@ng-icons/lucide';
 import { IUser } from '@nyots/data-source';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { UserService } from '@nyots/data-source/user';
+import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'nyots-user-autocomplete',
@@ -90,7 +92,15 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
         </div>
       }
 
-      @if (showDropdown() && filteredUsers().length === 0 && searchControl.value && !loading()) {
+      @if (showDropdown() && searchControl.value && searchControl.value.length < 2 && !loading()) {
+        <div
+          class="absolute z-50 w-full mt-1 bg-popover border border-border rounded-md shadow-md px-3 py-2 text-sm text-muted-foreground"
+        >
+          Type at least 2 characters to search
+        </div>
+      }
+
+      @if (showDropdown() && filteredUsers().length === 0 && searchControl.value && searchControl.value.length >= 2 && !loading()) {
         <div
           class="absolute z-50 w-full mt-1 bg-popover border border-border rounded-md shadow-md px-3 py-2 text-sm text-muted-foreground"
         >
@@ -105,7 +115,9 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     }
   `],
 })
-export class UserAutocompleteComponent implements ControlValueAccessor {
+export class UserAutocompleteComponent implements ControlValueAccessor, OnInit {
+  private userService = inject(UserService);
+
   // Signals
   searchControl = new FormControl('');
   selectedUser = signal<IUser | null>(null);
@@ -115,39 +127,83 @@ export class UserAutocompleteComponent implements ControlValueAccessor {
   disabled = signal(false);
   placeholder = signal('Search for user...');
 
-  // Mock users - in real implementation, this would come from a service
-  private allUsers = signal<IUser[]>([]);
-
   // ControlValueAccessor callbacks
   private onChange: (value: string | null) => void = () => {};
   private onTouched: () => void = () => {};
 
-  constructor() {
-    // Set up search with debounce
-    effect(() => {
-      this.searchControl.valueChanges
-        .pipe(
-          debounceTime(300),
-          distinctUntilChanged()
-        )
-        .subscribe((searchTerm) => {
-          this.filterUsers(searchTerm || '');
-        });
-    });
+  ngOnInit() {
+    // Set up search with debounce and API call
+    this.searchControl.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((searchTerm) => {
+          if (!searchTerm || searchTerm.length < 2) {
+            this.filteredUsers.set([]);
+            this.loading.set(false);
+            return of(null);
+          }
+
+          this.loading.set(true);
+          return this.searchUsers(searchTerm);
+        }),
+        catchError((error) => {
+          console.error('Error searching users:', error);
+          this.loading.set(false);
+          return of(null);
+        })
+      )
+      .subscribe((result) => {
+        if (result) {
+          this.filteredUsers.set(result);
+        }
+        this.loading.set(false);
+      });
+  }
+
+  /**
+   * Search users via the UserService
+   */
+  private async searchUsers(searchTerm: string): Promise<IUser[]> {
+    try {
+      const result = await this.userService.getAllUsers({
+        search: searchTerm,
+        pagination: { first: 10 }, // Limit to 10 results
+      });
+
+      if (result?.edges) {
+        return result.edges.map((edge) => edge.node);
+      }
+      return [];
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      return [];
+    }
   }
 
   // ControlValueAccessor implementation
   writeValue(userId: string | null): void {
     if (userId) {
-      // In real implementation, fetch user by ID
-      const user = this.allUsers().find(u => u.id === userId);
+      // Fetch user by ID to display their name
+      this.loadUserById(userId);
+    } else {
+      this.selectedUser.set(null);
+      this.searchControl.setValue('', { emitEvent: false });
+    }
+  }
+
+  /**
+   * Load user by ID for display
+   */
+  private async loadUserById(userId: string): Promise<void> {
+    try {
+      const user = await this.userService.getUserById(userId);
       if (user) {
         this.selectedUser.set(user);
         this.searchControl.setValue(this.getUserName(user), { emitEvent: false });
       }
-    } else {
-      this.selectedUser.set(null);
-      this.searchControl.setValue('', { emitEvent: false });
+    } catch (error) {
+      console.error('Error loading user:', error);
     }
   }
 
@@ -171,9 +227,7 @@ export class UserAutocompleteComponent implements ControlValueAccessor {
   // Component methods
   onFocus(): void {
     this.showDropdown.set(true);
-    if (!this.searchControl.value) {
-      this.filteredUsers.set(this.allUsers());
-    }
+    // Don't auto-load users on focus - wait for user to type
   }
 
   onBlur(): void {
@@ -195,23 +249,7 @@ export class UserAutocompleteComponent implements ControlValueAccessor {
     this.selectedUser.set(null);
     this.searchControl.setValue('', { emitEvent: false });
     this.onChange(null);
-    this.filteredUsers.set(this.allUsers());
-  }
-
-  filterUsers(searchTerm: string): void {
-    if (!searchTerm) {
-      this.filteredUsers.set(this.allUsers());
-      return;
-    }
-
-    const term = searchTerm.toLowerCase();
-    const filtered = this.allUsers().filter(user => {
-      const name = this.getUserName(user).toLowerCase();
-      const email = user.email.toLowerCase();
-      return name.includes(term) || email.includes(term);
-    });
-
-    this.filteredUsers.set(filtered);
+    this.filteredUsers.set([]);
   }
 
   getUserName(user: IUser): string {
@@ -225,11 +263,5 @@ export class UserAutocompleteComponent implements ControlValueAccessor {
       return user.lastName;
     }
     return user.email;
-  }
-
-  // Method to set users from parent component
-  setUsers(users: IUser[]): void {
-    this.allUsers.set(users);
-    this.filteredUsers.set(users);
   }
 }
