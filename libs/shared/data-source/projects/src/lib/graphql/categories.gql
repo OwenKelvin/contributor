@@ -20,7 +20,7 @@ mutation CreateCategory($input: CreateCategoryInput!) {
   }
 }
 
-mutation UpdateCategory($id: String!, $input: UpdateCategoryInput!) {
+mutation UpdateCategory($id: ID!, $input: UpdateCategoryInput!) {
   updateCategory(id: $id, input: $input) {
     id
     name
@@ -31,6 +31,6 @@ mutation UpdateCategory($id: String!, $input: UpdateCategoryInput!) {
   }
 }
 
-mutation DeleteCategory($id: String!) {
+mutation DeleteCategory($id: ID!) {
   deleteCategory(id: $id)
 }

@@ -1,7 +1,7 @@
   import type { CodegenConfig } from '@graphql-codegen/cli';
 
   const config: CodegenConfig = {
-    schema: 'src/schema.gql',
+    schema: 'apps/backend/src/app/modules/**/*.graphql',
     config: {
       allowPartialOutputs: true,
     },

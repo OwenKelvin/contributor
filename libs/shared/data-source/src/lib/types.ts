@@ -12,7 +12,6 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
-  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: { input: any; output: any; }
 };
 
@@ -43,6 +42,12 @@ export type IBulkUpdateError = {
 export type IBulkUpdateInput = {
   categoryId?: InputMaybe<Scalars['ID']['input']>;
   status?: InputMaybe<IProjectStatus>;
+};
+
+export type IBulkUpdateResult = {
+  errors?: Maybe<Array<Scalars['String']['output']>>;
+  failureCount: Scalars['Int']['output'];
+  successCount: Scalars['Int']['output'];
 };
 
 export type ICategory = {
@@ -156,10 +161,11 @@ export type ILoginInput = {
 };
 
 export type IMutation = {
+  _empty?: Maybe<Scalars['String']['output']>;
   adminCreateContribution: IContribution;
   approveProject: IProject;
   bulkUpdateContributionStatus: IContributionBulkUpdateResult;
-  bulkUpdateProjects: IProjectBulkUpdateResult;
+  bulkUpdateProjects: IBulkUpdateResult;
   createCategory: ICategory;
   createContribution: IContribution;
   createProject: IProject;
@@ -182,7 +188,7 @@ export type IMutationAdminCreateContributionArgs = {
 
 
 export type IMutationApproveProjectArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
   notes?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -195,7 +201,7 @@ export type IMutationBulkUpdateContributionStatusArgs = {
 
 
 export type IMutationBulkUpdateProjectsArgs = {
-  ids: Array<Scalars['String']['input']>;
+  ids: Array<Scalars['ID']['input']>;
   input: IBulkUpdateInput;
 };
 
@@ -216,12 +222,12 @@ export type IMutationCreateProjectArgs = {
 
 
 export type IMutationDeleteCategoryArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
 };
 
 
 export type IMutationDeleteProjectArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
 };
 
 
@@ -248,13 +254,13 @@ export type IMutationRegisterArgs = {
 
 
 export type IMutationRejectProjectArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
   reason: Scalars['String']['input'];
 };
 
 
 export type IMutationUpdateCategoryArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
   input: IUpdateCategoryInput;
 };
 
@@ -267,7 +273,7 @@ export type IMutationUpdateContributionStatusArgs = {
 
 
 export type IMutationUpdateProjectArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
   input: IUpdateProjectInput;
 };
 
@@ -294,7 +300,6 @@ export enum IPaymentStatus {
 export type IPermission = {
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
-  roles: Array<IRole>;
 };
 
 export type IProject = {
@@ -311,12 +316,6 @@ export type IProject = {
   status: IProjectStatus;
   title: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
-};
-
-export type IProjectBulkUpdateResult = {
-  errors: Array<Scalars['String']['output']>;
-  failureCount: Scalars['Int']['output'];
-  successCount: Scalars['Int']['output'];
 };
 
 export type IProjectConnection = {
@@ -338,8 +337,10 @@ export type IProjectFilter = {
 };
 
 export type IProjectPaginationInput = {
-  cursor?: InputMaybe<Scalars['String']['input']>;
-  limit: Scalars['Int']['input'];
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export enum IProjectStatus {
@@ -351,6 +352,7 @@ export enum IProjectStatus {
 }
 
 export type IQuery = {
+  _empty?: Maybe<Scalars['String']['output']>;
   getActiveProjects: IProjectConnection;
   getAllCategories: Array<ICategory>;
   getAllProjects: IProjectConnection;
@@ -419,7 +421,7 @@ export type IQueryGetPendingProjectsArgs = {
 
 
 export type IQueryGetProjectByIdArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
 };
 
 
@@ -450,7 +452,6 @@ export type IReportFilter = {
   userId?: InputMaybe<Scalars['ID']['input']>;
 };
 
-/** Type of contribution report to generate */
 export enum IReportType {
   ByProject = 'BY_PROJECT',
   ByUser = 'BY_USER',
@@ -461,8 +462,6 @@ export enum IReportType {
 export type IRole = {
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
-  permissions: Array<IPermission>;
-  users: Array<IUser>;
 };
 
 export type ITimeSeriesPoint = {
@@ -538,7 +537,7 @@ export type IUser = {
   id: Scalars['ID']['output'];
   lastName?: Maybe<Scalars['String']['output']>;
   phoneNumber?: Maybe<Scalars['String']['output']>;
-  roles: Array<IRole>;
+  roles?: Maybe<Array<IRole>>;
 };
 
 export type IUserContributionSummary = {

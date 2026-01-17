@@ -50,8 +50,8 @@ export class ProjectService {
     }
 
     // Apply pagination
-    const limit = pagination?.limit || 20;
-    const offset = pagination?.cursor ? parseInt(pagination.cursor, 10) : 0;
+    const limit = pagination?.first || 20;
+    const offset = pagination?.after ? parseInt(Buffer.from(pagination.after, 'base64').toString('ascii')) + 1 : 0;
 
     const { rows: projects, count } = await this.projectModel.findAndCountAll({
       where,
@@ -72,8 +72,8 @@ export class ProjectService {
     const pageInfo: PageInfo = {
       hasNextPage,
       hasPreviousPage,
-      startCursor: projects.length > 0 ? String(offset) : null,
-      endCursor: hasNextPage ? String(offset + limit) : null,
+      startCursor: projects.length > 0 ? Buffer.from(offset.toString()).toString('base64') : null,
+      endCursor: hasNextPage ? Buffer.from((offset + limit - 1).toString()).toString('base64') : null,
     };
 
     return {
@@ -118,8 +118,8 @@ export class ProjectService {
       };
     }
 
-    const limit = pagination?.limit || 20;
-    const offset = pagination?.cursor ? parseInt(pagination.cursor, 10) : 0;
+    const limit = pagination?.first || 20;
+    const offset = pagination?.after ? parseInt(Buffer.from(pagination.after, 'base64').toString('ascii')) + 1 : 0;
 
     const { rows: projects } = await this.projectModel.findAndCountAll({
       where,
@@ -139,8 +139,8 @@ export class ProjectService {
     const pageInfo: PageInfo = {
       hasNextPage,
       hasPreviousPage,
-      startCursor: projects.length > 0 ? String(offset) : null,
-      endCursor: hasNextPage ? String(offset + limit) : null,
+      startCursor: projects.length > 0 ? Buffer.from(offset.toString()).toString('base64') : null,
+      endCursor: hasNextPage ? Buffer.from((offset + limit - 1).toString()).toString('base64') : null,
     };
 
     return {

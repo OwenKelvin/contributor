@@ -1,4 +1,6 @@
 export class PaginationInput {
-  cursor?: string;
-  limit: number;
+  first?: number;
+  after?: string;
+  last?: number;
+  before?: string;
 }
