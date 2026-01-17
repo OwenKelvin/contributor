@@ -1,0 +1,202 @@
+<div class="max-w-3xl mx-auto space-y-6">
+  <!-- Header -->
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+      <ng-icon name="lucideUserPlus" class="text-blue-600" size="lg" />
+    </div>
+    <div>
+      <h2 class="text-2xl font-bold">Invite New User</h2>
+      <p class="text-sm text-muted-foreground">Send an invitation to join the platform</p>
+    </div>
+  </div>
+
+  <form [formGroup]="inviteForm" (ngSubmit)="onSubmit()">
+    <!-- User Information -->
+    <div hlmCard class="mb-6">
+      <div hlmCardHeader>
+        <h3 hlmCardTitle>User Information</h3>
+        <p hlmCardDescription>Enter the details of the user you want to invite</p>
+      </div>
+      <div hlmCardContent>
+        <div class="space-y-4">
+          <!-- Email -->
+          <div>
+            <label hlmLabel for="email" class="flex items-center gap-2">
+              <ng-icon name="lucideMail" size="sm" />
+              Email Address *
+            </label>
+            <input
+              hlmInput
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="user@example.com"
+              [class.border-red-500]="getFieldError('email')"
+            />
+            @if (getFieldError('email')) {
+              <p class="text-sm text-red-600 mt-1">{{ getFieldError('email') }}</p>
+            }
+          </div>
+
+          <!-- First Name -->
+          <div>
+            <label hlmLabel for="firstName" class="flex items-center gap-2">
+              <ng-icon name="lucideUser" size="sm" />
+              First Name
+            </label>
+            <input
+              hlmInput
+              id="firstName"
+              type="text"
+              formControlName="firstName"
+              placeholder="John"
+            />
+          </div>
+
+          <!-- Last Name -->
+          <div>
+            <label hlmLabel for="lastName" class="flex items-center gap-2">
+              <ng-icon name="lucideUser" size="sm" />
+              Last Name
+            </label>
+            <input
+              hlmInput
+              id="lastName"
+              type="text"
+              formControlName="lastName"
+              placeholder="Doe"
+            />
+          </div>
+
+          <!-- Phone Number -->
+          <div>
+            <label hlmLabel for="phoneNumber" class="flex items-center gap-2">
+              <ng-icon name="lucidePhone" size="sm" />
+              Phone Number
+            </label>
+            <input
+              hlmInput
+              id="phoneNumber"
+              type="tel"
+              formControlName="phoneNumber"
+              placeholder="+1234567890"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Role Assignment -->
+    <div hlmCard class="mb-6">
+      <div hlmCardHeader>
+        <h3 hlmCardTitle>Role Assignment</h3>
+        <p hlmCardDescription>Select one or more roles for this user *</p>
+      </div>
+      <div hlmCardContent>
+        @if (isLoading()) {
+          <div class="flex items-center justify-center py-8">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </div>
+        } @else {
+          <div class="space-y-3">
+            @for (role of roles(); track role.id) {
+              <div
+                class="flex items-start gap-3 p-4 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors"
+                [class.border-blue-500]="isRoleSelected(role.id)"
+                [class.bg-blue-50]="isRoleSelected(role.id)"
+                (click)="toggleRole(role.id)"
+              >
+                <div class="flex items-center h-6">
+                  <input
+                    type="checkbox"
+                    [checked]="isRoleSelected(role.id)"
+                    class="rounded border-gray-300"
+                    (click)="$event.stopPropagation()"
+                    (change)="toggleRole(role.id)"
+                  />
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-1">
+                    <ng-icon name="lucideShield" size="sm" class="text-blue-600" />
+                    <span class="font-medium">{{ role.name }}</span>
+                  </div>
+                  <p class="text-sm text-muted-foreground">{{ role.description }}</p>
+                </div>
+              </div>
+            }
+          </div>
+          @if (getFieldError('roleIds')) {
+            <p class="text-sm text-red-600 mt-2">{{ getFieldError('roleIds') }}</p>
+          }
+        }
+      </div>
+    </div>
+
+    <!-- Invitation Options -->
+    <div hlmCard class="mb-6">
+      <div hlmCardHeader>
+        <h3 hlmCardTitle>Invitation Options</h3>
+        <p hlmCardDescription>Customize the invitation email</p>
+      </div>
+      <div hlmCardContent>
+        <div class="space-y-4">
+          <!-- Send Email -->
+          <div class="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="sendEmail"
+              formControlName="sendEmail"
+              class="rounded border-gray-300"
+            />
+            <label for="sendEmail" class="text-sm font-medium cursor-pointer">
+              Send invitation email immediately
+            </label>
+          </div>
+
+          <!-- Custom Message -->
+          <div>
+            <label hlmLabel for="customMessage">Custom Message (Optional)</label>
+            <textarea
+              hlmInput
+              id="customMessage"
+              formControlName="customMessage"
+              rows="4"
+              placeholder="Add a personal message to the invitation email..."
+              class="resize-none"
+            ></textarea>
+            <p class="text-xs text-muted-foreground mt-1">
+              This message will be included in the invitation email
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center justify-end gap-3">
+      <button
+        hlmBtn
+        variant="outline"
+        type="button"
+        (click)="onCancel()"
+        [disabled]="isSubmitting()"
+      >
+        Cancel
+      </button>
+      <button
+        hlmBtn
+        type="submit"
+        [disabled]="isSubmitting()"
+        class="inline-flex items-center gap-2"
+      >
+        @if (isSubmitting()) {
+          <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+          <span>Sending...</span>
+        } @else {
+          <ng-icon hlmIcon name="lucideSend" size="sm" />
+          <span>Send Invitation</span>
+        }
+      </button>
+    </div>
+  </form>
+</div>

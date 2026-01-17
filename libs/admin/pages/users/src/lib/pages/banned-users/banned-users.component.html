@@ -1,0 +1,121 @@
+<div class="space-y-6">
+  <!-- Search -->
+  <div hlmCard>
+    <div hlmCardHeader>
+      <h3 hlmCardTitle>Banned Users</h3>
+      <p hlmCardDescription>Manage users who have been banned from the platform</p>
+    </div>
+    <div hlmCardContent>
+      <div class="flex gap-4">
+        <div class="flex-1">
+          <label hlmLabel for="search">Search</label>
+          <div class="relative">
+            <ng-icon
+              name="lucideSearch"
+              class="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+              size="sm"
+            />
+            <input
+              hlmInput
+              id="search"
+              type="text"
+              placeholder="Search by name, email, or ban reason..."
+              class="pl-10"
+              [value]="searchTerm()"
+              (input)="onSearchChange($any($event.target).value)"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Banned Users List -->
+  <div hlmCard>
+    <div hlmCardHeader>
+      <h3 hlmCardTitle>Banned Users List</h3>
+      <p hlmCardDescription>
+        {{ filteredUsers().length }} banned user{{ filteredUsers().length !== 1 ? 's' : '' }}
+      </p>
+    </div>
+    <div hlmCardContent>
+      @if (isLoading()) {
+        <div class="flex items-center justify-center py-12">
+          <div class="text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <p class="mt-4 text-sm text-muted-foreground">Loading banned users...</p>
+          </div>
+        </div>
+      } @else if (filteredUsers().length === 0) {
+        <div class="text-center py-12">
+          <ng-icon name="lucideShield" size="xl" class="text-muted-foreground mx-auto mb-4" />
+          <h3 class="text-lg font-semibold mb-2">No banned users</h3>
+          <p class="text-sm text-muted-foreground">
+            @if (searchTerm()) {
+              Try adjusting your search criteria
+            } @else {
+              There are currently no banned users
+            }
+          </p>
+        </div>
+      } @else {
+        <div class="space-y-4">
+          @for (user of filteredUsers(); track user.id) {
+            <div class="p-4 border rounded-lg hover:bg-slate-50 transition-colors">
+              <div class="flex items-start justify-between gap-4">
+                <!-- User Info -->
+                <div class="flex items-start gap-4 flex-1">
+                  <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                    <ng-icon name="lucideShield" class="text-red-600" />
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                      <h4 class="font-semibold">{{ getUserName(user) }}</h4>
+                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
+                        Banned
+                      </span>
+                    </div>
+                    <p class="text-sm text-muted-foreground mb-2">{{ user.email }}</p>
+                    
+                    <!-- Ban Details -->
+                    <div class="space-y-1">
+                      <div class="flex items-center gap-2 text-sm">
+                        <ng-icon name="lucideAlertCircle" size="sm" class="text-muted-foreground" />
+                        <span class="text-muted-foreground">Reason:</span>
+                        <span>{{ user.banReason }}</span>
+                      </div>
+                      <div class="flex items-center gap-2 text-sm">
+                        <ng-icon name="lucideCalendar" size="sm" class="text-muted-foreground" />
+                        <span class="text-muted-foreground">Banned on:</span>
+                        <span>{{ formatDate(user.bannedAt) }}</span>
+                      </div>
+                      <div class="flex items-center gap-2 text-sm">
+                        <ng-icon name="lucideShield" size="sm" class="text-muted-foreground" />
+                        <span class="text-muted-foreground">Banned by:</span>
+                        <span>{{ user.bannedBy }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex-shrink-0">
+                  <button
+                    hlmBtn
+                    variant="outline"
+                    size="sm"
+                    (click)="unbanUser(user)"
+                    class="inline-flex items-center gap-2"
+                  >
+                    <ng-icon hlmIcon name="lucideShieldOff" size="sm" />
+                    Unban User
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

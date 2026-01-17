@@ -1,0 +1,138 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div hlmCard>
+    <div hlmCardHeader>
+      <h3 hlmCardTitle>User Permissions Management</h3>
+      <p hlmCardDescription>Assign and manage user roles and permissions</p>
+    </div>
+    <div hlmCardContent>
+      <div class="flex gap-4">
+        <div class="flex-1">
+          <label hlmLabel for="search">Search Users</label>
+          <div class="relative">
+            <ng-icon
+              name="lucideSearch"
+              class="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+              size="sm"
+            />
+            <input
+              hlmInput
+              id="search"
+              type="text"
+              placeholder="Search by name or email..."
+              class="pl-10"
+              [value]="searchTerm()"
+              (input)="onSearchChange($any($event.target).value)"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Permissions Matrix -->
+  <div hlmCard>
+    <div hlmCardHeader>
+      <h3 hlmCardTitle>Role Assignments</h3>
+      <p hlmCardDescription>Toggle roles for each user</p>
+    </div>
+    <div hlmCardContent>
+      @if (isLoading()) {
+        <div class="flex items-center justify-center py-12">
+          <div class="text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <p class="mt-4 text-sm text-muted-foreground">Loading permissions...</p>
+          </div>
+        </div>
+      } @else if (filteredUsers().length === 0) {
+        <div class="text-center py-12">
+          <ng-icon name="lucideUsers" size="xl" class="text-muted-foreground mx-auto mb-4" />
+          <h3 class="text-lg font-semibold mb-2">No users found</h3>
+          <p class="text-sm text-muted-foreground">
+            @if (searchTerm()) {
+              Try adjusting your search criteria
+            } @else {
+              No users available to manage permissions
+            }
+          </p>
+        </div>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="border-b">
+              <tr class="text-left">
+                <th class="pb-3 px-4 text-sm font-medium text-muted-foreground sticky left-0 bg-white">User</th>
+                @for (role of roles(); track role.id) {
+                  <th class="pb-3 px-4 text-sm font-medium text-muted-foreground text-center">
+                    <div class="flex flex-col items-center gap-1">
+                      <ng-icon name="lucideShield" size="sm" />
+                      <span>{{ role.name }}</span>
+                    </div>
+                  </th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (user of filteredUsers(); track user.id) {
+                <tr class="border-b hover:bg-slate-50 transition-colors">
+                  <td class="py-4 px-4 sticky left-0 bg-white">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                        <span class="text-sm font-medium text-blue-600">
+                          {{ (user.firstName?.[0] || user.email[0]).toUpperCase() }}
+                        </span>
+                      </div>
+                      <div>
+                        <div class="font-medium">{{ getUserName(user) }}</div>
+                        <div class="text-sm text-muted-foreground">{{ user.email }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  @for (role of roles(); track role.id) {
+                    <td class="py-4 px-4 text-center">
+                      <button
+                        hlmBtn
+                        [variant]="hasRole(user, role.id) ? 'default' : 'outline'"
+                        size="sm"
+                        class="w-10 h-10 p-0"
+                        (click)="toggleRole(user, role)"
+                        [title]="hasRole(user, role.id) ? 'Remove ' + role.name : 'Add ' + role.name"
+                      >
+                        @if (hasRole(user, role.id)) {
+                          <ng-icon hlmIcon name="lucideCheck" size="sm" />
+                        } @else {
+                          <ng-icon hlmIcon name="lucideX" size="sm" class="text-muted-foreground" />
+                        }
+                      </button>
+                    </td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Role Descriptions -->
+  <div hlmCard>
+    <div hlmCardHeader>
+      <h3 hlmCardTitle>Role Descriptions</h3>
+      <p hlmCardDescription>Understanding each role's permissions</p>
+    </div>
+    <div hlmCardContent>
+      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        @for (role of roles(); track role.id) {
+          <div class="p-4 border rounded-lg">
+            <div class="flex items-center gap-2 mb-2">
+              <ng-icon name="lucideShield" class="text-blue-600" />
+              <h4 class="font-semibold">{{ role.name }}</h4>
+            </div>
+            <p class="text-sm text-muted-foreground">{{ role.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
