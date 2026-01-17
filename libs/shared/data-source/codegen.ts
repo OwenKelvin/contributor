@@ -84,6 +84,20 @@
           skipTypename: true,
         },
       },
+      [`libs/shared/data-source/user/src/lib/graphql/users.generated.ts`]: {
+        documents: `libs/shared/data-source/user/src/lib/graphql/users.gql`,
+        plugins: ['typescript-operations', 'typescript-apollo-angular'],
+        preset: 'near-operation-file',
+        presetConfig: {
+          extension: '.generated.ts',
+          baseTypesPath: '~@nyots/data-source',
+        },
+        config: {
+          addExplicitOverride: true,
+          typesPrefix: 'I',
+          skipTypename: true,
+        },
+      },
     },
     overwrite: true,
   };

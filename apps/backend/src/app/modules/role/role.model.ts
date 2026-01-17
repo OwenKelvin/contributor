@@ -15,6 +15,7 @@ import { UserRole } from './user-role.model';
 interface IRole {
   id?: string;
   name: string;
+  description?: string;
 }
 
 @Table({
@@ -33,6 +34,12 @@ export class Role extends Model<IRole> {
     unique: true,
   })
   name: string;
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  description: string;
 
   @BelongsToMany(() => User, () => UserRole)
   users: User[];

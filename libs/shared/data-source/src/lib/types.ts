@@ -540,6 +540,7 @@ export enum IReportType {
 }
 
 export type IRole = {
+  description?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
 };

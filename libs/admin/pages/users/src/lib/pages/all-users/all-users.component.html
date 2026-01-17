@@ -191,29 +191,24 @@
         <!-- Pagination -->
         <div class="flex items-center justify-between mt-6 pt-6 border-t">
           <div class="text-sm text-muted-foreground">
-            Showing {{ (currentPage() - 1) * pageSize() + 1 }} to
-            {{ displayedUsersEnd() }} of
-            {{ totalUsers() }} users
+            Showing {{ users().length }} of {{ totalUsers() }} users
           </div>
           <div class="flex items-center gap-2">
             <button
               hlmBtn
               variant="outline"
               size="sm"
-              [disabled]="currentPage() === 1"
+              [disabled]="!pagination().hasPreviousPage"
               (click)="previousPage()"
             >
               <ng-icon hlmIcon name="lucideChevronLeft" size="sm" class="mr-1" />
               Previous
             </button>
-            <div class="text-sm text-muted-foreground px-4">
-              Page {{ currentPage() }} of {{ totalPages() }}
-            </div>
             <button
               hlmBtn
               variant="outline"
               size="sm"
-              [disabled]="currentPage() >= totalPages()"
+              [disabled]="!pagination().hasNextPage"
               (click)="nextPage()"
             >
               Next

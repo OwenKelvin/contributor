@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { toast } from 'ngx-sonner';
 import { IUser } from '@nyots/data-source';
+import { UserService } from '@nyots/data-source/user';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
@@ -61,6 +62,7 @@ interface BannedUser extends IUser {
 })
 export class BannedUsersComponent {
   private readonly router = inject(Router);
+  private readonly userService = inject(UserService);
 
   // State management
   bannedUsers = signal<BannedUser[]>([]);
@@ -94,34 +96,23 @@ export class BannedUsersComponent {
   async loadBannedUsers() {
     this.isLoading.set(true);
     try {
-      // TODO: Replace with actual API call
-      const mockBannedUsers: BannedUser[] = [
-        {
-          id: '1',
-          email: 'banned.user@example.com',
-          firstName: 'Banned',
-          lastName: 'User',
-          phoneNumber: '+1234567890',
-          roles: [],
-          bannedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
-          bannedBy: 'Admin User',
-          banReason: 'Violation of terms of service',
-        },
-        {
-          id: '2',
-          email: 'spam.account@example.com',
-          firstName: 'Spam',
-          lastName: 'Account',
-          phoneNumber: '+1234567891',
-          roles: [],
-          bannedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3),
-          bannedBy: 'Moderator',
-          banReason: 'Spam and fraudulent activity',
-        },
-      ];
+      const result = await this.userService.getBannedUsers({
+        first: this.pageSize(),
+      });
 
-      this.bannedUsers.set(mockBannedUsers);
-      this.totalUsers.set(mockBannedUsers.length);
+      if (result) {
+        // Map to BannedUser type with mock ban data
+        // TODO: Update backend to include ban information
+        const users = result.edges.map(edge => ({
+          ...edge.node,
+          bannedAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+          bannedBy: 'Admin',
+          banReason: 'Violation of terms of service',
+        })) as BannedUser[];
+
+        this.bannedUsers.set(users);
+        this.totalUsers.set(result.totalCount);
+      }
     } catch (error) {
       console.error('Error loading banned users:', error);
       toast.error('Failed to load banned users');
@@ -148,8 +139,7 @@ export class BannedUsersComponent {
   async unbanUser(user: BannedUser) {
     if (confirm(`Are you sure you want to unban ${this.getUserName(user)}?`)) {
       try {
-        // TODO: Implement API call to unban user
-        console.log('Unbanning user:', user.id);
+        await this.userService.unbanUser(user.id);
         toast.success('User unbanned successfully');
         await this.loadBannedUsers();
       } catch (error) {

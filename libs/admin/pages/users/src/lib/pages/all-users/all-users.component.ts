@@ -1,9 +1,10 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, effect } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { toast } from 'ngx-sonner';
-import { IUser } from '@nyots/data-source';
+import { IUser, IPageInfo } from '@nyots/data-source';
+import { UserService } from '@nyots/data-source/user';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
@@ -66,27 +67,49 @@ import {
 })
 export class AllUsersComponent {
   private readonly router = inject(Router);
+  private readonly userService = inject(UserService);
 
   // State management using signals
   users = signal<IUser[]>([]);
   isLoading = signal(false);
   searchTerm = signal('');
+  debouncedSearchTerm = signal('');
   selectedUsers = signal<Set<string>>(new Set());
 
   // Pagination state
-  currentPage = signal(1);
-  pageSize = signal(20);
+  pagination = signal<IPageInfo>({
+    hasNextPage: false,
+    hasPreviousPage: false,
+    startCursor: null,
+    endCursor: null,
+  });
+  currentCursor = signal<string | null>(null);
   totalUsers = signal(0);
 
   // Computed properties
   selectedCount = computed(() => this.selectedUsers().size);
   hasSelection = computed(() => this.selectedCount() > 0);
-  totalPages = computed(() => Math.ceil(this.totalUsers() / this.pageSize()));
-  displayedUsersEnd = computed(() => Math.min(this.currentPage() * this.pageSize(), this.totalUsers()));
+  displayedUsersEnd = computed(() => Math.min(this.users().length, this.totalUsers()));
+
+  // Debounce timer for search
+  private searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     // Load initial data
     this.loadUsers();
+
+    // Set up search debouncing
+    effect(() => {
+      const term = this.searchTerm();
+      if (this.searchDebounceTimer !== null) {
+        clearTimeout(this.searchDebounceTimer);
+      }
+      this.searchDebounceTimer = setTimeout(() => {
+        this.debouncedSearchTerm.set(term);
+        this.currentCursor.set(null);
+        this.loadUsers();
+      }, 300);
+    });
   }
 
   /**
@@ -96,29 +119,24 @@ export class AllUsersComponent {
     this.isLoading.set(true);
 
     try {
-      // TODO: Replace with actual API call
-      // Mock data for now
-      const mockUsers: IUser[] = [
-        {
-          id: '1',
-          email: 'john.doe@example.com',
-          firstName: 'John',
-          lastName: 'Doe',
-          phoneNumber: '+1234567890',
-          roles: [{ id: '1', name: 'Admin' }],
+      const result = await this.userService.getAllUsers({
+        search: this.debouncedSearchTerm() || undefined,
+        pagination: {
+          first: 20,
+          after: this.currentCursor() ?? undefined,
         },
-        {
-          id: '2',
-          email: 'jane.smith@example.com',
-          firstName: 'Jane',
-          lastName: 'Smith',
-          phoneNumber: '+1234567891',
-          roles: [{ id: '2', name: 'User' }],
-        },
-      ];
+      });
 
-      this.users.set(mockUsers);
-      this.totalUsers.set(mockUsers.length);
+      if (result) {
+        this.users.set(result.edges.map(edge => edge.node).filter((u): u is IUser => !!u));
+        this.pagination.set({
+          hasNextPage: result.pageInfo.hasNextPage ?? false,
+          hasPreviousPage: result.pageInfo.hasPreviousPage ?? false,
+          startCursor: result.pageInfo.startCursor ?? null,
+          endCursor: result.pageInfo.endCursor ?? null,
+        });
+        this.totalUsers.set(result.totalCount);
+      }
     } catch (error) {
       console.error('Error loading users:', error);
       toast.error('Failed to load users');
@@ -132,27 +150,26 @@ export class AllUsersComponent {
    */
   onSearchChange(value: string) {
     this.searchTerm.set(value);
-    this.currentPage.set(1);
-    this.loadUsers();
   }
 
   /**
    * Navigate to next page
    */
-  nextPage() {
-    if (this.currentPage() < this.totalPages()) {
-      this.currentPage.update(page => page + 1);
-      this.loadUsers();
+  async nextPage() {
+    const pageInfo = this.pagination();
+    if (pageInfo.hasNextPage && pageInfo.endCursor) {
+      this.currentCursor.set(pageInfo.endCursor);
+      await this.loadUsers();
     }
   }
 
   /**
    * Navigate to previous page
    */
-  previousPage() {
-    if (this.currentPage() > 1) {
-      this.currentPage.update(page => page - 1);
-      this.loadUsers();
+  async previousPage() {
+    if (this.pagination().hasPreviousPage) {
+      this.currentCursor.set(null);
+      await this.loadUsers();
     }
   }
 
@@ -169,8 +186,7 @@ export class AllUsersComponent {
   async onUserDelete(userId: string) {
     if (confirm('Are you sure you want to delete this user?')) {
       try {
-        // TODO: Implement delete API call
-        console.log('Deleting user:', userId);
+        await this.userService.deleteUser(userId);
         toast.success('User deleted successfully');
         await this.loadUsers();
       } catch (error) {
