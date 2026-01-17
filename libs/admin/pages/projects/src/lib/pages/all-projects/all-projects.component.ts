@@ -382,7 +382,8 @@ export class AllProjectsComponent {
    * Handle project view action
    */
   onProjectView(projectId: string) {
-    this.router.navigate(['/dashboard/projects', projectId, 'view']);
+    console.log(['/dashboard','projects', projectId, 'view']);
+    this.router.navigate(['/dashboard','projects', projectId, 'view']);
   }
 
   /**

@@ -134,7 +134,7 @@ export class ContributionResolver {
     // Verify user has access to this contribution
     const contribution = await this.contributionService.getContributionById(contributionId);
     const isAdmin = user.roles?.some((role) => role.name === 'admin');
-    
+
     if (!isAdmin && contribution.userId !== user.id) {
       throw new Error('Unauthorized: You can only view transactions for your own contributions');
     }
@@ -199,7 +199,7 @@ export class ContributionResolver {
   ): Promise<Contribution> {
     // Verify user owns this contribution
     const contribution = await this.contributionService.getContributionById(contributionId);
-    
+
     if (contribution.userId !== user.id) {
       throw new Error('Unauthorized: You can only process payment for your own contributions');
     }
