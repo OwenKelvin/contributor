@@ -13,6 +13,7 @@ import { CategoryModule } from './modules/category/category.module';
 import { FileModule } from './modules/file/file.module';
 import { PaymentModule } from './modules/payment/payment.module';
 import { ContributionModule } from './modules/contribution/contribution.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -33,7 +34,7 @@ import { ContributionModule } from './modules/contribution/contribution.module';
     FileModule,
     PaymentModule,
     ContributionModule,
-    UserModule
+    DashboardModule,
   ],
 })
 export class AppModule {}
