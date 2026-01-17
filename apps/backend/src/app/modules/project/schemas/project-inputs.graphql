@@ -38,7 +38,7 @@ input DateRangeInput {
   end: DateTime!
 }
 
-input PaginationInput {
+input ProjectPaginationInput {
   cursor: String
   limit: Int!
 }

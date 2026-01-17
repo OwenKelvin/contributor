@@ -8,7 +8,6 @@ import {
   ForeignKey,
   BelongsTo,
 } from 'sequelize-typescript';
-import { ObjectType, Field, ID, Float, registerEnumType } from '@nestjs/graphql';
 import { Contribution } from './contribution.model';
 
 export enum TransactionType {
@@ -22,22 +21,13 @@ export enum TransactionStatus {
   FAILED = 'failed',
 }
 
-registerEnumType(TransactionType, {
-  name: 'TransactionType',
-});
 
-registerEnumType(TransactionStatus, {
-  name: 'TransactionStatus',
-});
-
-@ObjectType()
 @Table({
   tableName: 'transactions',
   underscored: true,
   timestamps: false,
 })
 export class Transaction extends Model<Transaction> {
-  @Field(() => ID)
   @PrimaryKey
   @Default(DataType.UUIDV4)
   @Column(DataType.UUID)
@@ -51,11 +41,9 @@ export class Transaction extends Model<Transaction> {
   })
   contributionId: string;
 
-  @Field(() => Contribution)
   @BelongsTo(() => Contribution)
   contribution: Contribution;
 
-  @Field(() => TransactionType)
   @Column({
     type: DataType.ENUM(...Object.values(TransactionType)),
     allowNull: false,
@@ -63,14 +51,12 @@ export class Transaction extends Model<Transaction> {
   })
   transactionType: TransactionType;
 
-  @Field(() => Float)
   @Column({
     type: DataType.DECIMAL(10, 2),
     allowNull: false,
   })
   amount: number;
 
-  @Field(() => TransactionStatus)
   @Column({
     type: DataType.ENUM(...Object.values(TransactionStatus)),
     allowNull: false,
@@ -78,7 +64,6 @@ export class Transaction extends Model<Transaction> {
   })
   status: TransactionStatus;
 
-  @Field({ nullable: true })
   @Column({
     type: DataType.STRING,
     allowNull: true,
@@ -86,7 +71,6 @@ export class Transaction extends Model<Transaction> {
   })
   gatewayTransactionId?: string;
 
-  @Field({ nullable: true })
   @Column({
     type: DataType.TEXT,
     allowNull: true,
@@ -94,7 +78,6 @@ export class Transaction extends Model<Transaction> {
   })
   gatewayResponse?: string;
 
-  @Field({ nullable: true })
   @Column({
     type: DataType.STRING,
     allowNull: true,
@@ -102,7 +85,6 @@ export class Transaction extends Model<Transaction> {
   })
   errorCode?: string;
 
-  @Field({ nullable: true })
   @Column({
     type: DataType.TEXT,
     allowNull: true,
@@ -110,7 +92,6 @@ export class Transaction extends Model<Transaction> {
   })
   errorMessage?: string;
 
-  @Field()
   @Column({
     type: DataType.DATE,
     allowNull: false,

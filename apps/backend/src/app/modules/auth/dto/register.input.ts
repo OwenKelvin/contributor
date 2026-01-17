@@ -7,7 +7,7 @@ import {
   IsPhoneNumber,
 } from 'class-validator';
 
-@InputType()
+
 export class RegisterInput {
   @Field()
   @IsEmail()
