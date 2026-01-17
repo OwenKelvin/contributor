@@ -51,6 +51,11 @@ export type IBulkUpdateResult = {
   successCount: Scalars['Int']['output'];
 };
 
+export type IBulkUpdateUserInput = {
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  roleIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
 export type ICategory = {
   createdAt: Scalars['DateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
@@ -151,6 +156,15 @@ export type ICreateProjectInput = {
   title: Scalars['String']['input'];
 };
 
+export type ICreateUserInput = {
+  email: Scalars['String']['input'];
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  password: Scalars['String']['input'];
+  phoneNumber?: InputMaybe<Scalars['String']['input']>;
+  roleIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
 export type IDateRangeInput = {
   end: Scalars['DateTime']['input'];
   start: Scalars['DateTime']['input'];
@@ -165,21 +179,27 @@ export type IMutation = {
   _empty?: Maybe<Scalars['String']['output']>;
   adminCreateContribution: IContribution;
   approveProject: IProject;
+  banUser: IUser;
   bulkUpdateContributionStatus: IContributionBulkUpdateResult;
   bulkUpdateProjects: IBulkUpdateResult;
+  bulkUpdateUsers: IBulkUpdateResult;
   createCategory: ICategory;
   createContribution: IContribution;
   createProject: IProject;
+  createUser: IUser;
   deleteCategory: Scalars['Boolean']['output'];
   deleteProject: Scalars['Boolean']['output'];
+  deleteUser: Scalars['Boolean']['output'];
   login: IAuthResponse;
   processContributionPayment: IContribution;
   processContributionRefund: IContribution;
   register: IAuthResponse;
   rejectProject: IProject;
+  unbanUser: IUser;
   updateCategory: ICategory;
   updateContributionStatus: IContribution;
   updateProject: IProject;
+  updateUser: IUser;
 };
 
 
@@ -194,6 +214,12 @@ export type IMutationApproveProjectArgs = {
 };
 
 
+export type IMutationBanUserArgs = {
+  id: Scalars['ID']['input'];
+  reason?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type IMutationBulkUpdateContributionStatusArgs = {
   contributionIds: Array<Scalars['String']['input']>;
   reason?: InputMaybe<Scalars['String']['input']>;
@@ -204,6 +230,12 @@ export type IMutationBulkUpdateContributionStatusArgs = {
 export type IMutationBulkUpdateProjectsArgs = {
   ids: Array<Scalars['ID']['input']>;
   input: IBulkUpdateInput;
+};
+
+
+export type IMutationBulkUpdateUsersArgs = {
+  ids: Array<Scalars['ID']['input']>;
+  input: IBulkUpdateUserInput;
 };
 
 
@@ -222,12 +254,22 @@ export type IMutationCreateProjectArgs = {
 };
 
 
+export type IMutationCreateUserArgs = {
+  input: ICreateUserInput;
+};
+
+
 export type IMutationDeleteCategoryArgs = {
   id: Scalars['ID']['input'];
 };
 
 
 export type IMutationDeleteProjectArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type IMutationDeleteUserArgs = {
   id: Scalars['ID']['input'];
 };
 
@@ -260,6 +302,11 @@ export type IMutationRejectProjectArgs = {
 };
 
 
+export type IMutationUnbanUserArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type IMutationUpdateCategoryArgs = {
   id: Scalars['ID']['input'];
   input: IUpdateCategoryInput;
@@ -276,6 +323,12 @@ export type IMutationUpdateContributionStatusArgs = {
 export type IMutationUpdateProjectArgs = {
   id: Scalars['ID']['input'];
   input: IUpdateProjectInput;
+};
+
+
+export type IMutationUpdateUserArgs = {
+  id: Scalars['ID']['input'];
+  input: IUpdateUserInput;
 };
 
 export type IPageInfo = {
@@ -363,7 +416,9 @@ export type IQuery = {
   getActiveProjects: IProjectConnection;
   getAllCategories: Array<ICategory>;
   getAllProjects: IProjectConnection;
+  getAllUsers: IUserConnection;
   getArchivedProjects: IProjectConnection;
+  getBannedUsers: IUserConnection;
   getContribution: IContribution;
   getContributionReport: IContributionReport;
   getContributionTransactions: Array<ITransaction>;
@@ -373,6 +428,7 @@ export type IQuery = {
   getProjectById: IProject;
   getProjectContributions: IContributionConnection;
   getTransactions: ITransactionConnection;
+  getUserById: IUser;
 };
 
 
@@ -388,9 +444,21 @@ export type IQueryGetAllProjectsArgs = {
 };
 
 
+export type IQueryGetAllUsersArgs = {
+  filter?: InputMaybe<IUserFilter>;
+  pagination?: InputMaybe<IUserPaginationInput>;
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type IQueryGetArchivedProjectsArgs = {
   filter?: InputMaybe<IArchivedProjectFilter>;
   pagination?: InputMaybe<IProjectPaginationInput>;
+};
+
+
+export type IQueryGetBannedUsersArgs = {
+  pagination?: InputMaybe<IUserPaginationInput>;
 };
 
 
@@ -442,6 +510,11 @@ export type IQueryGetProjectContributionsArgs = {
 export type IQueryGetTransactionsArgs = {
   filter?: InputMaybe<ITransactionFilterInput>;
   pagination?: InputMaybe<IContributionPaginationInput>;
+};
+
+
+export type IQueryGetUserByIdArgs = {
+  id: Scalars['ID']['input'];
 };
 
 export type IRegisterInput = {
@@ -538,13 +611,30 @@ export type IUpdateProjectInput = {
   title?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type IUpdateUserInput = {
+  email?: InputMaybe<Scalars['String']['input']>;
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
+  phoneNumber?: InputMaybe<Scalars['String']['input']>;
+  roleIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
 export type IUser = {
+  createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
   firstName?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   lastName?: Maybe<Scalars['String']['output']>;
   phoneNumber?: Maybe<Scalars['String']['output']>;
   roles?: Maybe<Array<IRole>>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type IUserConnection = {
+  edges: Array<IUserEdge>;
+  pageInfo: IPageInfo;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type IUserContributionSummary = {
@@ -553,4 +643,22 @@ export type IUserContributionSummary = {
   userEmail: Scalars['String']['output'];
   userId: Scalars['ID']['output'];
   userName: Scalars['String']['output'];
+};
+
+export type IUserEdge = {
+  cursor: Scalars['String']['output'];
+  node: IUser;
+};
+
+export type IUserFilter = {
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  roleId?: InputMaybe<Scalars['ID']['input']>;
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type IUserPaginationInput = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
 };

@@ -1,0 +1,27 @@
+extend type Query {
+  getAllUsers(
+    search: String
+    filter: UserFilter
+    pagination: UserPaginationInput
+  ): UserConnection!
+  getUserById(id: ID!): User!
+  getBannedUsers(pagination: UserPaginationInput): UserConnection!
+}
+
+type UserConnection {
+  edges: [UserEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type UserEdge {
+  cursor: String!
+  node: User!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}

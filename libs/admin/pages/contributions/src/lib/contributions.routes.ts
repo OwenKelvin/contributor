@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '@nyots/data-source/auth';
+import { ContributionsLayoutComponent } from './layout/contributions-layout.component';
 import { ContributionDashboardComponent } from './pages/dashboard/contribution-dashboard.component';
 import { ContributionListComponent } from './pages/list/contribution-list.component';
 import { ContributionFormComponent } from './pages/form/contribution-form.component';
@@ -15,16 +16,12 @@ import { TransactionLogsComponent } from './pages/transactions/transaction-logs.
 export const contributionsRoutes: Routes = [
   {
     path: '',
+    component: ContributionsLayoutComponent,
     canActivate: [authGuard],
     children: [
       // Dashboard route (default)
       {
         path: '',
-        component: ContributionDashboardComponent,
-      },
-      // Dashboard route (explicit)
-      {
-        path: 'dashboard',
         component: ContributionDashboardComponent,
       },
       // List all contributions
@@ -37,7 +34,7 @@ export const contributionsRoutes: Routes = [
         path: 'create',
         component: ContributionFormComponent,
       },
-      // Pending contributions (uses list component with filter)
+      // Pending contributions
       {
         path: 'pending',
         component: PendingContributionsComponent,
@@ -47,7 +44,7 @@ export const contributionsRoutes: Routes = [
         path: 'reports',
         component: ContributionReportsComponent,
       },
-      // Refunds route (placeholder - will be implemented later)
+      // Refunds route
       {
         path: 'refunds',
         component: ContributionListComponent,
