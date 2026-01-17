@@ -35,7 +35,7 @@ export class AuthService {
     if (existingUser) {
       throw new GraphQLError('Validation failed', {
         extensions: {
-          code: 'BAD_REQUEST',
+          code: 'BAD_USER_INPUT',
           validationErrors: {
             email: 'User with this email already exists',
           },
