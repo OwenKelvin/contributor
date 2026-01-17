@@ -1,0 +1,9 @@
+type Query {
+  getContribution(id: String!): Contribution!
+  getContributions(filter: ContributionFilter, pagination: ContributionPaginationInput): ContributionConnection!
+  getMyContributions(filter: ContributionFilter, pagination: ContributionPaginationInput): ContributionConnection!
+  getProjectContributions(filter: ContributionFilter, pagination: ContributionPaginationInput, projectId: String!): ContributionConnection!
+  getContributionReport(filter: ReportFilter, reportType: ReportType!): ContributionReport!
+  getContributionTransactions(contributionId: String!): [Transaction!]!
+  getTransactions(filter: TransactionFilterInput, pagination: ContributionPaginationInput): TransactionConnection!
+}

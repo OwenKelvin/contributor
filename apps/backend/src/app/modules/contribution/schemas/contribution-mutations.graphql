@@ -1,0 +1,19 @@
+type Mutation {
+  adminCreateContribution(input: AdminCreateContributionInput!): Contribution!
+  bulkUpdateContributionStatus(contributionIds: [String!]!, reason: String, status: PaymentStatus!): ContributionBulkUpdateResult!
+  createContribution(input: CreateContributionInput!): Contribution!
+  processContributionPayment(contributionId: String!, paymentDetails: PaymentDetailsInput!): Contribution!
+  processContributionRefund(contributionId: String!, reason: String!): Contribution!
+  updateContributionStatus(contributionId: String!, reason: String, status: PaymentStatus!): Contribution!
+}
+
+type ContributionBulkUpdateResult {
+  errors: [BulkUpdateError!]!
+  failureCount: Int!
+  successCount: Int!
+}
+
+type BulkUpdateError {
+  contributionId: String!
+  error: String!
+}
