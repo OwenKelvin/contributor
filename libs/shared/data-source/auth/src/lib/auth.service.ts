@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { ILoginGQL, IRegisterGQL } from './auth.generated';
 import { ILoginInput, IRegisterInput } from '@nyots/data-source';
 import { firstValueFrom } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -9,6 +10,7 @@ import { firstValueFrom } from 'rxjs';
 export class AuthService {
   loginGQL = inject(ILoginGQL);
   registerGQL = inject(IRegisterGQL);
+  router = inject(Router);
 
   async login(credentials: ILoginInput) {
     const response = await firstValueFrom(
@@ -42,5 +44,15 @@ export class AuthService {
       localStorage.setItem('user', JSON.stringify(response.data?.register.user));
     }
     return response;
+  }
+
+  logout() {
+    // Clear tokens and user info
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+
+    // Redirect to login page
+    this.router.navigate(['/login']);
   }
 }

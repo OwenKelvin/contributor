@@ -133,6 +133,18 @@ export type IContributionReport = {
   totalContributions: Scalars['Int']['output'];
 };
 
+export type IContributionStatusCount = {
+  amount: Scalars['Float']['output'];
+  count: Scalars['Int']['output'];
+  status: Scalars['String']['output'];
+};
+
+export type IContributionTrend = {
+  amount: Scalars['Float']['output'];
+  count: Scalars['Int']['output'];
+  date: Scalars['String']['output'];
+};
+
 export type ICreateCategoryInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
@@ -163,6 +175,18 @@ export type ICreateUserInput = {
   password: Scalars['String']['input'];
   phoneNumber?: InputMaybe<Scalars['String']['input']>;
   roleIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
+export type IDashboardStats = {
+  activeProjects: Scalars['Int']['output'];
+  contributionsByStatus: Array<IContributionStatusCount>;
+  pendingContributions: Scalars['Int']['output'];
+  pendingContributionsAmount: Scalars['Float']['output'];
+  projectsByStatus: Array<IProjectStatusCount>;
+  totalContributions: Scalars['Int']['output'];
+  totalProjects: Scalars['Int']['output'];
+  totalRevenue: Scalars['Float']['output'];
+  totalUsers: Scalars['Int']['output'];
 };
 
 export type IDateRangeInput = {
@@ -345,10 +369,10 @@ export type IPaymentDetailsInput = {
 };
 
 export enum IPaymentStatus {
-  Failed = 'failed',
-  Paid = 'paid',
-  Pending = 'pending',
-  Refunded = 'refunded'
+  Failed = 'FAILED',
+  Paid = 'PAID',
+  Pending = 'PENDING',
+  Refunded = 'REFUNDED'
 }
 
 export type IPermission = {
@@ -404,15 +428,22 @@ export type IProjectPaginationInput = {
 };
 
 export enum IProjectStatus {
-  Active = 'ACTIVE',
-  Archived = 'ARCHIVED',
-  Completed = 'COMPLETED',
-  Draft = 'DRAFT',
-  Pending = 'PENDING'
+  Active = 'active',
+  Archived = 'archived',
+  Completed = 'completed',
+  Draft = 'draft',
+  Pending = 'pending'
 }
+
+export type IProjectStatusCount = {
+  count: Scalars['Int']['output'];
+  status: Scalars['String']['output'];
+};
 
 export type IQuery = {
   _empty?: Maybe<Scalars['String']['output']>;
+  contributionTrends: Array<IContributionTrend>;
+  dashboardStats: IDashboardStats;
   getActiveProjects: IProjectConnection;
   getAllCategories: Array<ICategory>;
   getAllProjects: IProjectConnection;
@@ -429,6 +460,20 @@ export type IQuery = {
   getProjectContributions: IContributionConnection;
   getTransactions: ITransactionConnection;
   getUserById: IUser;
+  topProjects: Array<ITopProject>;
+};
+
+
+export type IQueryContributionTrendsArgs = {
+  endDate: Scalars['DateTime']['input'];
+  groupBy?: InputMaybe<Scalars['String']['input']>;
+  startDate: Scalars['DateTime']['input'];
+};
+
+
+export type IQueryDashboardStatsArgs = {
+  endDate?: InputMaybe<Scalars['DateTime']['input']>;
+  startDate?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 
@@ -517,6 +562,13 @@ export type IQueryGetUserByIdArgs = {
   id: Scalars['ID']['input'];
 };
 
+
+export type IQueryTopProjectsArgs = {
+  endDate?: InputMaybe<Scalars['DateTime']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  startDate?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
 export type IRegisterInput = {
   email: Scalars['String']['input'];
   firstName: Scalars['String']['input'];
@@ -548,6 +600,12 @@ export type IRole = {
 export type ITimeSeriesPoint = {
   contributionCount: Scalars['Int']['output'];
   date: Scalars['String']['output'];
+  totalAmount: Scalars['Float']['output'];
+};
+
+export type ITopProject = {
+  contributionCount: Scalars['Int']['output'];
+  project: IProject;
   totalAmount: Scalars['Float']['output'];
 };
 

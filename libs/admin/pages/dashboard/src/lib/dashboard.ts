@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   HlmSidebar,
   HlmSidebarContent, HlmSidebarFooter,
@@ -39,6 +39,10 @@ import { HlmCollapsible, HlmCollapsibleContent, HlmCollapsibleTrigger } from '@n
 import { NgOptimizedImage } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { HlmDropdownMenu, HlmDropdownMenuItem, HlmDropdownMenuTrigger } from '@nyots/ui/dropdown-menu';
+import { AuthService } from '@nyots/data-source/auth';
+import { HlmDialogService } from '@nyots/ui/dialog';
+import { ConfirmationDialogComponent } from '@nyots/ui/dialog';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   imports: [
@@ -194,6 +198,8 @@ import { HlmDropdownMenu, HlmDropdownMenuItem, HlmDropdownMenuTrigger } from '@n
   ],
 })
 export class Dashboard {
+  private readonly authService = inject(AuthService);
+  private readonly dialogService = inject(HlmDialogService);
   protected readonly _items = [
     {
       title: 'Dashboard',
@@ -448,7 +454,21 @@ export class Dashboard {
     },
   ];
 
-  signOut() {
+  async signOut() {
+    const dialogRef = this.dialogService.open(ConfirmationDialogComponent, {
+      context: {
+        title: 'Sign Out',
+        message: 'Are you sure you want to sign out?',
+        confirmLabel: 'Sign Out',
+        cancelLabel: 'Cancel',
+        variant: 'destructive',
+      },
+    });
 
+    const result = await firstValueFrom(dialogRef.closed$);
+    if (result === true) {
+      this.authService.logout();
+    }
   }
 }
+

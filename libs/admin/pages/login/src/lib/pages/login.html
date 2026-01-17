@@ -13,6 +13,7 @@
             <ng-icon hlmIcon name="lucideMail" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size="sm" />
             <input
               hlmInput
+              autocomplete="username"
               id="email"
               type="email"
               [field]="loginForm.email"
@@ -40,6 +41,7 @@
               type="password"
               [field]="loginForm.password"
               placeholder="••••••••"
+              autocomplete="current-password"
               class="pl-10"
               [class.border-red-500]="loginForm.password().invalid() && loginForm.password().touched()"
             />
@@ -111,13 +113,6 @@
         </svg>
         Sign in with Google
       </button>
-    </div>
-
-    <div hlmCardFooter class="flex flex-col space-y-2">
-      <div class="text-sm text-center text-slate-500">
-        Don't have an account?
-        <a [routerLink]="['/register']" class="text-blue-600 hover:underline">Sign up</a>
-      </div>
     </div>
   </div>
 </div>

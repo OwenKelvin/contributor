@@ -26,7 +26,7 @@ export class AuthResolver {
 
   // Example of a protected route
   // @Mutation(() => String)
-  // @Roles('admin')
+  // @Roles(RoleList.Admin)
   // @UseGuards(GqlAuthGuard, RolesGuard)
   // async testProtectedRoute(@CurrentUser() user: User) {
   //   return `Hello ${user.email}, you are authenticated and have the role: ${user.roles.map(role => role.name).join(', ')}!`;
