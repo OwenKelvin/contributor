@@ -1,0 +1,158 @@
+query GetAllUsers(
+  $search: String
+  $filter: UserFilter
+  $pagination: UserPaginationInput
+) {
+  getAllUsers(search: $search, filter: $filter, pagination: $pagination) {
+    edges {
+      node {
+        id
+        email
+        firstName
+        lastName
+        phoneNumber
+        roles {
+          id
+          name
+          description
+        }
+        createdAt
+        updatedAt
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}
+
+query GetUserById($id: ID!) {
+  getUserById(id: $id) {
+    id
+    email
+    firstName
+    lastName
+    phoneNumber
+    roles {
+      id
+      name
+      description
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+query GetBannedUsers($pagination: UserPaginationInput) {
+  getBannedUsers(pagination: $pagination) {
+    edges {
+      node {
+        id
+        email
+        firstName
+        lastName
+        phoneNumber
+        roles {
+          id
+          name
+          description
+        }
+        createdAt
+        updatedAt
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}
+
+mutation CreateUser($input: CreateUserInput!) {
+  createUser(input: $input) {
+    id
+    email
+    firstName
+    lastName
+    phoneNumber
+    roles {
+      id
+      name
+      description
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+mutation UpdateUser($id: ID!, $input: UpdateUserInput!) {
+  updateUser(id: $id, input: $input) {
+    id
+    email
+    firstName
+    lastName
+    phoneNumber
+    roles {
+      id
+      name
+      description
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+mutation DeleteUser($id: ID!) {
+  deleteUser(id: $id)
+}
+
+mutation BulkUpdateUsers($ids: [ID!]!, $input: BulkUpdateUserInput!) {
+  bulkUpdateUsers(ids: $ids, input: $input) {
+    successCount
+    failureCount
+    errors
+  }
+}
+
+mutation BanUser($id: ID!, $reason: String) {
+  banUser(id: $id, reason: $reason) {
+    id
+    email
+    firstName
+    lastName
+    phoneNumber
+    roles {
+      id
+      name
+      description
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+mutation UnbanUser($id: ID!) {
+  unbanUser(id: $id) {
+    id
+    email
+    firstName
+    lastName
+    phoneNumber
+    roles {
+      id
+      name
+      description
+    }
+    createdAt
+    updatedAt
+  }
+}

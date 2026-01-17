@@ -129,7 +129,11 @@
               <ng-icon name="lucideShield" class="text-blue-600" />
               <h4 class="font-semibold">{{ role.name }}</h4>
             </div>
-            <p class="text-sm text-muted-foreground">{{ role.description }}</p>
+            @if (role.description) {
+              <p class="text-sm text-muted-foreground">{{ role.description }}</p>
+            } @else {
+              <p class="text-sm text-muted-foreground italic">No description available</p>
+            }
           </div>
         }
       </div>

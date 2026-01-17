@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { toast } from 'ngx-sonner';
 import { IRole } from '@nyots/data-source';
+import { UserService } from '@nyots/data-source/user';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
@@ -58,6 +59,7 @@ import {
 export class InviteUserComponent {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly userService = inject(UserService);
 
   // State
   roles = signal<IRole[]>([]);
@@ -73,6 +75,7 @@ export class InviteUserComponent {
       firstName: [''],
       lastName: [''],
       phoneNumber: [''],
+      password: ['', [Validators.required, Validators.minLength(8)]],
       roleIds: [[], [Validators.required]],
       sendEmail: [true],
       customMessage: [''],
@@ -84,14 +87,23 @@ export class InviteUserComponent {
   async loadRoles() {
     this.isLoading.set(true);
     try {
-      // TODO: Replace with actual API call
-      const mockRoles: IRole[] = [
-        { id: '1', name: 'Admin', description: 'Full system access' },
-        { id: '2', name: 'User', description: 'Regular user access' },
-        { id: '3', name: 'Moderator', description: 'Content moderation access' },
-      ];
-
-      this.roles.set(mockRoles);
+      // Load users to extract roles
+      const usersResult = await this.userService.getAllUsers({
+        pagination: { first: 100 },
+      });
+      
+      if (usersResult) {
+        // Extract unique roles from all users
+        const rolesMap = new Map<string, IRole>();
+        usersResult.edges.forEach(edge => {
+          edge.node.roles?.forEach(role => {
+            if (role && !rolesMap.has(role.id)) {
+              rolesMap.set(role.id, role);
+            }
+          });
+        });
+        this.roles.set(Array.from(rolesMap.values()));
+      }
     } catch (error) {
       console.error('Error loading roles:', error);
       toast.error('Failed to load roles');
@@ -131,8 +143,15 @@ export class InviteUserComponent {
     this.isSubmitting.set(true);
     try {
       const formValue = this.inviteForm.value;
-      // TODO: Implement API call to invite user
-      console.log('Inviting user:', formValue);
+      
+      await this.userService.createUser({
+        email: formValue.email,
+        password: formValue.password,
+        firstName: formValue.firstName || undefined,
+        lastName: formValue.lastName || undefined,
+        phoneNumber: formValue.phoneNumber || undefined,
+        roleIds: formValue.roleIds,
+      });
       
       toast.success('User invitation sent successfully');
       this.router.navigate(['/dashboard/users']);
