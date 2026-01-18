@@ -23,42 +23,66 @@ export const contributionsRoutes: Routes = [
       {
         path: '',
         component: ContributionDashboardComponent,
+        data: {
+          breadcrumb: 'Dashboard'
+        }
       },
       // List all contributions
       {
         path: 'list',
         component: ContributionListComponent,
+        data: {
+          breadcrumb: 'List'
+        }
       },
       // Create new contribution
       {
         path: 'create',
         component: ContributionFormComponent,
+        data: {
+          breadcrumb: 'Create'
+        }
       },
       // Pending contributions
       {
         path: 'pending',
         component: PendingContributionsComponent,
+        data: {
+          breadcrumb: 'Pending'
+        }
       },
       // Reports route
       {
         path: 'reports',
         component: ContributionReportsComponent,
+        data: {
+          breadcrumb: 'Reports'
+        }
       },
       // Refunds route
       {
         path: 'refunds',
         component: ContributionListComponent,
-        data: { filter: { paymentStatus: 'REFUNDED' } },
+        data: {
+          filter: { paymentStatus: 'REFUNDED' },
+          breadcrumb: 'Refunds'
+        },
       },
       // Transaction logs route
       {
         path: 'transactions',
         component: TransactionLogsComponent,
+        data: {
+          breadcrumb: 'Transactions'
+        }
       },
       // View contribution detail (must be last to avoid conflicts)
       {
         path: ':id',
         component: ContributionDetailComponent,
+        data: {
+          breadcrumb: 'Detail'
+        }
       },
     ],
   },

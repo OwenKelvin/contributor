@@ -20,41 +20,65 @@ export const projectsRoutes: Routes = [
       {
         path: 'test-editor',
         component: TestEditorComponent,
+        data: {
+          breadcrumb: 'Test Editor'
+        }
       },
       // All projects route (default)
       {
         path: '',
         component: AllProjectsComponent,
+        data: {
+          breadcrumb: 'All'
+        }
       },
       // Create project route
       {
         path: 'create',
         component: CreateProjectComponent,
+        data: {
+          breadcrumb: 'Create'
+        }
       },
       // Active projects route
       {
         path: 'active',
         component: ActiveProjectsComponent,
+        data: {
+          breadcrumb: 'Active'
+        }
       },
       // Pending projects route
       {
         path: 'pending',
         component: PendingProjectsComponent,
+        data: {
+          breadcrumb: 'Pending'
+        }
       },
       // Archived projects route
       {
         path: 'archived',
         component: ArchivedProjectsComponent,
+        data: {
+          breadcrumb: 'Archived'
+        }
       },
       // Categories management route
       {
         path: 'categories',
         component: ProjectCategoriesComponent,
+        data: {
+          breadcrumb: 'Categories'
+        }
       },
       // Edit project route (must be last to avoid conflicts)
       {
         path: ':id/edit',
         component: EditProjectComponent,
+        data: {
+          breadcrumb: 'Edit'
+        }
       },
     ],
   },

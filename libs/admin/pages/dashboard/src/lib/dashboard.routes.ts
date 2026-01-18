@@ -14,18 +14,30 @@ export const dashboardRoutes: Routes = [
       },
       {
         path: 'overview',
-        component: OverviewComponent
+        component: OverviewComponent,
+        data: {
+          breadcrumb: 'Overview'
+        }
       },
       {
         path: 'projects',
+        data: {
+          breadcrumb: 'Projects'
+        },
         loadChildren: () => import('@nyots/admin-pages/projects').then(m => m.projectsRoutes)
       },
       {
         path: 'contributions',
+        data: {
+          breadcrumb: 'Contributions'
+        },
         loadChildren: () => import('@nyots/admin-pages/contributions').then(m => m.contributionsRoutes)
       },
       {
         path: 'users',
+        data: {
+          breadcrumb: 'Users'
+        },
         loadChildren: () => import('@nyots/admin-pages/users').then(m => m.usersRoutes)
       },
     ]
