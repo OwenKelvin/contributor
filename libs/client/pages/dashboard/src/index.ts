@@ -1,1 +1,1 @@
-export { Dashboard as default } from './lib/dashboard';
+export { DashboardRoutes as default } from './lib/dashboard-routes';

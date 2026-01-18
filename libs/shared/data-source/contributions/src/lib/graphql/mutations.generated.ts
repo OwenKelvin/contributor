@@ -8,7 +8,7 @@ export type ICreateContributionMutationVariables = Types.Exact<{
 }>;
 
 
-export type ICreateContributionMutation = { createContribution: { id: string, amount: number, paymentStatus: Types.IPaymentStatus, notes?: string | null, paymentReference?: string | null, failureReason?: string | null, paidAt?: any | null, createdAt: any, updatedAt: any, user: { id: string, firstName?: string | null, lastName?: string | null, email: string }, project: { id: string, title: string, description: string, goalAmount: number, currentAmount: number, status: Types.IProjectStatus } } };
+export type ICreateContributionMutation = { createContribution: { success: boolean, message: string, data: { id: string, amount: number, paymentStatus: Types.IPaymentStatus, notes?: string | null, paymentReference?: string | null, failureReason?: string | null, paidAt?: any | null, createdAt: any, updatedAt: any, user: { id: string, firstName?: string | null, lastName?: string | null, email: string }, project: { id: string, title: string, description: string, goalAmount: number, currentAmount: number, status: Types.IProjectStatus } } } };
 
 export type IAdminCreateContributionMutationVariables = Types.Exact<{
   input: Types.IAdminCreateContributionInput;
@@ -54,29 +54,33 @@ export type IBulkUpdateContributionStatusMutation = { bulkUpdateContributionStat
 export const CreateContributionDocument = gql`
     mutation CreateContribution($input: CreateContributionInput!) {
   createContribution(input: $input) {
-    id
-    user {
+    success
+    message
+    data {
       id
-      firstName
-      lastName
-      email
+      user {
+        id
+        firstName
+        lastName
+        email
+      }
+      project {
+        id
+        title
+        description
+        goalAmount
+        currentAmount
+        status
+      }
+      amount
+      paymentStatus
+      notes
+      paymentReference
+      failureReason
+      paidAt
+      createdAt
+      updatedAt
     }
-    project {
-      id
-      title
-      description
-      goalAmount
-      currentAmount
-      status
-    }
-    amount
-    paymentStatus
-    notes
-    paymentReference
-    failureReason
-    paidAt
-    createdAt
-    updatedAt
   }
 }
     `;

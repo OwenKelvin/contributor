@@ -30,7 +30,7 @@ import {
   lucidePhone,
 } from '@ng-icons/lucide';
 import { AuthService } from '@nyots/data-source/auth';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { GraphQLError } from 'graphql/error';
 import { IRegisterInput } from '@nyots/data-source';
 import { mapGraphqlValidationErrors } from '@nyots/data-source/helpers';
@@ -51,6 +51,7 @@ import { HttpErrorResponse } from '@angular/common/http';
     HlmCardTitle,
     HlmIcon,
     NgIcon,
+    RouterLink,
   ],
   providers: [
     provideIcons({

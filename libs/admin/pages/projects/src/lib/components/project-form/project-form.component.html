@@ -130,6 +130,7 @@
   <div class="space-y-2">
     <label hlmLabel for="category">Category <span class="text-red-500">*</span></label>
     <brn-select
+      hlm
       class="w-full"
       [class.pointer-events-none]="isFormDisabled"
       [class.opacity-50]="isFormDisabled"
@@ -251,7 +252,7 @@
   <!-- Status -->
   <div class="space-y-2">
     <label hlmLabel for="status">Status <span class="text-red-500">*</span></label>
-    <brn-select
+    <hlm-select
       class="w-full"
       [class.pointer-events-none]="isFormDisabled"
       [class.opacity-50]="isFormDisabled"
@@ -268,7 +269,7 @@
           </hlm-option>
         }
       </hlm-select-content>
-    </brn-select>
+    </hlm-select>
     @if (projectForm().status().invalid() && projectForm().status().touched()) {
       <p class="text-sm text-red-500">
         @for (error of projectForm().status().errors(); track error.kind) {

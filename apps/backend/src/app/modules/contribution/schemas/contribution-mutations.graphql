@@ -1,7 +1,13 @@
+type CreateContributionResult {
+  success: Boolean!,
+  message: String!,
+  data: Contribution!
+}
+
 type Mutation {
   adminCreateContribution(input: AdminCreateContributionInput!): Contribution!
   bulkUpdateContributionStatus(contributionIds: [String!]!, reason: String, status: PaymentStatus!): ContributionBulkUpdateResult!
-  createContribution(input: CreateContributionInput!): Contribution!
+  createContribution(input: CreateContributionInput!): CreateContributionResult!
   processContributionPayment(contributionId: String!, paymentDetails: PaymentDetailsInput!): Contribution!
   processContributionRefund(contributionId: String!, reason: String!): Contribution!
   updateContributionStatus(contributionId: String!, reason: String, status: PaymentStatus!): Contribution!

@@ -13,6 +13,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { User } from '../user/user.model';
 import { GraphQLError } from 'graphql/error';
+import { RoleList } from '../role/role-list';
 
 interface AuthResponse {
   user: User;
@@ -43,7 +44,7 @@ export class AuthService {
       });
     }
 
-    const clientRole = await this.roleService.findByName('client');
+    const clientRole = await this.roleService.findByName(RoleList.Client);
     if (!clientRole) {
       throw new BadRequestException(
         'Client role not found. Please seed roles.',

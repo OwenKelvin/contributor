@@ -21,6 +21,7 @@ import {
   IProjectPaginationInput,
   IBulkUpdateInput,
 } from '@nyots/data-source';
+import { map } from 'rxjs/operators';
 
 /**
  * Service for managing project-related GraphQL operations.
@@ -47,22 +48,20 @@ export class ProjectService {
    * @param params - Query parameters including search term, filters, and pagination
    * @returns Project connection with projects array and page info
    */
-  async getAllProjects(params: {
+  getAllProjects = (params: {
     search?: string;
     filters?: IProjectFilter;
     pagination?: IProjectPaginationInput;
-  }) {
-    const response = await firstValueFrom(
-      this.getAllProjectsGQL.fetch({
+  }) =>
+    this.getAllProjectsGQL
+      .fetch({
         variables: {
           search: params.search,
           filter: params.filters,
           pagination: params.pagination,
         },
       })
-    );
-    return response.data?.getAllProjects;
-  }
+      .pipe(map((response) => response.data?.getAllProjects));
 
   /**
    * Retrieves a single project by ID.
@@ -71,7 +70,7 @@ export class ProjectService {
    */
   async getProjectById(id: string) {
     const response = await firstValueFrom(
-      this.getProjectByIdGQL.fetch({ variables: { id } })
+      this.getProjectByIdGQL.fetch({ variables: { id } }),
     );
     return response.data?.getProjectById;
   }
@@ -83,7 +82,7 @@ export class ProjectService {
    */
   async getActiveProjects(pagination?: IProjectPaginationInput) {
     const response = await firstValueFrom(
-      this.getActiveProjectsGQL.fetch({ variables: { pagination } })
+      this.getActiveProjectsGQL.fetch({ variables: { pagination } }),
     );
     return response.data?.getActiveProjects;
   }
@@ -95,7 +94,7 @@ export class ProjectService {
    */
   async getPendingProjects(pagination?: IProjectPaginationInput) {
     const response = await firstValueFrom(
-      this.getPendingProjectsGQL.fetch({ variables: { pagination } })
+      this.getPendingProjectsGQL.fetch({ variables: { pagination } }),
     );
     return response.data?.getPendingProjects;
   }
@@ -115,7 +114,7 @@ export class ProjectService {
           filter: params.filter,
           pagination: params.pagination,
         },
-      })
+      }),
     );
     return response.data?.getArchivedProjects;
   }
@@ -129,7 +128,7 @@ export class ProjectService {
     const response = await firstValueFrom(
       this.createProjectGQL.mutate({
         variables: { input },
-      })
+      }),
     );
     return response.data?.createProject;
   }
@@ -144,7 +143,7 @@ export class ProjectService {
     const response = await firstValueFrom(
       this.updateProjectGQL.mutate({
         variables: { id, input },
-      })
+      }),
     );
     return response.data?.updateProject;
   }
@@ -158,7 +157,7 @@ export class ProjectService {
     const response = await firstValueFrom(
       this.deleteProjectGQL.mutate({
         variables: { id },
-      })
+      }),
     );
     return response.data?.deleteProject;
   }
@@ -173,7 +172,7 @@ export class ProjectService {
     const response = await firstValueFrom(
       this.bulkUpdateProjectsGQL.mutate({
         variables: { ids, input },
-      })
+      }),
     );
     return response.data?.bulkUpdateProjects;
   }
@@ -188,7 +187,7 @@ export class ProjectService {
     const response = await firstValueFrom(
       this.approveProjectGQL.mutate({
         variables: { id, notes },
-      })
+      }),
     );
     return response.data?.approveProject;
   }
@@ -203,7 +202,7 @@ export class ProjectService {
     const response = await firstValueFrom(
       this.rejectProjectGQL.mutate({
         variables: { id, reason },
-      })
+      }),
     );
     return response.data?.rejectProject;
   }

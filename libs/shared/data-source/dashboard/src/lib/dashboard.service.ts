@@ -39,7 +39,7 @@ export class DashboardService {
   getContributionTrends(
     startDate: Date,
     endDate: Date,
-    groupBy: string = 'day'
+    groupBy = 'day'
   ) {
     return from(
       this.getContributionTrendsGQL.fetch({
@@ -52,7 +52,7 @@ export class DashboardService {
     ).pipe(map((result) => result.data?.contributionTrends));
   }
 
-  getTopProjects(limit: number = 10, dateRange?: DashboardDateRange) {
+  getTopProjects(limit = 10, dateRange?: DashboardDateRange) {
     return from(
       this.getTopProjectsGQL.fetch({
         variables: {
@@ -64,7 +64,7 @@ export class DashboardService {
     ).pipe(map((result) => result.data?.topProjects));
   }
 
-  getRecentContributions(limit: number = 10) {
+  getRecentContributions(limit = 10) {
     return from(
       this.getRecentContributionsGQL.fetch({
         variables: { limit },
@@ -74,7 +74,7 @@ export class DashboardService {
     );
   }
 
-  getRecentProjects(limit: number = 5) {
+  getRecentProjects(limit = 5) {
     return from(
       this.getRecentProjectsGQL.fetch({
         variables: { limit },
@@ -84,7 +84,7 @@ export class DashboardService {
     );
   }
 
-  getRecentUsers(limit: number = 5) {
+  getRecentUsers(limit = 5) {
     return from(
       this.getRecentUsersGQL.fetch({
         variables: { limit },

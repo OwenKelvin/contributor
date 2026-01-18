@@ -1,8 +1,8 @@
 
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   HlmSidebar,
-  HlmSidebarContent,
+  HlmSidebarContent, HlmSidebarFooter,
   HlmSidebarGroup,
   HlmSidebarGroupContent,
   HlmSidebarHeader,
@@ -26,6 +26,11 @@ import {
 } from '@ng-icons/lucide';
 import { HlmCollapsible, HlmCollapsibleContent, HlmCollapsibleTrigger } from '@nyots/ui/collapsible';
 import { NgOptimizedImage } from '@angular/common';
+import { HlmDropdownMenu, HlmDropdownMenuItem, HlmDropdownMenuTrigger } from '@nyots/ui/dropdown-menu';
+import { ConfirmationDialogComponent, HlmDialogService } from '@nyots/ui/dialog';
+import { firstValueFrom } from 'rxjs';
+import { AuthService } from '@nyots/data-source/auth';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   imports: [
@@ -49,6 +54,11 @@ import { NgOptimizedImage } from '@angular/common';
     HlmSidebarMenuSub,
     HlmSidebarMenuSubButton,
     NgOptimizedImage,
+    HlmDropdownMenu,
+    HlmSidebarFooter,
+    HlmDropdownMenuItem,
+    HlmDropdownMenuTrigger,
+    RouterOutlet,
   ],
   template: `
     <div hlmSidebarWrapper>
@@ -111,6 +121,23 @@ import { NgOptimizedImage } from '@angular/common';
             </div>
           </div>
         </div>
+        <div hlmSidebarFooter>
+          <ul hlmSidebarMenu>
+            <li hlmSidebarMenuItem>
+              <button hlmSidebarMenuButton [hlmDropdownMenuTrigger]="menu">
+                My Account
+                <ng-icon hlmIcon name="lucideChevronUp" class="ml-auto" />
+              </button>
+              <ng-template #menu>
+                <hlm-dropdown-menu class="w-60">
+                  <button hlmDropdownMenuItem>Profile</button>
+                  <button hlmDropdownMenuItem>Settings</button>
+                  <button hlmDropdownMenuItem (click)="signOut()">Sign out</button>
+                </hlm-dropdown-menu>
+              </ng-template>
+            </li>
+          </ul>
+        </div>
       </hlm-sidebar>
       <main hlmSidebarInset>
         <header class="flex h-12 items-center justify-between px-4">
@@ -118,6 +145,7 @@ import { NgOptimizedImage } from '@angular/common';
             <span class="sr-only">Toggle Sidebar</span>
           </button>
         </header>
+        <router-outlet></router-outlet>
       </main>
     </div>
   `,
@@ -136,6 +164,8 @@ import { NgOptimizedImage } from '@angular/common';
   ],
 })
 export class Dashboard {
+  private readonly authService = inject(AuthService);
+  private readonly dialogService = inject(HlmDialogService);
   protected readonly _items = [
     {
       title: 'Projects',
@@ -193,4 +223,21 @@ export class Dashboard {
       ],
     },
   ];
+
+  async signOut() {
+    const dialogRef = this.dialogService.open(ConfirmationDialogComponent, {
+      context: {
+        title: 'Sign Out',
+        message: 'Are you sure you want to sign out?',
+        confirmLabel: 'Sign Out',
+        cancelLabel: 'Cancel',
+        variant: 'destructive',
+      },
+    });
+
+    const result = await firstValueFrom(dialogRef.closed$);
+    if (result === true) {
+      this.authService.logout();
+    }
+  }
 }

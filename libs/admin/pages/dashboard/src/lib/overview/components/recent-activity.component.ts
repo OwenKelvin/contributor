@@ -22,7 +22,7 @@ import { HlmSpinner } from '@nyots/ui/spinner';
 import { HlmTabs, HlmTabsContent, HlmTabsList, HlmTabsTrigger } from '@nyots/ui/tabs';
 
 @Component({
-  selector: 'app-recent-activity',
+  selector: 'nyots-recent-activity',
   imports: [
     CommonModule,
     RouterLink,
@@ -114,7 +114,7 @@ import { HlmTabs, HlmTabsContent, HlmTabsList, HlmTabsTrigger } from '@nyots/ui/
           <div hlmTabsContent value="projects">
             @if (loadingProjects()) {
               <div class="flex items-center justify-center h-32">
-                <span hlmSpinner></span>
+                <hlm-spinner></hlm-spinner>
               </div>
             } @else {
               <table hlmTable>
@@ -275,21 +275,21 @@ export class RecentActivityComponent implements OnInit, OnChanges {
 
   getStatusVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
     const statusMap: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-      paid: 'default',
-      pending: 'secondary',
-      failed: 'destructive',
-      refunded: 'outline',
+      PAID: 'default',
+      PENDING: 'secondary',
+      FAILED: 'destructive',
+      REFUNDED: 'outline',
     };
     return statusMap[status.toLowerCase()] || 'outline';
   }
 
   getProjectStatusVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
     const statusMap: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-      active: 'default',
-      draft: 'secondary',
-      pending: 'secondary',
-      completed: 'outline',
-      archived: 'destructive',
+      ACTIVE: 'default',
+      DRAFT: 'secondary',
+      PENDING: 'secondary',
+      COMPLETED: 'outline',
+      ARCHIVED: 'destructive',
     };
     return statusMap[status.toLowerCase()] || 'outline';
   }

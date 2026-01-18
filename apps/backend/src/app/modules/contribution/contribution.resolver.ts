@@ -22,6 +22,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { User } from '../user/user.model';
 import { RoleList } from '../role/role-list';
+import { CreateContributionResultType } from './types/create-contribution-result.type';
 
 /**
  * GraphQL Resolver for Contribution operations
@@ -163,13 +164,18 @@ export class ContributionResolver {
    * Mutation: Create a new contribution (user creates for themselves)
    * Requirements: 1.1
    */
-  @Mutation(() => Contribution)
+  @Mutation(() => CreateContributionResultType)
   @UseGuards(GqlAuthGuard)
   async createContribution(
     @Args('input') input: CreateContributionInput,
     @CurrentUser() user: User
-  ): Promise<Contribution> {
-    return this.contributionService.createContribution(input, user.id);
+  ): Promise<CreateContributionResultType> {
+    const data = await this.contributionService.createContribution(input, user.id);
+    return {
+      success: true,
+      message: 'Successfully created contribution record',
+      data
+    }
   }
 
   /**

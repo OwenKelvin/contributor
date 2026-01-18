@@ -13,6 +13,7 @@
             <ng-icon hlmIcon name="lucideMail" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size="sm" />
             <input
               hlmInput
+              autocomplete="username"
               id="email"
               type="email"
               [field]="loginForm.email"
@@ -36,6 +37,7 @@
             <ng-icon hlmIcon name="lucideLock" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size="sm" />
             <input
               hlmInput
+              autocomplete="current-password"
               id="password"
               type="password"
               [field]="loginForm.password"

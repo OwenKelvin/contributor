@@ -1,47 +1,70 @@
 @use 'tailwindcss';
-@layer theme, base, components, utilities;
-
-@import 'tailwindcss/theme.css' layer(theme);
-@import 'tailwindcss/preflight.css' layer(base);
-@import 'tailwindcss/utilities.css';
 
 
 /* You can add global styles to this file, and also import other style files */
 
 @import "@spartan-ng/brain/hlm-tailwind-preset.css";
 
-:root .theme-default {
-  color-scheme: light;
-
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+/* Quill Editor Styles */
+@import 'quill/dist/quill.snow.css';
+@theme {
+  --font-family-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.147 0.004 49.25);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.147 0.004 49.25);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.147 0.004 49.25);
-  --primary: oklch(0.216 0.006 56.043);
-  --primary-foreground: oklch(0.985 0.001 106.423);
-  --secondary: oklch(0.97 0.001 106.424);
-  --secondary-foreground: oklch(0.216 0.006 56.043);
-  --muted: oklch(0.97 0.001 106.424);
-  --muted-foreground: oklch(0.553 0.013 58.071);
-  --accent: oklch(0.97 0.001 106.424);
-  --accent-foreground: oklch(0.216 0.006 56.043);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.923 0.003 48.717);
-  --input: oklch(0.923 0.003 48.717);
-  --ring: oklch(0.709 0.01 56.259);
-  --sidebar: oklch(0.985 0.001 106.423);
-  --sidebar-foreground: oklch(0.147 0.004 49.25);
-  --sidebar-primary: oklch(0.216 0.006 56.043);
-  --sidebar-primary-foreground: oklch(0.985 0.001 106.423);
-  --sidebar-accent: oklch(0.97 0.001 106.424);
-  --sidebar-accent-foreground: oklch(0.216 0.006 56.043);
-  --sidebar-border: oklch(0.923 0.003 48.717);
-  --sidebar-ring: oklch(0.709 0.01 56.259);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+
+  /* Base Colors */
+  --color-background: #ffffff;
+  --color-foreground: #222426;
+
+  /* Card */
+  --color-card: #ffffff;
+  --color-card-foreground: #222426;
+
+  /* Popover */
+  --color-popover: #ffffff;
+  --color-popover-foreground: #222426;
+
+  /* Primary */
+  --color-primary: #6C0B0B;
+  --color-primary-foreground: #fcfcfc;
+
+  /* Secondary */
+  --color-secondary: #f8f8f8;
+  --color-secondary-foreground: #323537;
+
+  /* Muted */
+  --color-muted: #f8f8f8;
+  --color-muted-foreground: #7c8084;
+
+  /* Accent */
+  --color-accent: #f8f8f8;
+  --color-accent-foreground: #323537;
+
+  /* Destructive */
+  --color-destructive: #e74c3c;
+  --color-destructive-foreground: #ffffff;
+
+  /* Border, Input, Ring */
+  --color-border: #e8e8e8;
+  --color-input: #e8e8e8;
+  --color-ring: #a8acaf;
+
+  /* Sidebar */
+  --color-sidebar: #fcfcfc;
+  --color-sidebar-foreground: #222426;
+  --color-sidebar-primary: #323537;
+  --color-sidebar-primary-foreground: #fcfcfc;
+  --color-sidebar-accent: #f8f8f8;
+  --color-sidebar-accent-foreground: #323537;
+  --color-sidebar-border: #e8e8e8;
+  --color-sidebar-ring: #a8acaf;
+}
+
+:root .theme-default {
+  color-scheme: light;
 }
 
 :root.dark .theme-default {

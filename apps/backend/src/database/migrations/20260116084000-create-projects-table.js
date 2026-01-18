@@ -70,7 +70,7 @@ module.exports = {
       status: {
         type: Sequelize.ENUM('DRAFT', 'ACTIVE', 'PENDING', 'COMPLETED', 'ARCHIVED'),
         allowNull: false,
-        defaultValue: 'draft',
+        defaultValue: 'DRAFT',
       },
       featured_image: {
         type: Sequelize.STRING,
