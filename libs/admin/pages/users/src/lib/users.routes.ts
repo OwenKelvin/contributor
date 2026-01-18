@@ -17,26 +17,41 @@ export const usersRoutes: Routes = [
       {
         path: '',
         component: AllUsersComponent,
+        data: {
+          breadcrumb: 'All'
+        }
       },
       // User permissions route
       {
         path: 'permissions',
         component: UserPermissionsComponent,
+        data: {
+          breadcrumb: 'Permissions'
+        }
       },
       // User activity route
       {
         path: 'activity',
         component: UserActivityComponent,
+        data: {
+          breadcrumb: 'Activity'
+        }
       },
       // Banned users route
       {
         path: 'banned',
         component: BannedUsersComponent,
+        data: {
+          breadcrumb: 'Banned'
+        }
       },
       // Invite user route
       {
         path: 'invite',
         component: InviteUserComponent,
+        data: {
+          breadcrumb: 'Invite'
+        }
       },
       // TODO: Add more routes as needed
       // {

@@ -12,6 +12,9 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'dashboard',
+    data: {
+      breadcrumb: 'Dashboard'
+    },
     loadChildren: () => import('@nyots/admin-pages/dashboard')
   },
   {

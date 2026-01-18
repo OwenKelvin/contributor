@@ -43,6 +43,13 @@ import { AuthService } from '@nyots/data-source/auth';
 import { HlmDialogService } from '@nyots/ui/dialog';
 import { ConfirmationDialogComponent } from '@nyots/ui/dialog';
 import { firstValueFrom } from 'rxjs';
+import {
+  BreadcrumbService,
+  HlmBreadcrumb,
+  HlmBreadcrumbEllipsis,
+  HlmBreadcrumbItem, HlmBreadcrumbLink, HlmBreadcrumbList, HlmBreadcrumbPage,
+  HlmBreadcrumbSeparator
+} from '@nyots/ui/breadcrumb';
 
 @Component({
   imports: [
@@ -73,6 +80,14 @@ import { firstValueFrom } from 'rxjs';
     HlmDropdownMenuTrigger,
     HlmDropdownMenu,
     HlmDropdownMenuItem,
+
+    HlmBreadcrumb,
+    HlmBreadcrumbEllipsis,
+    HlmBreadcrumbSeparator,
+    HlmBreadcrumbItem,
+    HlmBreadcrumbLink,
+    HlmBreadcrumbPage,
+    HlmBreadcrumbList,
   ],
   template: `
     <div hlmSidebarWrapper>
@@ -167,6 +182,29 @@ import { firstValueFrom } from 'rxjs';
           <button hlmSidebarTrigger>
             <span class="sr-only">Toggle Sidebar</span>
           </button>
+
+          <nav hlmBreadcrumb>
+            <ol hlmBreadcrumbList>
+
+              @for (breadcrumb of breadcrumbs(); track breadcrumb.label) {
+                <!--                <li hlmBreadcrumbItem>-->
+                  <!--                  <hlm-breadcrumb-ellipsis />-->
+                  <!--                </li>-->
+                @if (!$last) {
+                  <li hlmBreadcrumbItem>
+                    <a hlmBreadcrumbLink [link]="breadcrumb.url">{{ breadcrumb.label }}</a>
+                  </li>
+                } @else {
+                  <li hlmBreadcrumbSeparator></li>
+                  <li hlmBreadcrumbItem>
+                    <span hlmBreadcrumbPage>{{ breadcrumb.label }}</span>
+                  </li>
+
+                }
+              }
+
+            </ol>
+          </nav>
           <div class="flex items-center gap-2">
             <span class="text-sm font-medium">Admin Panel</span>
           </div>
@@ -200,6 +238,8 @@ import { firstValueFrom } from 'rxjs';
 export class Dashboard {
   private readonly authService = inject(AuthService);
   private readonly dialogService = inject(HlmDialogService);
+  private readonly breadcrumbService = inject(BreadcrumbService);
+  public readonly breadcrumbs = this.breadcrumbService.breadcrumbs;
   protected readonly _items = [
     {
       title: 'Dashboard',

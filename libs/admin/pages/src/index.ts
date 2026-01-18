@@ -1,1 +1,1 @@
-export * from './lib/pages';
+export * from './src/lib/breadcrumb.service';

@@ -1,13 +1,10 @@
 import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
-import {
-  HlmDialogContent,
-  HlmDialogHeader,
-  HlmDialogFooter,
-  HlmDialogTitle,
-  HlmDialogDescription,
-} from '@nyots/ui/dialog';
 import { HlmButton } from '@nyots/ui/button';
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
+import { HlmDialogDescription } from './hlm-dialog-description';
+import { HlmDialogTitle } from './hlm-dialog-title';
+import { HlmDialogFooter } from './hlm-dialog-footer';
+import { HlmDialogHeader } from './hlm-dialog-header';
 
 export interface ConfirmationDialogData {
   title: string;
