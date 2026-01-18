@@ -30,7 +30,10 @@ import {
   lucideImage,
 } from '@ng-icons/lucide';
 import { BrnSelectImports } from '@spartan-ng/brain/select';
-import { HlmSelectImports } from '@nyots/ui/select';
+import {
+  HlmSelect, HlmSelectContent, HlmSelectOption, HlmSelectTrigger, HlmSelectValue
+
+} from '@nyots/ui/select';
 import { RichTextEditorComponent } from '../rich-text-editor/rich-text-editor.component';
 import { ICategory, IProjectStatus } from '@nyots/data-source';
 
@@ -63,8 +66,12 @@ export interface ProjectFormModel {
     HlmIcon,
     NgIcon,
     BrnSelectImports,
-    HlmSelectImports,
     RichTextEditorComponent,
+    HlmSelect,
+    HlmSelectTrigger,
+    HlmSelectValue,
+    HlmSelectOption,
+    HlmSelectContent,
   ],
   providers: [
     provideIcons({
@@ -124,7 +131,7 @@ export class ProjectFormComponent {
   async onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
-    
+
     if (!file) return;
 
     // Reset error state
@@ -134,7 +141,7 @@ export class ProjectFormComponent {
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
       this.uploadError.set(
-        'Invalid file type. Only JPEG, PNG, and WebP images are allowed.'
+        'Invalid file type. Only JPEG, PNG, and WebP images are allowed.',
       );
       return;
     }
@@ -168,8 +175,8 @@ export class ProjectFormComponent {
       const response = await firstValueFrom(
         this.http.post<{ filename: string; url: string }>(
           '/api/files/upload',
-          formData
-        )
+          formData,
+        ),
       );
 
       clearInterval(progressInterval);
@@ -194,7 +201,9 @@ export class ProjectFormComponent {
   }
 
   triggerFileInput() {
-    const fileInput = document.getElementById('featuredImage') as HTMLInputElement;
+    const fileInput = document.getElementById(
+      'featuredImage',
+    ) as HTMLInputElement;
     fileInput?.click();
   }
 
@@ -218,7 +227,7 @@ export class ProjectFormComponent {
   onDateChange(field: 'startDate' | 'endDate', event: Event) {
     const input = event.target as HTMLInputElement;
     const dateValue = input.value;
-    
+
     if (dateValue) {
       const date = new Date(dateValue);
       this.projectForm()[field]().value.set(date);

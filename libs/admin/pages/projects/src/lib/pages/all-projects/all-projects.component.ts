@@ -41,7 +41,7 @@ import {
   lucideChevronLeft,
   lucideChevronRight,
 } from '@ng-icons/lucide';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { retryAsync, getUserFriendlyErrorMessage, isNetworkError } from '../../utils/retry.util';
 
 @Component({
@@ -223,12 +223,12 @@ export class AllProjectsComponent {
       };
 
       const result = await retryAsync(
-        () =>
+        () => lastValueFrom(
           this.projectService.getAllProjects({
             search: this.debouncedSearchTerm() || undefined,
             filters: Object.keys(filter).length > 0 ? filter : undefined,
             pagination,
-          }),
+          })),
         {
           maxAttempts: 3,
           delayMs: 1000,

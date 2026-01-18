@@ -231,6 +231,7 @@
   <div class="space-y-2">
     <label hlmLabel for="detailedDescription">Detailed Description <span class="text-red-500">*</span></label>
     <nyots-rich-text-editor
+      id="detailedDescription"
       [content]="projectForm().detailedDescription().value()"
       (contentChange)="onDetailedDescriptionChange($event)"
       (validationError)="onDetailedDescriptionError($event)"
