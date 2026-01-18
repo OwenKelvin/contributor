@@ -11,6 +11,6 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'dashboard',
-    loadComponent: () => import('@nyots/client-pages/dashboard')
+    loadChildren: () => import('@nyots/client-pages/dashboard')
   }
 ];

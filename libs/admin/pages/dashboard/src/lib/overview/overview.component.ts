@@ -109,7 +109,7 @@ import { DateRangeFilterComponent } from './components/date-range-filter.compone
         </div>
 
         <!-- Recent Activity -->
-        <app-recent-activity [dateRange]="dateRange()" />
+        <nyots-recent-activity [dateRange]="dateRange()" />
       }
     </div>
   `,

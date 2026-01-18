@@ -162,6 +162,18 @@ export class ProjectService {
   }
 
   async createProject(input: CreateProjectInput): Promise<Project> {
+    console.log({
+      title: input.title,
+      description: input.description,
+      detailedDescription: input.detailedDescription,
+      goalAmount: input.goalAmount,
+      startDate: input.startDate,
+      endDate: input.endDate,
+      categoryId: input.categoryId,
+      featuredImage: input.featuredImage,
+      status: input.status,
+      currentAmount: 0,
+    });
     const project = await this.projectModel.create({
       title: input.title,
       description: input.description,

@@ -39,19 +39,9 @@ import {
 import { ContributionChartComponent } from '../../components/contribution-chart/contribution-chart.component';
 import { TopProjectsListComponent } from '../../components/top-projects-list/top-projects-list.component';
 import { TopContributorsListComponent } from '../../components/top-contributors-list/top-contributors-list.component';
+import { map } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 
-/**
- * Contribution Reports Component
- * 
- * Provides comprehensive reporting capabilities for contributions including:
- * - Report type selection (summary, by project, by user, time series)
- * - Date range filtering
- * - Project filtering
- * - Status filtering
- * - Export functionality (CSV, PDF)
- * 
- * Requirements: 7.1, 7.2, 7.3, 7.4, 7.5, 7.6
- */
 @Component({
   selector: 'nyots-contribution-reports',
   standalone: true,
@@ -100,9 +90,7 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
       <div hlmCard>
         <div hlmCardHeader>
           <h3 hlmCardTitle>Report Filters</h3>
-          <p hlmCardDescription>
-            Configure report parameters and filters
-          </p>
+          <p hlmCardDescription>Configure report parameters and filters</p>
         </div>
         <div hlmCardContent>
           <form [formGroup]="filterForm" class="space-y-4">
@@ -110,17 +98,19 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
               <!-- Report Type -->
               <div class="space-y-2">
                 <label hlmLabel for="reportType">Report Type</label>
-                <select
-                  hlmSelect
+                <hlm-select
                   id="reportType"
                   formControlName="reportType"
                   class="w-full"
                 >
-                  <option [value]="ReportType.Summary">Summary Report</option>
-                  <option [value]="ReportType.ByProject">By Project</option>
-                  <option [value]="ReportType.ByUser">By User</option>
-                  <option [value]="ReportType.TimeSeries">Time Series</option>
-                </select>
+                  <hlm-select-trigger class="w-full">
+                    <hlm-select-value />
+                  </hlm-select-trigger>
+                  <hlm-option [value]="$any(ReportType.Summary)">Summary Report</hlm-option>
+                  <hlm-option [value]="$any(ReportType.ByProject)">By Project</hlm-option>
+                  <hlm-option [value]="$any(ReportType.ByUser)">By User</hlm-option>
+                  <hlm-option [value]="$any(ReportType.TimeSeries)">Time Series</hlm-option>
+                </hlm-select>
               </div>
 
               <!-- Start Date -->
@@ -150,34 +140,40 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
               <!-- Project Filter -->
               <div class="space-y-2">
                 <label hlmLabel for="projectId">Project (Optional)</label>
-                <select
-                  hlmSelect
+                <hlm-select
                   id="projectId"
                   formControlName="projectId"
                   class="w-full"
                 >
-                  <option value="">All Projects</option>
+                  <hlm-select-trigger class="w-full">
+                    <hlm-select-value />
+                  </hlm-select-trigger>
+                  <hlm-option [value]="">All Projects</hlm-option>
                   @for (project of projects(); track project.id) {
-                    <option [value]="project.id">{{ project.title }}</option>
+                    <hlm-option [value]="project.id">{{ project.title }}</hlm-option>
                   }
-                </select>
+                </hlm-select>
               </div>
 
               <!-- Status Filter -->
               <div class="space-y-2">
                 <label hlmLabel for="status">Status (Optional)</label>
-                <select
-                  hlmSelect
+                <hlm-select
                   id="status"
                   formControlName="status"
                   class="w-full"
                 >
-                  <option value="">All Statuses</option>
-                  <option [value]="PaymentStatus.Pending">Pending</option>
-                  <option [value]="PaymentStatus.Paid">Paid</option>
-                  <option [value]="PaymentStatus.Failed">Failed</option>
-                  <option [value]="PaymentStatus.Refunded">Refunded</option>
-                </select>
+                  <hlm-select-trigger class="w-full">
+                    <hlm-select-value />
+                  </hlm-select-trigger>
+                  <hlm-select-content>
+                    <hlm-option [value]="">All Statuses</hlm-option>
+                    <hlm-option [value]="$any(PaymentStatus.Pending)">Pending</hlm-option>
+                    <hlm-option [value]="$any(PaymentStatus.Paid)">Paid</hlm-option>
+                    <hlm-option [value]="$any(PaymentStatus.Failed)">Failed</hlm-option>
+                    <hlm-option [value]="$any(PaymentStatus.Refunded)">Refunded</hlm-option>
+                  </hlm-select-content>
+                </hlm-select>
               </div>
             </div>
 
@@ -190,7 +186,12 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
                 (click)="generateReport()"
                 [disabled]="isLoading() || filterForm.invalid"
               >
-                <ng-icon hlmIcon name="lucideBarChart3" size="base" class="mr-2" />
+                <ng-icon
+                  hlmIcon
+                  name="lucideBarChart3"
+                  size="base"
+                  class="mr-2"
+                />
                 Generate Report
               </button>
               <button
@@ -200,7 +201,12 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
                 (click)="resetFilters()"
                 [disabled]="isLoading()"
               >
-                <ng-icon hlmIcon name="lucideRefreshCw" size="base" class="mr-2" />
+                <ng-icon
+                  hlmIcon
+                  name="lucideRefreshCw"
+                  size="base"
+                  class="mr-2"
+                />
                 Reset
               </button>
               @if (report()) {
@@ -211,7 +217,12 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
                   (click)="exportToCSV()"
                   [disabled]="isLoading()"
                 >
-                  <ng-icon hlmIcon name="lucideDownload" size="base" class="mr-2" />
+                  <ng-icon
+                    hlmIcon
+                    name="lucideDownload"
+                    size="base"
+                    class="mr-2"
+                  />
                   Export CSV
                 </button>
                 <button
@@ -221,7 +232,12 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
                   (click)="exportToPDF()"
                   [disabled]="isLoading()"
                 >
-                  <ng-icon hlmIcon name="lucideFileText" size="base" class="mr-2" />
+                  <ng-icon
+                    hlmIcon
+                    name="lucideFileText"
+                    size="base"
+                    class="mr-2"
+                  />
                   Export PDF
                 </button>
               }
@@ -257,7 +273,10 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
               <!-- Total Contributions Card -->
               <div hlmCard>
                 <div hlmCardHeader class="pb-2">
-                  <h3 hlmCardTitle class="text-sm font-medium text-muted-foreground">
+                  <h3
+                    hlmCardTitle
+                    class="text-sm font-medium text-muted-foreground"
+                  >
                     Total Contributions
                   </h3>
                 </div>
@@ -274,7 +293,10 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
               <!-- Pending Card -->
               <div hlmCard>
                 <div hlmCardHeader class="pb-2">
-                  <h3 hlmCardTitle class="text-sm font-medium text-muted-foreground">
+                  <h3
+                    hlmCardTitle
+                    class="text-sm font-medium text-muted-foreground"
+                  >
                     Pending
                   </h3>
                 </div>
@@ -291,7 +313,10 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
               <!-- Paid Card -->
               <div hlmCard>
                 <div hlmCardHeader class="pb-2">
-                  <h3 hlmCardTitle class="text-sm font-medium text-muted-foreground">
+                  <h3
+                    hlmCardTitle
+                    class="text-sm font-medium text-muted-foreground"
+                  >
                     Paid
                   </h3>
                 </div>
@@ -308,7 +333,10 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
               <!-- Success Rate Card -->
               <div hlmCard>
                 <div hlmCardHeader class="pb-2">
-                  <h3 hlmCardTitle class="text-sm font-medium text-muted-foreground">
+                  <h3
+                    hlmCardTitle
+                    class="text-sm font-medium text-muted-foreground"
+                  >
                     Success Rate
                   </h3>
                 </div>
@@ -329,9 +357,7 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
               <div hlmCard>
                 <div hlmCardHeader>
                   <h3 hlmCardTitle>Contributions Over Time</h3>
-                  <p hlmCardDescription>
-                    Daily contribution trends
-                  </p>
+                  <p hlmCardDescription>Daily contribution trends</p>
                 </div>
                 <div hlmCardContent>
                   <nyots-contribution-chart [data]="report()!.timeSeriesData" />
@@ -342,9 +368,7 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
               <div hlmCard>
                 <div hlmCardHeader>
                   <h3 hlmCardTitle>Top Projects</h3>
-                  <p hlmCardDescription>
-                    Projects with highest contributions
-                  </p>
+                  <p hlmCardDescription>Projects with highest contributions</p>
                 </div>
                 <div hlmCardContent>
                   <nyots-top-projects-list [projects]="report()!.topProjects" />
@@ -361,7 +385,9 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
                 </p>
               </div>
               <div hlmCardContent>
-                <nyots-top-contributors-list [contributors]="report()!.topContributors" />
+                <nyots-top-contributors-list
+                  [contributors]="report()!.topContributors"
+                />
               </div>
             </div>
           }
@@ -371,9 +397,7 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
             <div hlmCard>
               <div hlmCardHeader>
                 <h3 hlmCardTitle>Contributions by Project</h3>
-                <p hlmCardDescription>
-                  Total contributions grouped by project
-                </p>
+                <p hlmCardDescription>Total contributions grouped by project</p>
               </div>
               <div hlmCardContent>
                 <nyots-top-projects-list [projects]="report()!.topProjects" />
@@ -391,7 +415,9 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
                 </p>
               </div>
               <div hlmCardContent>
-                <nyots-top-contributors-list [contributors]="report()!.topContributors" />
+                <nyots-top-contributors-list
+                  [contributors]="report()!.topContributors"
+                />
               </div>
             </div>
           }
@@ -401,9 +427,7 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
             <div hlmCard>
               <div hlmCardHeader>
                 <h3 hlmCardTitle>Contributions Over Time</h3>
-                <p hlmCardDescription>
-                  Time-based contribution analysis
-                </p>
+                <p hlmCardDescription>Time-based contribution analysis</p>
               </div>
               <div hlmCardContent>
                 <nyots-contribution-chart [data]="report()!.timeSeriesData" />
@@ -415,7 +439,9 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
 
       <!-- Empty State -->
       @if (!report() && !isLoading() && !error()) {
-        <div class="flex flex-col items-center justify-center py-12 text-center">
+        <div
+          class="flex flex-col items-center justify-center py-12 text-center"
+        >
           <ng-icon
             hlmIcon
             name="lucideBarChart3"
@@ -424,7 +450,8 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
           />
           <p class="text-lg font-medium">No Report Generated</p>
           <p class="text-sm text-muted-foreground mt-1">
-            Configure filters and click "Generate Report" to view contribution analytics
+            Configure filters and click "Generate Report" to view contribution
+            analytics
           </p>
         </div>
       }
@@ -451,7 +478,18 @@ export class ContributionReportsComponent {
   report = signal<IContributionReport | null>(null);
   isLoading = signal(false);
   error = signal<string | null>(null);
-  projects = signal<Array<{ id: string; title: string }>>([]);
+  projects$ = this.projectService.getAllProjects({}).pipe(
+    map((result) => {
+      if (result?.edges) {
+        return result.edges.map((edge) => ({
+          id: edge.node.id,
+          title: edge.node.title,
+        }));
+      }
+      return [];
+    }),
+  );
+  projects = toSignal(this.projects$, {initialValue: []})
 
   // Form
   filterForm = this.fb.group({
@@ -463,32 +501,9 @@ export class ContributionReportsComponent {
   });
 
   // Computed
-  currentReportType = computed(() => this.filterForm.value.reportType as IReportType);
-
-  constructor() {
-    this.loadProjects();
-  }
-
-  /**
-   * Load available projects for filtering
-   */
-  async loadProjects() {
-    try {
-      const result = await this.projectService.getAllProjects({});
-      if (result?.edges) {
-        this.projects.set(
-          result.edges.map(edge => ({
-            id: edge.node.id,
-            title: edge.node.title,
-          }))
-        );
-      }
-    } catch (error) {
-      console.error('Error loading projects:', error);
-      // Don't show error toast for project loading failure
-      // as it's not critical for the report functionality
-    }
-  }
+  currentReportType = computed(
+    () => this.filterForm.value.reportType as IReportType,
+  );
 
   /**
    * Generate report based on current filters
@@ -519,7 +534,10 @@ export class ContributionReportsComponent {
       // If needed, it should be added to the backend schema
 
       const reportType = formValue.reportType as IReportType;
-      const reportData = await this.contributionService.getReport(reportType, filter);
+      const reportData = await this.contributionService.getReport(
+        reportType,
+        filter,
+      );
 
       if (reportData) {
         this.report.set(reportData);
@@ -633,8 +651,10 @@ export class ContributionReportsComponent {
     if (report.topProjects && report.topProjects.length > 0) {
       lines.push('Top Projects');
       lines.push('Project,Total Amount,Contribution Count');
-      report.topProjects.forEach(project => {
-        lines.push(`"${project.projectTitle}",${project.totalAmount},${project.contributionCount}`);
+      report.topProjects.forEach((project) => {
+        lines.push(
+          `"${project.projectTitle}",${project.totalAmount},${project.contributionCount}`,
+        );
       });
       lines.push('');
     }
@@ -643,8 +663,10 @@ export class ContributionReportsComponent {
     if (report.topContributors && report.topContributors.length > 0) {
       lines.push('Top Contributors');
       lines.push('Contributor,Total Amount,Contribution Count');
-      report.topContributors.forEach(contributor => {
-        lines.push(`"${contributor.userName}",${contributor.totalAmount},${contributor.contributionCount}`);
+      report.topContributors.forEach((contributor) => {
+        lines.push(
+          `"${contributor.userName}",${contributor.totalAmount},${contributor.contributionCount}`,
+        );
       });
     }
 
@@ -662,8 +684,10 @@ export class ContributionReportsComponent {
     lines.push('Project,Total Amount,Contribution Count');
 
     if (report.topProjects && report.topProjects.length > 0) {
-      report.topProjects.forEach(project => {
-        lines.push(`"${project.projectTitle}",${project.totalAmount},${project.contributionCount}`);
+      report.topProjects.forEach((project) => {
+        lines.push(
+          `"${project.projectTitle}",${project.totalAmount},${project.contributionCount}`,
+        );
       });
     }
 
@@ -681,8 +705,10 @@ export class ContributionReportsComponent {
     lines.push('Contributor,Total Amount,Contribution Count');
 
     if (report.topContributors && report.topContributors.length > 0) {
-      report.topContributors.forEach(contributor => {
-        lines.push(`"${contributor.userName}",${contributor.totalAmount},${contributor.contributionCount}`);
+      report.topContributors.forEach((contributor) => {
+        lines.push(
+          `"${contributor.userName}",${contributor.totalAmount},${contributor.contributionCount}`,
+        );
       });
     }
 
@@ -700,8 +726,10 @@ export class ContributionReportsComponent {
     lines.push('Date,Total Amount,Contribution Count');
 
     if (report.timeSeriesData && report.timeSeriesData.length > 0) {
-      report.timeSeriesData.forEach(point => {
-        lines.push(`${point.date},${point.totalAmount},${point.contributionCount}`);
+      report.timeSeriesData.forEach((point) => {
+        lines.push(
+          `${point.date},${point.totalAmount},${point.contributionCount}`,
+        );
       });
     }
 

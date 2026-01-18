@@ -1,28 +1,32 @@
 mutation CreateContribution($input: CreateContributionInput!) {
   createContribution(input: $input) {
-    id
-    user {
+    success
+    message
+    data {
       id
-      firstName
-      lastName
-      email
+      user {
+        id
+        firstName
+        lastName
+        email
+      }
+      project {
+        id
+        title
+        description
+        goalAmount
+        currentAmount
+        status
+      }
+      amount
+      paymentStatus
+      notes
+      paymentReference
+      failureReason
+      paidAt
+      createdAt
+      updatedAt
     }
-    project {
-      id
-      title
-      description
-      goalAmount
-      currentAmount
-      status
-    }
-    amount
-    paymentStatus
-    notes
-    paymentReference
-    failureReason
-    paidAt
-    createdAt
-    updatedAt
   }
 }
 

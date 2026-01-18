@@ -21,7 +21,6 @@ export interface ConfirmationDialogData {
   selector: 'hlm-confirmation-dialog',
   standalone: true,
   imports: [
-    HlmDialogContent,
     HlmDialogHeader,
     HlmDialogFooter,
     HlmDialogTitle,
@@ -32,7 +31,7 @@ export interface ConfirmationDialogData {
     <div hlmDialogHeader>
       <h3 hlmDialogTitle>{{ _data.title }}</h3>
     </div>
-    <p hlmDialogDescription class="py-4">{{ _data.message }}</p>
+    <p hlmDialogDescription class="my-4">{{ _data.message }}</p>
     <div hlmDialogFooter>
       <button hlmBtn (click)="onCancel()" variant="outline">{{ _data.cancelLabel }}</button>
       <button hlmBtn (click)="onConfirm()" [variant]="_data.variant">{{ _data.confirmLabel }}</button>
@@ -42,7 +41,7 @@ export interface ConfirmationDialogData {
 })
 export class ConfirmationDialogComponent {
   protected readonly _dialogRef = inject(DialogRef);
-  protected readonly _data = inject(DIALOG_DATA);
+  protected readonly _data = inject<ConfirmationDialogData>(DIALOG_DATA);
 
   onConfirm() {
     this._dialogRef.close(true);

@@ -156,6 +156,12 @@ export type ICreateContributionInput = {
   projectId: Scalars['ID']['input'];
 };
 
+export type ICreateContributionResult = {
+  data: IContribution;
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
+};
+
 export type ICreateProjectInput = {
   categoryId: Scalars['ID']['input'];
   description: Scalars['String']['input'];
@@ -208,7 +214,7 @@ export type IMutation = {
   bulkUpdateProjects: IBulkUpdateResult;
   bulkUpdateUsers: IBulkUpdateResult;
   createCategory: ICategory;
-  createContribution: IContribution;
+  createContribution: ICreateContributionResult;
   createProject: IProject;
   createUser: IUser;
   deleteCategory: Scalars['Boolean']['output'];
@@ -428,11 +434,11 @@ export type IProjectPaginationInput = {
 };
 
 export enum IProjectStatus {
-  Active = 'active',
-  Archived = 'archived',
-  Completed = 'completed',
-  Draft = 'draft',
-  Pending = 'pending'
+  Active = 'ACTIVE',
+  Archived = 'ARCHIVED',
+  Completed = 'COMPLETED',
+  Draft = 'DRAFT',
+  Pending = 'PENDING'
 }
 
 export type IProjectStatusCount = {

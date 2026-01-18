@@ -88,6 +88,7 @@
                      size="sm" />
             <input
               hlmInput
+              autocomplete="username"
               id="phone"
               type="tel"
               [field]="signupForm.phone"
@@ -112,6 +113,7 @@
                      size="sm" />
             <input
               hlmInput
+              autocomplete="current-password"
               id="password"
               type="password"
               [field]="signupForm.password"
@@ -223,7 +225,7 @@
     <div hlmCardFooter class="flex flex-col space-y-2">
       <div class="text-sm text-center text-slate-500">
         Already have an account?
-        <a href="#" class="text-blue-600 hover:underline">Sign in</a>
+        <a [routerLink]="['/login']" class="text-blue-600 hover:underline">Sign in</a>
       </div>
     </div>
   </div>
