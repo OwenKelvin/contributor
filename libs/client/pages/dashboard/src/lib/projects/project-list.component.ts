@@ -5,7 +5,8 @@ import { HlmSpinner } from '@nyots/ui/spinner';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmBadge } from '@nyots/ui/badge';
 import { CurrencyPipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, ActivatedRoute } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'nyots-project-list',
@@ -25,8 +26,8 @@ import { RouterLink } from '@angular/router';
   template: `
     <div class="p-6 space-y-6">
       <div>
-        <h1 class="text-3xl font-bold">Active Projects</h1>
-        <p class="text-muted-foreground mt-2">Browse and contribute to active projects</p>
+        <h1 class="text-3xl font-bold">{{ getTitle() }}</h1>
+        <p class="text-muted-foreground mt-2">{{ getDescription() }}</p>
       </div>
 
       @if (loading()) {
@@ -37,7 +38,7 @@ import { RouterLink } from '@angular/router';
         @if (projects().length === 0) {
           <div hlmCard class="text-center py-12">
             <div hlmCardContent>
-              <p class="text-muted-foreground">No active projects available at the moment.</p>
+              <p class="text-muted-foreground">No {{ filterType() === 'active' ? 'active' : '' }} projects available at the moment.</p>
             </div>
           </div>
         } @else {
@@ -91,8 +92,10 @@ import { RouterLink } from '@angular/router';
 })
 export class ProjectListComponent implements OnInit {
   private projectService = inject(ProjectService);
+  private route = inject(ActivatedRoute);
   
   loading = signal(true);
+  filterType = signal<'all' | 'active'>('active');
   projects = signal<Array<{
     id: string;
     name: string;
@@ -104,8 +107,27 @@ export class ProjectListComponent implements OnInit {
   }>>([]);
 
   async ngOnInit() {
+    // Subscribe to query params to handle filter changes
+    this.route.queryParams.subscribe(params => {
+      const filter = params['filter'] || 'active';
+      this.filterType.set(filter === 'all' ? 'all' : 'active');
+      this.loadProjects();
+    });
+  }
+
+  async loadProjects() {
+    this.loading.set(true);
     try {
-      const result = await this.projectService.getActiveProjects();
+      let result;
+      
+      if (this.filterType() === 'all') {
+        // Fetch all projects - getAllProjects returns Observable
+        result = await firstValueFrom(this.projectService.getAllProjects({}));
+      } else {
+        // Fetch only active projects
+        result = await this.projectService.getActiveProjects();
+      }
+      
       const projects = result?.edges?.map(edge => ({
         id: edge.node.id,
         name: edge.node.title,
@@ -121,6 +143,16 @@ export class ProjectListComponent implements OnInit {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  getTitle(): string {
+    return this.filterType() === 'all' ? 'All Projects' : 'Active Projects';
+  }
+
+  getDescription(): string {
+    return this.filterType() === 'all' 
+      ? 'Browse all projects in the system'
+      : 'Browse and contribute to active projects';
   }
 
   getProgress(current: number, goal: number): number {

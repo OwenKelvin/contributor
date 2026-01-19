@@ -5,6 +5,7 @@ export const DashboardRoutes: Routes = [
   {
     path: '',
     component: Dashboard,
+    data: { breadcrumb: 'Dashboard' },
     children: [
       {
         path: '',
@@ -13,26 +14,22 @@ export const DashboardRoutes: Routes = [
       },
       {
         path: 'overview',
+        data: { breadcrumb: 'Overview' },
         loadComponent: () => import('./overview/overview.component').then(m => m.OverviewComponent)
       },
       {
         path: 'projects',
+        data: { breadcrumb: 'Projects' },
         loadComponent: () => import('./projects/project-list.component').then(m => m.ProjectListComponent)
       },
       {
         path: 'projects/:id',
+        data: { breadcrumb: 'Project Details' },
         loadComponent: () => import('./project-detail/project-detail.component').then(m => m.ProjectDetailComponent)
       },
       {
-        path: 'my-contributions',
-        loadComponent: () => import('./my-contributions/my-contributions.component').then(m => m.MyContributionsComponent)
-      },
-      {
-        path: 'contributions/:id',
-        loadComponent: () => import('./contribution-detail/contribution-detail.component').then(m => m.ContributionDetailComponent)
-      },
-      {
         path: 'contributions',
+        data: { breadcrumb: 'Contributions' },
         loadChildren: () => import('@nyots/client-pages/contributions')
       }
     ]
