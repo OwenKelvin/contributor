@@ -32,6 +32,15 @@ import { ConfirmationDialogComponent, HlmDialogService } from '@nyots/ui/dialog'
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '@nyots/data-source/auth';
 import { RouterOutlet, RouterLink } from '@angular/router';
+import {
+  BreadcrumbService,
+  HlmBreadcrumb,
+  HlmBreadcrumbItem,
+  HlmBreadcrumbLink,
+  HlmBreadcrumbList,
+  HlmBreadcrumbPage,
+  HlmBreadcrumbSeparator
+} from '@nyots/ui/breadcrumb';
 
 @Component({
   imports: [
@@ -61,6 +70,12 @@ import { RouterOutlet, RouterLink } from '@angular/router';
     HlmDropdownMenuTrigger,
     RouterOutlet,
     RouterLink,
+    HlmBreadcrumb,
+    HlmBreadcrumbItem,
+    HlmBreadcrumbLink,
+    HlmBreadcrumbList,
+    HlmBreadcrumbPage,
+    HlmBreadcrumbSeparator,
   ],
   template: `
     <div hlmSidebarWrapper>
@@ -114,7 +129,8 @@ import { RouterOutlet, RouterLink } from '@angular/router';
                               <li hlmSidebarMenuSubItem>
                                 <a
                                   hlmSidebarMenuSubButton
-                                  [routerLink]="subItem.route"
+                                  [routerLink]="getRoutePath(subItem)"
+                                  [queryParams]="getQueryParams(subItem)"
                                   class="flex w-full items-center gap-2"
                                 >
                                   <ng-icon
@@ -156,10 +172,29 @@ import { RouterOutlet, RouterLink } from '@angular/router';
         </div>
       </hlm-sidebar>
       <main hlmSidebarInset>
-        <header class="flex h-12 items-center justify-between px-4">
-          <button hlmSidebarTrigger>
-            <span class="sr-only">Toggle Sidebar</span>
-          </button>
+        <header class="px-4 py-3 border-b">
+          <div class="flex items-center mb-3">
+            <button hlmSidebarTrigger>
+              <span class="sr-only">Toggle Sidebar</span>
+            </button>
+          </div>
+          
+          <nav hlmBreadcrumb>
+            <ol hlmBreadcrumbList>
+              @for (breadcrumb of breadcrumbs(); track breadcrumb.label) {
+                @if (!$last) {
+                  <li hlmBreadcrumbItem>
+                    <a hlmBreadcrumbLink [link]="breadcrumb.url">{{ breadcrumb.label }}</a>
+                  </li>
+                  <li hlmBreadcrumbSeparator></li>
+                } @else {
+                  <li hlmBreadcrumbItem>
+                    <span hlmBreadcrumbPage>{{ breadcrumb.label }}</span>
+                  </li>
+                }
+              }
+            </ol>
+          </nav>
         </header>
         <router-outlet></router-outlet>
       </main>
@@ -183,6 +218,9 @@ import { RouterOutlet, RouterLink } from '@angular/router';
 export class Dashboard {
   private readonly authService = inject(AuthService);
   private readonly dialogService = inject(HlmDialogService);
+  private readonly breadcrumbService = inject(BreadcrumbService);
+  
+  protected readonly breadcrumbs = this.breadcrumbService.breadcrumbs;
   protected readonly _items = [
     {
       title: 'Overview',
@@ -194,8 +232,18 @@ export class Dashboard {
       icon: 'lucideFolderOpen',
       defaultOpen: false as boolean,
       items: [
-        { title: 'Browse All Projects', icon: 'lucideFolderOpen', route: '/dashboard/projects' },
-        { title: 'Active Projects', icon: 'lucideBarChart3', route: '/dashboard/projects' },
+        { 
+          title: 'Browse All Projects', 
+          icon: 'lucideFolderOpen', 
+          routePath: '/dashboard/projects',
+          queryParams: { filter: 'all' }
+        },
+        { 
+          title: 'Active Projects', 
+          icon: 'lucideBarChart3', 
+          routePath: '/dashboard/projects',
+          queryParams: { filter: 'active' }
+        },
       ],
     },
     {
@@ -203,8 +251,18 @@ export class Dashboard {
       icon: 'lucideWallet',
       defaultOpen: false as boolean,
       items: [
-        { title: 'All Contributions', icon: 'lucideBarChart3', route: '/dashboard/my-contributions' },
-        { title: 'By Project', icon: 'lucideFolderOpen', route: '/dashboard/my-contributions' },
+        { 
+          title: 'All Contributions', 
+          icon: 'lucideBarChart3', 
+          routePath: '/dashboard/contributions/my-contributions',
+          queryParams: { view: 'all' }
+        },
+        { 
+          title: 'By Project', 
+          icon: 'lucideFolderOpen', 
+          routePath: '/dashboard/contributions/my-contributions',
+          queryParams: { view: 'by-project' }
+        },
       ],
     },
     {
@@ -229,5 +287,13 @@ export class Dashboard {
     if (result === true) {
       this.authService.logout();
     }
+  }
+
+  getRoutePath(subItem: any): string {
+    return subItem.routePath || subItem.route;
+  }
+
+  getQueryParams(subItem: any): any {
+    return subItem.queryParams || null;
   }
 }

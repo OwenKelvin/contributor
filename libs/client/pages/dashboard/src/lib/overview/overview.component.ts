@@ -64,7 +64,7 @@ import { HlmButton } from '@nyots/ui/button';
                   }
                 </div>
                 <div class="mt-6 text-center">
-                  <a routerLink="/dashboard/my-contributions" hlmBtn variant="outline">
+                  <a routerLink="/dashboard/contributions/my-contributions" hlmBtn variant="outline">
                     View All Contributions
                   </a>
                 </div>

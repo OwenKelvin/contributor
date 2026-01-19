@@ -7,7 +7,7 @@ import { HlmBadge } from '@nyots/ui/badge';
 import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { HlmDialogService } from '@nyots/ui/dialog';
-import { ContributionDialogComponent } from '../contribution-dialog/contribution-dialog.component';
+import { ContributionDialogComponent } from '@nyots/client-pages/contributions';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -69,7 +69,7 @@ import { firstValueFrom } from 'rxjs';
                   </div>
                 </div>
                 <div class="w-full bg-secondary rounded-full h-3">
-                  <div 
+                  <div
                     class="bg-primary h-3 rounded-full transition-all"
                     [style.width.%]="getProgress()"
                   ></div>
@@ -88,7 +88,8 @@ import { firstValueFrom } from 'rxjs';
             </div>
             <div hlmCardContent>
               <div class="prose max-w-none">
-                <p class="text-muted-foreground whitespace-pre-wrap">{{ project()?.detailedDescription || project()?.description }}</p>
+                <p class="text-muted-foreground whitespace-pre-wrap"
+                   [innerHTML]="project()?.detailedDescription || project()?.description"></p>
               </div>
             </div>
           </div>
@@ -139,9 +140,9 @@ export class ProjectDetailComponent implements OnInit {
   private projectService = inject(ProjectService);
   private dialogService = inject(HlmDialogService);
   private router = inject(Router);
-  
+
   id = input.required<string>();
-  
+
   loading = signal(true);
   project = signal<{
     id: string;
@@ -213,7 +214,7 @@ export class ProjectDetailComponent implements OnInit {
     });
 
     const result = await firstValueFrom(dialogRef.closed$);
-    
+
     // If contribution was successful, refresh the project data
     if (result === true) {
       await this.loadProject();
