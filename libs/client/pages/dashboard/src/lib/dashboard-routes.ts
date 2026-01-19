@@ -31,6 +31,11 @@ export const DashboardRoutes: Routes = [
         path: 'contributions',
         data: { breadcrumb: 'Contributions' },
         loadChildren: () => import('@nyots/client-pages/contributions')
+      },
+      {
+        path: 'my-activity',
+        data: { breadcrumb: 'My Activity' },
+        loadComponent: () => import('./my-activity/my-activity.component').then(m => m.MyActivityComponent)
       }
     ]
   }

@@ -270,6 +270,11 @@ export class Dashboard {
       icon: 'lucidePlus',
       route: '/dashboard/contributions/create',
     },
+    {
+      title: 'My Activity',
+      icon: 'lucideHistory',
+      route: '/dashboard/my-activity',
+    },
   ];
 
   async signOut() {
