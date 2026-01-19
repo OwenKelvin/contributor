@@ -31,6 +31,8 @@ import { UserContributionSummary } from './types/user-contribution-summary.type'
 import { TimeSeriesPoint } from './types/time-series-point.type';
 import { BulkUpdateResult, BulkUpdateError } from './types/bulk-update-result.type';
 import { TransactionStatus, TransactionType } from './transaction.model';
+import { ActivityService } from '../activity/activity.service';
+import { ActivityAction, TargetType } from '../activity/activity.model';
 
 /**
  * Contribution Service
@@ -51,6 +53,7 @@ export class ContributionService {
     private readonly auditLogModel: typeof ContributionAuditLog,
     private readonly transactionService: TransactionService,
     private readonly emailService: EmailService,
+    private readonly activityService: ActivityService,
     private readonly sequelize: Sequelize
   ) {}
 
@@ -87,6 +90,19 @@ export class ContributionService {
       });
 
       this.logger.log(`Contribution ${contribution.id} created successfully`);
+
+      // Log activity
+      await this.activityService.logActivity({
+        userId,
+        action: ActivityAction.CONTRIBUTION_CREATED,
+        targetId: contribution.id,
+        targetType: TargetType.CONTRIBUTION,
+        details: JSON.stringify({
+          projectId: input.projectId,
+          amount: input.amount,
+          status: PaymentStatus.Pending,
+        }),
+      });
 
       // Load relationships for return
       return await this.getContributionById(contribution.id);
@@ -243,6 +259,21 @@ export class ContributionService {
 
         this.logger.log(`Payment processed successfully for contribution ${contributionId}`);
 
+        // Log successful payment activity
+        await this.activityService.logActivity({
+          userId: contribution.userId,
+          action: ActivityAction.CONTRIBUTION_UPDATED,
+          targetId: contributionId,
+          targetType: TargetType.CONTRIBUTION,
+          details: JSON.stringify({
+            projectId: contribution.projectId,
+            amount: contribution.amount,
+            status: PaymentStatus.Paid,
+            paymentSuccess: true,
+            paidAt: new Date().toISOString(),
+          }),
+        });
+
         // Send success email (async, don't wait)
         this.emailService
           .sendPaymentSuccessEmail(contribution)
@@ -271,6 +302,21 @@ export class ContributionService {
         this.logger.warn(
           `Payment failed for contribution ${contributionId}: ${transactionResult.errorMessage}`
         );
+
+        // Log failed payment activity
+        await this.activityService.logActivity({
+          userId: contribution.userId,
+          action: ActivityAction.CONTRIBUTION_UPDATED,
+          targetId: contributionId,
+          targetType: TargetType.CONTRIBUTION,
+          details: JSON.stringify({
+            projectId: contribution.projectId,
+            amount: contribution.amount,
+            status: PaymentStatus.Failed,
+            paymentSuccess: false,
+            failureReason: transactionResult.errorMessage,
+          }),
+        });
 
         // Send failure email (async, don't wait)
         this.emailService
@@ -880,6 +926,22 @@ export class ContributionService {
         await transaction.commit();
 
         this.logger.log(`Refund processed successfully for contribution ${contributionId}`);
+
+        // Log refund activity
+        await this.activityService.logActivity({
+          userId: adminUserId || contribution.userId,
+          action: ActivityAction.CONTRIBUTION_UPDATED,
+          targetId: contributionId,
+          targetType: TargetType.CONTRIBUTION,
+          details: JSON.stringify({
+            projectId: contribution.projectId,
+            amount: contribution.amount,
+            status: PaymentStatus.Refunded,
+            reason,
+            refundedAt: new Date().toISOString(),
+            processedBy: adminUserId ? 'admin' : 'system',
+          }),
+        });
 
         // Send refund email (async, don't wait)
         this.emailService

@@ -6,9 +6,10 @@ import { UserResolver } from './user.resolver';
 import { RoleModule } from '../role/role.module';
 import { UserRole } from '../role/user-role.model';
 import { Role } from '../role/role.model';
+import { ActivityModule } from '../activity/activity.module';
 
 @Module({
-  imports: [SequelizeModule.forFeature([User, UserRole, Role]), RoleModule],
+  imports: [SequelizeModule.forFeature([User, UserRole, Role]), RoleModule, ActivityModule],
   providers: [UserService, UserResolver],
   exports: [UserService],
 })

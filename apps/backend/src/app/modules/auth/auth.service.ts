@@ -14,6 +14,8 @@ import { Queue } from 'bull';
 import { User } from '../user/user.model';
 import { GraphQLError } from 'graphql/error';
 import { RoleList } from '../role/role-list';
+import { ActivityService } from '../activity/activity.service';
+import { ActivityAction } from '../activity/activity.model';
 
 interface AuthResponse {
   user: User;
@@ -26,6 +28,7 @@ export class AuthService {
     private userService: UserService,
     private roleService: RoleService,
     private jwtService: JwtService,
+    private activityService: ActivityService,
     @InjectQueue('email') private emailQueue: Queue,
   ) {}
 
@@ -66,6 +69,18 @@ export class AuthService {
       name: user.firstName,
     });
 
+    // Log registration activity
+    await this.activityService.logActivity({
+      userId: user.id,
+      action: ActivityAction.USER_CREATED,
+      targetId: user.id,
+      targetType: 'User' as any,
+      details: JSON.stringify({
+        email: user.email,
+        registeredAt: new Date().toISOString(),
+      }),
+    });
+
     const accessToken = this.generateJwtToken(user.id, user.email);
     return { user, accessToken };
   }
@@ -82,6 +97,16 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
+
+    // Log login activity
+    await this.activityService.logActivity({
+      userId: user.id,
+      action: ActivityAction.USER_LOGIN,
+      details: JSON.stringify({
+        email: user.email,
+        loginAt: new Date().toISOString(),
+      }),
+    });
 
     const accessToken = this.generateJwtToken(user.id, user.email);
     return { user, accessToken };

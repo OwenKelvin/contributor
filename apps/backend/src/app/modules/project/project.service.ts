@@ -12,12 +12,15 @@ import { PageInfo } from '../../common/types/page-info.type';
 import { BulkUpdateResult } from './types/bulk-update-result.type';
 import { Op } from 'sequelize';
 import { Category } from '../category/category.model';
+import { ActivityService } from '../activity/activity.service';
+import { ActivityAction, TargetType } from '../activity/activity.model';
 
 @Injectable()
 export class ProjectService {
   constructor(
     @InjectModel(Project)
     private projectModel: typeof Project,
+    private activityService: ActivityService,
   ) {}
 
   async getAllProjects(
@@ -161,7 +164,7 @@ export class ProjectService {
     };
   }
 
-  async createProject(input: CreateProjectInput): Promise<Project> {
+  async createProject(input: CreateProjectInput, userId?: string): Promise<Project> {
     console.log({
       title: input.title,
       description: input.description,
@@ -187,18 +190,70 @@ export class ProjectService {
       currentAmount: 0,
     } as any);
 
+    // Log activity if userId is provided
+    if (userId) {
+      await this.activityService.logActivity({
+        userId,
+        action: ActivityAction.PROJECT_CREATED,
+        targetId: project.id,
+        targetType: TargetType.PROJECT,
+        details: JSON.stringify({
+          title: project.title,
+          goalAmount: project.goalAmount,
+          categoryId: project.categoryId,
+          status: project.status,
+        }),
+      });
+    }
+
     return this.getProjectById(project.id);
   }
 
-  async updateProject(id: string, input: UpdateProjectInput): Promise<Project> {
+  async updateProject(id: string, input: UpdateProjectInput, userId?: string): Promise<Project> {
     const project = await this.getProjectById(id);
+    const oldStatus = project.status;
+    
     await project.update(input);
+
+    // Log activity if userId is provided
+    if (userId) {
+      await this.activityService.logActivity({
+        userId,
+        action: ActivityAction.PROJECT_UPDATED,
+        targetId: project.id,
+        targetType: TargetType.PROJECT,
+        details: JSON.stringify({
+          title: project.title,
+          changes: input,
+          oldStatus,
+          newStatus: project.status,
+        }),
+      });
+    }
+
     return this.getProjectById(id);
   }
 
-  async deleteProject(id: string): Promise<boolean> {
+  async deleteProject(id: string, userId?: string): Promise<boolean> {
     const project = await this.getProjectById(id);
+    const projectTitle = project.title;
+    
     await project.destroy();
+
+    // Log activity if userId is provided
+    if (userId) {
+      await this.activityService.logActivity({
+        userId,
+        action: ActivityAction.PROJECT_DELETED,
+        targetId: id,
+        targetType: TargetType.PROJECT,
+        details: JSON.stringify({
+          title: projectTitle,
+          deletedAt: new Date().toISOString(),
+        }),
+      });
+    }
+
     return true;
   }
 
@@ -224,7 +279,7 @@ export class ProjectService {
     };
   }
 
-  async approveProject(id: string, notes?: string): Promise<Project> {
+  async approveProject(id: string, notes?: string, userId?: string): Promise<Project> {
     const project = await this.getProjectById(id);
 
     if (project.status !== ProjectStatus.Pending) {
@@ -236,10 +291,25 @@ export class ProjectService {
       // TODO: Store approval notes if needed
     });
 
+    // Log activity if userId is provided
+    if (userId) {
+      await this.activityService.logActivity({
+        userId,
+        action: ActivityAction.PROJECT_APPROVED,
+        targetId: project.id,
+        targetType: TargetType.PROJECT,
+        details: JSON.stringify({
+          title: project.title,
+          notes,
+          approvedAt: new Date().toISOString(),
+        }),
+      });
+    }
+
     return this.getProjectById(id);
   }
 
-  async rejectProject(id: string, reason: string): Promise<Project> {
+  async rejectProject(id: string, reason: string, userId?: string): Promise<Project> {
     const project = await this.getProjectById(id);
 
     if (project.status !== ProjectStatus.Pending) {
@@ -250,6 +320,21 @@ export class ProjectService {
       status: ProjectStatus.Draft,
       // TODO: Store rejection reason if needed
     });
+
+    // Log activity if userId is provided
+    if (userId) {
+      await this.activityService.logActivity({
+        userId,
+        action: ActivityAction.PROJECT_REJECTED,
+        targetId: project.id,
+        targetType: TargetType.PROJECT,
+        details: JSON.stringify({
+          title: project.title,
+          reason,
+          rejectedAt: new Date().toISOString(),
+        }),
+      });
+    }
 
     return this.getProjectById(id);
   }

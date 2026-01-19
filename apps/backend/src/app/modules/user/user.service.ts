@@ -12,6 +12,8 @@ import { UserConnection } from './types/user-connection.type';
 import { BulkUpdateResult } from './types/bulk-update-result.type';
 import { PageInfo } from '../../common/types/page-info.type';
 import { Op } from 'sequelize';
+import { ActivityService } from '../activity/activity.service';
+import { ActivityAction, TargetType } from '../activity/activity.model';
 
 @Injectable()
 export class UserService {
@@ -22,6 +24,7 @@ export class UserService {
     private userRoleModel: typeof UserRole,
     @InjectModel(Role)
     private roleModel: typeof Role,
+    private activityService: ActivityService,
   ) {}
 
   async create(userData: Partial<User> & { roles?: Role[] }): Promise<User> {
@@ -134,7 +137,7 @@ export class UserService {
     return user;
   }
 
-  async createUser(input: CreateUserInput): Promise<User> {
+  async createUser(input: CreateUserInput, createdByUserId?: string): Promise<User> {
     // Check if user already exists
     const existingUser = await this.findByEmail(input.email);
     if (existingUser) {
@@ -157,11 +160,28 @@ export class UserService {
       await user.$set('roles', roles);
     }
 
+    // Log activity if createdByUserId is provided
+    if (createdByUserId) {
+      await this.activityService.logActivity({
+        userId: createdByUserId,
+        action: ActivityAction.USER_CREATED,
+        targetId: user.id,
+        targetType: TargetType.USER,
+        details: JSON.stringify({
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          roleIds: input.roleIds,
+        }),
+      });
+    }
+
     return this.getUserById(user.id);
   }
 
-  async updateUser(id: string, input: UpdateUserInput): Promise<User> {
+  async updateUser(id: string, input: UpdateUserInput, updatedByUserId?: string): Promise<User> {
     const user = await this.getUserById(id);
+    const oldEmail = user.email;
 
     // Check if email is being changed and if it's already taken
     if (input.email && input.email !== user.email) {
@@ -191,6 +211,22 @@ export class UserService {
       } else {
         await user.$set('roles', []);
       }
+    }
+
+    // Log activity if updatedByUserId is provided
+    if (updatedByUserId) {
+      await this.activityService.logActivity({
+        userId: updatedByUserId,
+        action: ActivityAction.USER_UPDATED,
+        targetId: user.id,
+        targetType: TargetType.USER,
+        details: JSON.stringify({
+          oldEmail,
+          newEmail: user.email,
+          changes: input,
+          updatedAt: new Date().toISOString(),
+        }),
+      });
     }
 
     return this.getUserById(id);
