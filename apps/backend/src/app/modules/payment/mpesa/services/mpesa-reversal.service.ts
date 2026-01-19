@@ -2,6 +2,8 @@ import { Injectable, Logger, Inject } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigType } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
+import * as crypto from 'crypto';
+import * as fs from 'fs';
 import mpesaConfig from '../mpesa.config';
 import { MpesaAuthService } from './mpesa-auth.service';
 import {
@@ -31,37 +33,43 @@ export class MpesaReversalService {
    * @param reason - Reason for the reversal
    * @returns Reversal response
    */
-  async initiateReversal(
-    transactionId: string,
-    amount: number,
-    reason: string
-  ): Promise<MpesaReversalResponseDto> {
-    try {
-      const accessToken = await this.authService.getAccessToken();
-
-      // Note: In production, you need to generate SecurityCredential
-      // This requires encrypting the initiator password with M-Pesa public key
-      // For now, we'll use a placeholder - this needs to be implemented properly
-      const securityCredential = await this.generateSecurityCredential();
-
-      const requestBody: MpesaReversalRequestDto = {
-        Initiator: 'apitest', // Replace with actual initiator name from M-Pesa portal
-        SecurityCredential: securityCredential,
-        CommandID: 'TransactionReversal',
-        TransactionID: transactionId,
-        Amount: Math.round(amount), // M-Pesa requires integer amount
-        ReceiverParty: this.config.businessShortCode,
-        RecieverIdentifierType: '11', // 11 = Till Number, 4 = Paybill
-        ResultURL: `${this.config.callbackUrl}/reversal`,
-        QueueTimeOutURL: `${this.config.callbackUrl}/reversal/timeout`,
-        Remarks: reason.substring(0, 100), // M-Pesa has a 100 character limit
-        Occasion: 'Refund',
-      };
-
-      this.logger.debug(
-        `Initiating reversal for transaction ${transactionId}, amount ${amount}`
-      );
-
+      async initiateReversal(
+        transactionId: string,
+        amount: number,
+        reason: string
+      ): Promise<MpesaReversalResponseDto> {
+        try {
+          const accessToken = await this.authService.getAccessToken();
+          const securityCredential = await this.generateSecurityCredential();
+    
+                let initiator: string;
+                if (this.config.environment === 'production') {
+                  if (!this.config.initiatorName) {
+                    throw new Error('MPESA_INITIATOR_NAME is required in production environment.');
+                  }
+                  initiator = this.config.initiatorName;
+                } else {
+                  // Provide a default or throw an error for sandbox if not provided.
+                  // For now, let's use a placeholder for sandbox.
+                  initiator = this.config.initiatorName || 'apitest';
+                }
+          
+                const requestBody: MpesaReversalRequestDto = {
+                  Initiator: initiator,            SecurityCredential: securityCredential,
+            CommandID: 'TransactionReversal',
+            TransactionID: transactionId,
+            Amount: Math.round(amount), // M-Pesa requires integer amount
+            ReceiverParty: this.config.businessShortCode,
+            RecieverIdentifierType: '11', // 11 = Till Number, 4 = Paybill
+            ResultURL: `${this.config.callbackUrl}/reversal`,
+            QueueTimeOutURL: `${this.config.callbackUrl}/reversal/timeout`,
+            Remarks: reason.substring(0, 100), // M-Pesa has a 100 character limit
+            Occasion: 'Refund',
+          };
+    
+          this.logger.debug(
+            `Initiating reversal for transaction ${transactionId}, amount ${amount}`
+          );
       const url = `${this.config.apiUrl}/mpesa/reversal/v1/request`;
 
       const response = await firstValueFrom(
@@ -108,43 +116,51 @@ export class MpesaReversalService {
   }
 
   /**
-   * Generate security credential for reversal
-   * 
-   * IMPORTANT: This is a placeholder implementation
-   * In production, you must:
-   * 1. Get the initiator password from secure storage
-   * 2. Download M-Pesa public certificate from the portal
-   * 3. Encrypt the password using the certificate
-   * 4. Base64 encode the encrypted result
-   * 
-   * Example implementation:
-   * ```
-   * const crypto = require('crypto');
-   * const fs = require('fs');
-   * 
-   * const publicKey = fs.readFileSync('mpesa_public_cert.cer');
-   * const buffer = Buffer.from(initiatorPassword);
-   * const encrypted = crypto.publicEncrypt(
-   *   {
-   *     key: publicKey,
-   *     padding: crypto.constants.RSA_PKCS1_PADDING,
-   *   },
-   *   buffer
-   * );
-   * return encrypted.toString('base64');
-   * ```
+   * Generates a security credential for M-Pesa API calls.
+   * For production, this implements the official Safaricom method for reversal by
+   * encrypting the initiator password with the M-Pesa public key certificate.
+   * For sandbox, it returns a test credential.
+   *
+   * @private
+   * @returns {Promise<string>} The generated security credential.
+   * @throws {Error} If required environment variables are not set for production or if the certificate cannot be read.
    */
   private async generateSecurityCredential(): Promise<string> {
-    // TODO: Implement proper security credential generation
-    // For sandbox testing, M-Pesa provides a test credential
-    // For production, this MUST be properly implemented
-    
-    this.logger.warn(
-      'Using placeholder security credential. Implement proper credential generation for production!'
-    );
+    if (this.config.environment !== 'production') {
+      this.logger.warn(
+        'Using placeholder security credential for sandbox environment.'
+      );
+      return 'Safaricom999!*!';
+    }
 
-    // Sandbox test credential (this won't work in production)
-    return 'Safaricom999!*!';
+    this.logger.log('Generating security credential for production environment.');
+
+    const initiatorPassword = this.config.initiatorPassword;
+    const certificatePath = this.config.securityCertificatePath;
+
+    if (!initiatorPassword || !certificatePath) {
+      throw new Error(
+        'MPESA_INITIATOR_PASSWORD and MPESA_SECURITY_CERTIFICATE_PATH are required for production.'
+      );
+    }
+
+    try {
+      const certificate = fs.readFileSync(certificatePath);
+      const encryptedPassword = crypto.publicEncrypt(
+        {
+          key: certificate,
+          padding: crypto.constants.RSA_PKCS1_PADDING,
+        },
+        Buffer.from(initiatorPassword)
+      );
+      return encryptedPassword.toString('base64');
+    } catch (error) {
+      this.logger.error(
+        `Failed to generate security credential. Check certificate path and permissions. Path: ${certificatePath}`,
+        error
+      );
+      throw new Error('Could not generate security credential.');
+    }
   }
 
   /**
