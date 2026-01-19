@@ -2,7 +2,6 @@ import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   form,
-  Field,
   required,
   minLength,
   maxLength,
@@ -11,7 +10,6 @@ import {
   FieldTree,
 } from '@angular/forms/signals';
 import { GraphQLError } from 'graphql/error';
-import { HttpErrorResponse } from '@angular/common/http';
 import { toast } from 'ngx-sonner';
 import { ICreateProjectInput, IProjectStatus, ICategory } from '@nyots/data-source';
 import { mapGraphqlValidationErrors } from '@nyots/data-source/helpers';
@@ -25,7 +23,6 @@ import { getUserFriendlyErrorMessage } from '../../utils/retry.util';
   selector: 'nyots-create-project',
   standalone: true,
   imports: [
-    Field,
     ProjectFormComponent,
     HlmCard,
     HlmCardContent,

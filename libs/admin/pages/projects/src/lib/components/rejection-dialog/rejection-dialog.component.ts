@@ -45,6 +45,7 @@ export interface RejectionDialogContext {
       <div>
         <label hlmLabel for="reason">Rejection Reason <span class="text-destructive">*</span></label>
         <textarea
+          hlmInput
           id="reason"
           [(ngModel)]="reason"
           placeholder="Please provide a reason for rejecting this project..."

@@ -10,7 +10,7 @@
         <div class="flex-1">
           <label hlmLabel for="search">Search</label>
           <div class="relative">
-            <ng-icon
+            <ng-icon hlmIcon
               name="lucideSearch"
               class="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
               size="sm"
@@ -66,7 +66,7 @@
         </div>
       } @else if (filteredActivities().length === 0) {
         <div class="text-center py-12">
-          <ng-icon name="lucideHistory" size="xl" class="text-muted-foreground mx-auto mb-4" />
+          <ng-icon hlmIcon name="lucideHistory" size="xl" class="text-muted-foreground mx-auto mb-4" />
           <h3 class="text-lg font-semibold mb-2">No activities found</h3>
           <p class="text-sm text-muted-foreground">
             @if (searchTerm() || selectedAction()) {
@@ -83,7 +83,7 @@
               <!-- Timeline dot -->
               <div class="flex flex-col items-center">
                 <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                  <ng-icon name="lucideActivity" class="text-blue-600" size="sm" />
+                  <ng-icon hlmIcon name="lucideActivity" class="text-blue-600" size="sm" />
                 </div>
                 @if (!$last) {
                   <div class="w-0.5 h-full bg-slate-200 mt-2"></div>
@@ -104,7 +104,7 @@
                   </div>
                   <div class="text-right flex-shrink-0">
                     <div class="text-sm text-muted-foreground flex items-center gap-1">
-                      <ng-icon name="lucideCalendar" size="sm" />
+                      <ng-icon hlmIcon name="lucideCalendar" size="sm" />
                       {{ formatTimestamp(activity.timestamp) }}
                     </div>
                     @if (activity.ipAddress) {

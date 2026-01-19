@@ -10,7 +10,7 @@ import {
 } from '@nyots/ui/card';
 
 @Component({
-  selector: 'app-payment-status-chart',
+  selector: 'nyots-payment-status-chart',
   imports: [
     CommonModule,
     NgxChartsModule,

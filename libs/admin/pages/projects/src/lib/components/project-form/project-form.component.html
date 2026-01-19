@@ -128,29 +128,33 @@
 
   <!-- Category -->
   <div class="space-y-2">
-    <label hlmLabel for="category">Category <span class="text-red-500">*</span></label>
-    <brn-select
-      hlm
-      class="w-full"
-      [class.pointer-events-none]="isFormDisabled"
-      [class.opacity-50]="isFormDisabled"
-      placeholder="Select a category"
-      [field]="projectForm().categoryId"
-    >
-      <hlm-select-trigger class="w-full">
-        <hlm-select-value />
-      </hlm-select-trigger>
-      <hlm-select-content>
-        @for (category of categories(); track category.id) {
-          <hlm-option [value]="category.id">
-            {{ category.name }}
-          </hlm-option>
-        }
-        @if (categories().length === 0) {
-          <div class="px-2 py-1.5 text-sm text-slate-500">No categories available</div>
-        }
-      </hlm-select-content>
-    </brn-select>
+    <hlm-form-field>
+      <label hlmLabel for="category">Category <span class="text-red-500">*</span></label>
+      <brn-select
+        hlm
+        class="w-full"
+        id="category"
+        [class.pointer-events-none]="isFormDisabled"
+        [class.opacity-50]="isFormDisabled"
+        placeholder="Select a category"
+        [field]="projectForm().categoryId"
+      >
+        <hlm-select-trigger class="w-full">
+          <hlm-select-value />
+        </hlm-select-trigger>
+        <hlm-select-content>
+          @for (category of categories(); track category.id) {
+            <hlm-option [value]="category.id">
+              {{ category.name }}
+            </hlm-option>
+          }
+          @if (categories().length === 0) {
+            <div class="px-2 py-1.5 text-sm text-slate-500">No categories available</div>
+          }
+        </hlm-select-content>
+      </brn-select>
+    </hlm-form-field>
+
     @if (projectForm().categoryId().invalid() && projectForm().categoryId().touched()) {
       <p class="text-sm text-red-500">
         @for (error of projectForm().categoryId().errors(); track error.kind) {

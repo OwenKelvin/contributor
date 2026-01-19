@@ -12,7 +12,7 @@ import {
 import { HlmSpinner } from '@nyots/ui/spinner';
 
 @Component({
-  selector: 'app-contribution-trend-chart',
+  selector: 'nyots-contribution-trend-chart',
   imports: [
     CommonModule,
     NgxChartsModule,
@@ -32,7 +32,7 @@ import { HlmSpinner } from '@nyots/ui/spinner';
       <div hlmCardContent>
         @if (loading()) {
           <div class="flex items-center justify-center h-64">
-            <span hlmSpinner></span>
+            <hlm-spinner></hlm-spinner>
           </div>
         } @else {
           <ngx-charts-area-chart
@@ -58,7 +58,7 @@ export class ContributionTrendChartComponent implements OnInit, OnChanges {
   @Input() dateRange: { startDate?: Date; endDate?: Date } = {};
 
   private dashboardService = inject(DashboardService);
-  
+
   loading = signal(true);
   chartData = signal<any[]>([]);
 
@@ -72,7 +72,7 @@ export class ContributionTrendChartComponent implements OnInit, OnChanges {
 
   loadData() {
     this.loading.set(true);
-    
+
     const endDate = this.dateRange.endDate || new Date();
     const startDate = this.dateRange.startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 

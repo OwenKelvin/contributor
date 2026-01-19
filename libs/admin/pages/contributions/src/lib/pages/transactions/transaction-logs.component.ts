@@ -45,7 +45,6 @@ import { HlmLabel } from '@nyots/ui/label';
 import { HlmInput } from '@nyots/ui/input';
 import {
   HlmSelect,
-  HlmSelectContent,
   HlmSelectOption,
   HlmSelectTrigger,
   HlmSelectValue,
@@ -58,10 +57,10 @@ type TransactionNode = NonNullable<
 
 /**
  * Transaction Logs Component
- * 
+ *
  * Displays all payment transactions with comprehensive filtering and search capabilities.
  * Shows transaction details including gateway responses and error information.
- * 
+ *
  * Requirements: 9.1, 9.2, 9.3, 9.4, 9.6
  */
 @Component({
@@ -89,7 +88,6 @@ type TransactionNode = NonNullable<
     HlmLabel,
     HlmInput,
     HlmSelect,
-    HlmSelectContent,
     HlmSelectOption,
     HlmSelectTrigger,
     HlmSelectValue,
@@ -128,17 +126,19 @@ type TransactionNode = NonNullable<
               <!-- Transaction Status Filter -->
               <div class="space-y-2">
                 <label hlmLabel for="status">Status</label>
-                <select
-                  hlmSelect
+                <hlm-select
                   id="status"
                   formControlName="status"
                   class="w-full"
                 >
-                  <option value="">All Statuses</option>
-                  <option [value]="TransactionStatus.Pending">Pending</option>
-                  <option [value]="TransactionStatus.Success">Success</option>
-                  <option [value]="TransactionStatus.Failed">Failed</option>
-                </select>
+                  <hlm-select-trigger>
+                    <hlm-select-value></hlm-select-value>
+                  </hlm-select-trigger>
+                  <hlm-option [value]="">All Statuses</hlm-option>
+                  <hlm-option [value]="$any(TransactionStatus.Pending)">Pending</hlm-option>
+                  <hlm-option [value]="$any(TransactionStatus.Success)">Success</hlm-option>
+                  <hlm-option [value]="$any(TransactionStatus.Failed)">Failed</hlm-option>
+                </hlm-select>
               </div>
 
               <!-- Transaction Type Filter -->
@@ -267,7 +267,7 @@ type TransactionNode = NonNullable<
                       <td hlmTd>
                         <div class="flex flex-col">
                           <span class="font-medium">
-                            {{ transaction.contribution.user.firstName }} 
+                            {{ transaction.contribution.user.firstName }}
                             {{ transaction.contribution.user.lastName }}
                           </span>
                           <span class="text-sm text-muted-foreground">
@@ -363,7 +363,7 @@ type TransactionNode = NonNullable<
                     </tr>
 
                     <!-- Error Details Row (for failed transactions) -->
-                    @if (transaction.status === TransactionStatus.Failed && 
+                    @if (transaction.status === TransactionStatus.Failed &&
                          (transaction.errorCode || transaction.errorMessage) &&
                          expandedTransactionId() === transaction.id) {
                       <tr hlmTr class="bg-red-50 dark:bg-red-950/20">
@@ -382,7 +382,7 @@ type TransactionNode = NonNullable<
                                 </p>
                                 @if (transaction.errorCode) {
                                   <p class="text-sm text-red-800 dark:text-red-200 mt-1">
-                                    <span class="font-medium">Error Code:</span> 
+                                    <span class="font-medium">Error Code:</span>
                                     <code class="bg-red-100 dark:bg-red-900 px-2 py-0.5 rounded">
                                       {{ transaction.errorCode }}
                                     </code>
@@ -390,7 +390,7 @@ type TransactionNode = NonNullable<
                                 }
                                 @if (transaction.errorMessage) {
                                   <p class="text-sm text-red-800 dark:text-red-200 mt-1">
-                                    <span class="font-medium">Error Message:</span> 
+                                    <span class="font-medium">Error Message:</span>
                                     {{ transaction.errorMessage }}
                                   </p>
                                 }

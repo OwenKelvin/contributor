@@ -46,7 +46,6 @@ import { firstValueFrom } from 'rxjs';
 import {
   BreadcrumbService,
   HlmBreadcrumb,
-  HlmBreadcrumbEllipsis,
   HlmBreadcrumbItem, HlmBreadcrumbLink, HlmBreadcrumbList, HlmBreadcrumbPage,
   HlmBreadcrumbSeparator
 } from '@nyots/ui/breadcrumb';
@@ -80,9 +79,7 @@ import {
     HlmDropdownMenuTrigger,
     HlmDropdownMenu,
     HlmDropdownMenuItem,
-
     HlmBreadcrumb,
-    HlmBreadcrumbEllipsis,
     HlmBreadcrumbSeparator,
     HlmBreadcrumbItem,
     HlmBreadcrumbLink,

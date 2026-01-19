@@ -2,7 +2,6 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   form,
-  Field,
   required,
   minLength,
   maxLength,
@@ -32,7 +31,6 @@ import { getUserFriendlyErrorMessage } from '../../utils/retry.util';
   selector: 'nyots-edit-project',
   standalone: true,
   imports: [
-    Field,
     ProjectFormComponent,
     HlmCard,
     HlmCardContent,

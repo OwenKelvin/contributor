@@ -12,7 +12,7 @@ import {
 import { HlmSpinner } from '@nyots/ui/spinner';
 
 @Component({
-  selector: 'app-top-projects-chart',
+  selector: 'nyots-top-projects-chart',
   imports: [
     CommonModule,
     NgxChartsModule,
@@ -32,7 +32,7 @@ import { HlmSpinner } from '@nyots/ui/spinner';
       <div hlmCardContent>
         @if (loading()) {
           <div class="flex items-center justify-center h-64">
-            <span hlmSpinner></span>
+            <hlm-spinner></hlm-spinner>
           </div>
         } @else {
           <ngx-charts-bar-horizontal
@@ -57,7 +57,7 @@ export class TopProjectsChartComponent implements OnInit, OnChanges {
   @Input() dateRange: { startDate?: Date; endDate?: Date } = {};
 
   private dashboardService = inject(DashboardService);
-  
+
   loading = signal(true);
   chartData = signal<any[]>([]);
 
@@ -92,7 +92,7 @@ export class TopProjectsChartComponent implements OnInit, OnChanges {
     });
   }
 
-  truncateTitle(title: string, maxLength: number = 30): string {
+  truncateTitle(title: string, maxLength = 30): string {
     return title.length > maxLength
       ? title.substring(0, maxLength) + '...'
       : title;

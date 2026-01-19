@@ -1,15 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { form, Field, required, email, submit } from '@angular/forms/signals';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
-import { HlmCard, HlmCardContent, HlmCardDescription, HlmCardFooter, HlmCardHeader, HlmCardTitle } from '@nyots/ui/card';
+import { HlmCard, HlmCardContent, HlmCardDescription, HlmCardHeader, HlmCardTitle } from '@nyots/ui/card';
 import { HlmIcon, HlmIconImports } from '@nyots/ui/icon';
 import { provideIcons } from '@ng-icons/core';
 import { lucideLoader2, lucideMail, lucideLock } from '@ng-icons/lucide';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '@nyots/data-source/auth';
 
 @Component({
@@ -22,12 +21,10 @@ import { AuthService } from '@nyots/data-source/auth';
     HlmCard,
     HlmCardContent,
     HlmCardDescription,
-    HlmCardFooter,
     HlmCardHeader,
     HlmCardTitle,
     HlmIcon,
     HlmIconImports,
-    RouterLink,
   ],
   providers: [provideIcons({ lucideLoader2, lucideMail, lucideLock })],
   templateUrl: 'login.html',
