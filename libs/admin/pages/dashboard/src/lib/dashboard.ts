@@ -175,36 +175,32 @@ import {
         </div>
       </hlm-sidebar>
       <main hlmSidebarInset>
-        <header class="flex h-12 items-center justify-between px-4">
-          <button hlmSidebarTrigger>
-            <span class="sr-only">Toggle Sidebar</span>
-          </button>
-
+        <header class="px-4 py-3 border-b">
+          <div class="flex items-center justify-between mb-3">
+            <button hlmSidebarTrigger>
+              <span class="sr-only">Toggle Sidebar</span>
+            </button>
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-medium">Admin Panel</span>
+            </div>
+          </div>
+          
           <nav hlmBreadcrumb>
             <ol hlmBreadcrumbList>
-
               @for (breadcrumb of breadcrumbs(); track breadcrumb.label) {
-                <!--                <li hlmBreadcrumbItem>-->
-                  <!--                  <hlm-breadcrumb-ellipsis />-->
-                  <!--                </li>-->
                 @if (!$last) {
                   <li hlmBreadcrumbItem>
                     <a hlmBreadcrumbLink [link]="breadcrumb.url">{{ breadcrumb.label }}</a>
                   </li>
-                } @else {
                   <li hlmBreadcrumbSeparator></li>
+                } @else {
                   <li hlmBreadcrumbItem>
                     <span hlmBreadcrumbPage>{{ breadcrumb.label }}</span>
                   </li>
-
                 }
               }
-
             </ol>
           </nav>
-          <div class="flex items-center gap-2">
-            <span class="text-sm font-medium">Admin Panel</span>
-          </div>
         </header>
         <router-outlet></router-outlet>
       </main>
