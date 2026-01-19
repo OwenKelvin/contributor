@@ -1,0 +1,59 @@
+type Activity {
+  id: ID!
+  userId: ID!
+  user: User!
+  action: ActivityAction!
+  targetId: ID
+  targetType: TargetType
+  details: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum ActivityAction {
+  USER_LOGIN
+  USER_LOGOUT
+  USER_CREATED
+  USER_UPDATED
+  USER_DELETED
+  PROJECT_CREATED
+  PROJECT_UPDATED
+  PROJECT_DELETED
+  PROJECT_APPROVED
+  PROJECT_REJECTED
+  PROJECT_ARCHIVED
+  CONTRIBUTION_CREATED
+  CONTRIBUTION_UPDATED
+  CONTRIBUTION_DELETED
+  ROLE_CREATED
+  ROLE_UPDATED
+  ROLE_DELETED
+  ROLE_ASSIGNED
+  ROLE_REVOKED
+  PERMISSION_CREATED
+  PERMISSION_UPDATED
+  PERMISSION_DELETED
+  CATEGORY_CREATED
+  CATEGORY_UPDATED
+  CATEGORY_DELETED
+}
+
+enum TargetType {
+  User
+  Project
+  Contribution
+  Role
+  Permission
+  Category
+}
+
+type ActivityConnection {
+  edges: [ActivityEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type ActivityEdge {
+  cursor: String!
+  node: Activity!
+}

@@ -21,6 +21,7 @@ import { PaymentModule } from '../payment/payment.module';
 import { ProjectModule } from '../project/project.module';
 import { UserModule } from '../user/user.module';
 import { EmailModule } from '../email/email.module';
+import { ActivityModule } from '../activity/activity.module';
 
 // Event Listeners
 import { ContributionEventListener } from './contribution.event-listener';
@@ -43,6 +44,7 @@ import { ContributionEventListener } from './contribution.event-listener';
     ProjectModule,
     UserModule,
     EmailModule,
+    ActivityModule,
     EventEmitterModule.forRoot(),
   ],
   providers: [

@@ -1,0 +1,24 @@
+input CreateActivityInput {
+  userId: ID!
+  action: ActivityAction!
+  targetId: ID
+  targetType: TargetType
+  details: String
+}
+
+input ActivityFilter {
+  userId: ID
+  action: ActivityAction
+  targetType: TargetType
+  dateRange: ActivityDateRangeInput
+}
+
+input ActivityDateRangeInput {
+  start: DateTime!
+  end: DateTime!
+}
+
+input ActivityPaginationInput {
+  first: Int
+  after: String
+}

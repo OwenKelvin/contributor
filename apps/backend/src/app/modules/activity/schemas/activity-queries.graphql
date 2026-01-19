@@ -1,0 +1,8 @@
+extend type Query {
+  activities(
+    filter: ActivityFilter
+    pagination: ActivityPaginationInput
+  ): ActivityConnection!
+  
+  activity(id: ID!): Activity
+}
