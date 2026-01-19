@@ -11,9 +11,7 @@ import {
   IProjectStatus,
 } from '@nyots/data-source';
 import { ProjectService } from '@nyots/data-source/projects';
-import { ProjectTableComponent } from '../../components/project-table/project-table.component';
 import { ConfirmationDialogComponent } from '../../components/confirmation-dialog/confirmation-dialog.component';
-import { ErrorBoundaryComponent } from '../../components/error-boundary/error-boundary.component';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
@@ -38,8 +36,6 @@ import { retryAsync, getUserFriendlyErrorMessage, isNetworkError } from '../../u
   imports: [
     CommonModule,
     FormsModule,
-    ProjectTableComponent,
-    ErrorBoundaryComponent,
     HlmButton,
     HlmInput,
     HlmLabel,

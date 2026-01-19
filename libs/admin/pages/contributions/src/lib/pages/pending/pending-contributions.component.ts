@@ -1,6 +1,5 @@
 import { Component, inject, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
 import { toast } from 'ngx-sonner';
 import {
   IContributionFilter,
@@ -9,7 +8,6 @@ import {
 } from '@nyots/data-source';
 import { ContributionService, IGetContributionsQuery } from '@nyots/data-source/contributions';
 import {
-  PaymentStatusBadgeComponent,
   PaginationComponent,
   PageChangeEvent,
   PaginationInfo,
@@ -39,6 +37,7 @@ import {
   HlmCardHeader,
   HlmCardTitle,
 } from '@nyots/ui/card';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 
 type ContributionNode = NonNullable<
   NonNullable<IGetContributionsQuery['getContributions']>['edges'][0]['node']
@@ -52,8 +51,6 @@ type ContributionNode = NonNullable<
   selector: 'nyots-pending-contributions',
   standalone: true,
   imports: [
-    CommonModule,
-    PaymentStatusBadgeComponent,
     PaginationComponent,
     HlmButton,
     HlmIcon,
@@ -70,6 +67,8 @@ type ContributionNode = NonNullable<
     HlmCardDescription,
     HlmCardHeader,
     HlmCardTitle,
+    CurrencyPipe,
+    DatePipe,
   ],
   providers: [
     provideIcons({
@@ -84,7 +83,9 @@ type ContributionNode = NonNullable<
       <!-- Header -->
       <div class="flex justify-between items-center">
         <div>
-          <h2 class="text-3xl font-bold tracking-tight">Pending Contributions</h2>
+          <h2 class="text-3xl font-bold tracking-tight">
+            Pending Contributions
+          </h2>
           <p class="text-muted-foreground">
             Manage contributions awaiting payment
           </p>
@@ -98,12 +99,7 @@ type ContributionNode = NonNullable<
             <span class="text-sm font-medium">
               {{ selectedCount() }} contribution(s) selected
             </span>
-            <button
-              hlmBtn
-              variant="ghost"
-              size="sm"
-              (click)="clearSelection()"
-            >
+            <button hlmBtn variant="ghost" size="sm" (click)="clearSelection()">
               Clear
             </button>
           </div>
@@ -115,7 +111,12 @@ type ContributionNode = NonNullable<
               (click)="handleBulkProcessPayment()"
               [disabled]="isLoading() || isProcessing()"
             >
-              <ng-icon hlmIcon name="lucideCreditCard" size="base" class="mr-2" />
+              <ng-icon
+                hlmIcon
+                name="lucideCreditCard"
+                size="base"
+                class="mr-2"
+              />
               Process Payment
             </button>
             <button
@@ -125,7 +126,12 @@ type ContributionNode = NonNullable<
               (click)="handleBulkMarkAsPaid()"
               [disabled]="isLoading() || isProcessing()"
             >
-              <ng-icon hlmIcon name="lucideCheckCircle" size="base" class="mr-2" />
+              <ng-icon
+                hlmIcon
+                name="lucideCheckCircle"
+                size="base"
+                class="mr-2"
+              />
               Mark as Paid
             </button>
           </div>
@@ -155,11 +161,15 @@ type ContributionNode = NonNullable<
                   size="lg"
                   class="animate-spin text-muted-foreground"
                 />
-                <p class="text-sm text-muted-foreground">Loading pending contributions...</p>
+                <p class="text-sm text-muted-foreground">
+                  Loading pending contributions...
+                </p>
               </div>
             </div>
           } @else if (contributions().length === 0) {
-            <div class="flex flex-col items-center justify-center py-12 text-center">
+            <div
+              class="flex flex-col items-center justify-center py-12 text-center"
+            >
               <p class="text-lg font-medium">No pending contributions</p>
               <p class="text-sm text-muted-foreground mt-1">
                 All contributions have been processed
@@ -187,7 +197,10 @@ type ContributionNode = NonNullable<
                   </tr>
                 </thead>
                 <tbody hlmTBody>
-                  @for (contribution of contributions(); track contribution.id) {
+                  @for (
+                    contribution of contributions();
+                    track contribution.id
+                  ) {
                     <tr hlmTr>
                       <td hlmTd>
                         <hlm-checkbox
@@ -199,7 +212,8 @@ type ContributionNode = NonNullable<
                       <td hlmTd>
                         <div class="flex flex-col">
                           <span class="font-medium">
-                            {{ contribution.user.firstName }} {{ contribution.user.lastName }}
+                            {{ contribution.user.firstName }}
+                            {{ contribution.user.lastName }}
                           </span>
                           <span class="text-sm text-muted-foreground">
                             {{ contribution.user.email }}
@@ -208,19 +222,27 @@ type ContributionNode = NonNullable<
                       </td>
                       <td hlmTd>
                         <div class="flex flex-col">
-                          <span class="font-medium">{{ contribution.project.title }}</span>
+                          <span class="font-medium">{{
+                            contribution.project.title
+                          }}</span>
                           @if (contribution.project.description) {
-                            <span class="text-sm text-muted-foreground line-clamp-1">
+                            <span
+                              class="text-sm text-muted-foreground line-clamp-1"
+                            >
                               {{ contribution.project.description }}
                             </span>
                           }
                         </div>
                       </td>
                       <td hlmTd>
-                        <span class="font-medium">{{ contribution.amount | currency }}</span>
+                        <span class="font-medium">{{
+                          contribution.amount | currency
+                        }}</span>
                       </td>
                       <td hlmTd>
-                        <span>{{ contribution.createdAt | date: 'short' }}</span>
+                        <span>{{
+                          contribution.createdAt | date: 'short'
+                        }}</span>
                       </td>
                       <td hlmTd class="text-right">
                         <div class="flex items-center justify-end gap-2">
@@ -241,7 +263,12 @@ type ContributionNode = NonNullable<
                             [disabled]="isProcessing()"
                             [attr.aria-label]="'Process payment'"
                           >
-                            <ng-icon hlmIcon name="lucideCreditCard" size="base" class="mr-2" />
+                            <ng-icon
+                              hlmIcon
+                              name="lucideCreditCard"
+                              size="base"
+                              class="mr-2"
+                            />
                             Process
                           </button>
                           <button
@@ -252,7 +279,12 @@ type ContributionNode = NonNullable<
                             [disabled]="isProcessing()"
                             [attr.aria-label]="'Mark as paid'"
                           >
-                            <ng-icon hlmIcon name="lucideCheckCircle" size="base" class="mr-2" />
+                            <ng-icon
+                              hlmIcon
+                              name="lucideCheckCircle"
+                              size="base"
+                              class="mr-2"
+                            />
                             Mark Paid
                           </button>
                         </div>
@@ -275,18 +307,20 @@ type ContributionNode = NonNullable<
       </div>
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
+  styles: [
+    `
+      :host {
+        display: block;
+      }
 
-    .line-clamp-1 {
-      display: -webkit-box;
-      -webkit-line-clamp: 1;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-  `],
+      .line-clamp-1 {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    `,
+  ],
 })
 export class PendingContributionsComponent {
   private readonly contributionService = inject(ContributionService);
@@ -313,7 +347,9 @@ export class PendingContributionsComponent {
   allSelected = computed(() => {
     const contributions = this.contributions();
     const selected = this.selectedContributions();
-    return contributions.length > 0 && contributions.every(c => selected.has(c.id));
+    return (
+      contributions.length > 0 && contributions.every((c) => selected.has(c.id))
+    );
   });
   someSelected = computed(() => {
     const selected = this.selectedContributions();
@@ -352,7 +388,7 @@ export class PendingContributionsComponent {
       });
 
       if (result) {
-        this.contributions.set(result.edges.map(edge => edge.node));
+        this.contributions.set(result.edges.map((edge) => edge.node));
         this.totalCount.set(result.totalCount);
         this.totalAmount.set(result.totalAmount);
 
@@ -435,7 +471,7 @@ export class PendingContributionsComponent {
     if (this.allSelected()) {
       this.selectedContributions.set(new Set());
     } else {
-      const allIds = this.contributions().map(c => c.id);
+      const allIds = this.contributions().map((c) => c.id);
       this.selectedContributions.set(new Set(allIds));
     }
   }
@@ -458,7 +494,9 @@ export class PendingContributionsComponent {
     }
 
     // Confirm action
-    if (!confirm(`Process payment for ${selectedIds.length} contribution(s)?`)) {
+    if (
+      !confirm(`Process payment for ${selectedIds.length} contribution(s)?`)
+    ) {
       return;
     }
 
@@ -479,7 +517,10 @@ export class PendingContributionsComponent {
           });
           successCount++;
         } catch (error) {
-          console.error(`Error processing payment for contribution ${id}:`, error);
+          console.error(
+            `Error processing payment for contribution ${id}:`,
+            error,
+          );
           failureCount++;
         }
       }
@@ -511,7 +552,11 @@ export class PendingContributionsComponent {
     }
 
     // Confirm action
-    if (!confirm(`Mark ${selectedIds.length} contribution(s) as paid? This is for offline payments only.`)) {
+    if (
+      !confirm(
+        `Mark ${selectedIds.length} contribution(s) as paid? This is for offline payments only.`,
+      )
+    ) {
       return;
     }
 
@@ -533,7 +578,9 @@ export class PendingContributionsComponent {
 
       // Show results
       if (successCount > 0) {
-        toast.success(`Successfully marked ${successCount} contribution(s) as paid`);
+        toast.success(
+          `Successfully marked ${successCount} contribution(s) as paid`,
+        );
       }
       if (failureCount > 0) {
         toast.error(`Failed to mark ${failureCount} contribution(s) as paid`);
@@ -583,14 +630,21 @@ export class PendingContributionsComponent {
    */
   async markAsPaid(contributionId: string) {
     // Confirm action
-    if (!confirm('Mark this contribution as paid? This is for offline payments only.')) {
+    if (
+      !confirm(
+        'Mark this contribution as paid? This is for offline payments only.',
+      )
+    ) {
       return;
     }
 
     this.isProcessing.set(true);
 
     try {
-      await this.contributionService.updateStatus(contributionId, IPaymentStatus.Paid);
+      await this.contributionService.updateStatus(
+        contributionId,
+        IPaymentStatus.Paid,
+      );
       toast.success('Contribution marked as paid');
       await this.loadPendingContributions();
     } catch (error) {

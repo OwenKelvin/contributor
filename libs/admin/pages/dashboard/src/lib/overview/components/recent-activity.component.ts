@@ -62,7 +62,7 @@ import { HlmTabs, HlmTabsContent, HlmTabsList, HlmTabsTrigger } from '@nyots/ui/
           <div hlmTabsContent value="contributions">
             @if (loadingContributions()) {
               <div class="flex items-center justify-center h-32">
-                <span hlmSpinner></span>
+                <hlm-spinner></hlm-spinner>
               </div>
             } @else {
               <table hlmTable>
@@ -159,7 +159,7 @@ import { HlmTabs, HlmTabsContent, HlmTabsList, HlmTabsTrigger } from '@nyots/ui/
           <div hlmTabsContent value="users">
             @if (loadingUsers()) {
               <div class="flex items-center justify-center h-32">
-                <span hlmSpinner></span>
+                <hlm-spinner></hlm-spinner>
               </div>
             } @else {
               <table hlmTable>

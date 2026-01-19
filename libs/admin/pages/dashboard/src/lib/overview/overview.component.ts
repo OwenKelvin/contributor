@@ -90,20 +90,20 @@ import { DateRangeFilterComponent } from './components/date-range-filter.compone
 
         <!-- Charts Row 1 -->
         <div class="grid gap-4 md:grid-cols-2">
-          <app-contribution-trend-chart
+          <nyots-contribution-trend-chart
             [dateRange]="dateRange()"
           />
-          <app-project-status-chart
+          <nyots-project-status-chart
             [data]="stats()?.projectsByStatus || []"
           />
         </div>
 
         <!-- Charts Row 2 -->
         <div class="grid gap-4 md:grid-cols-2">
-          <app-payment-status-chart
+          <nyots-payment-status-chart
             [data]="stats()?.contributionsByStatus || []"
           />
-          <app-top-projects-chart
+          <nyots-top-projects-chart
             [dateRange]="dateRange()"
           />
         </div>

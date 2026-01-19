@@ -56,7 +56,7 @@ import {
             />
           }
         </div>
-        
+
         <!-- Status Badge -->
         <div class="mt-2">
           <span
@@ -67,35 +67,35 @@ import {
           </span>
         </div>
       </div>
-      
+
       <div hlmCardContent class="space-y-3">
         <!-- Goal Amount -->
         <div class="flex items-center justify-between text-sm">
           <span class="text-muted-foreground flex items-center gap-1">
-            <ng-icon name="lucideDollarSign" size="14" />
+            <ng-icon hlmIcon name="lucideDollarSign" size="14" />
             Goal
           </span>
           <span class="font-medium">{{ formatCurrency(project().goalAmount) }}</span>
         </div>
-        
+
         <!-- Current Amount -->
         <div class="flex items-center justify-between text-sm">
           <span class="text-muted-foreground flex items-center gap-1">
-            <ng-icon name="lucideDollarSign" size="14" />
+            <ng-icon hlmIcon name="lucideDollarSign" size="14" />
             Current
           </span>
           <span class="font-medium">{{ formatCurrency(project().currentAmount) }}</span>
         </div>
-        
+
         <!-- Created Date -->
         <div class="flex items-center justify-between text-sm">
           <span class="text-muted-foreground flex items-center gap-1">
-            <ng-icon name="lucideCalendar" size="14" />
+            <ng-icon hlmIcon name="lucideCalendar" size="14" />
             Created
           </span>
           <span>{{ formatDate(project().createdAt) }}</span>
         </div>
-        
+
         <!-- Actions -->
         <div class="flex gap-2 pt-2 border-t">
           <button
@@ -106,7 +106,7 @@ import {
             (click)="onView()"
             [attr.aria-label]="'View project ' + project().title"
           >
-            <ng-icon name="lucideEye" size="16" class="mr-2" />
+            <ng-icon hlmIcon name="lucideEye" size="16" class="mr-2" />
             View
           </button>
           <button
@@ -117,7 +117,7 @@ import {
             (click)="onEdit()"
             [attr.aria-label]="'Edit project ' + project().title"
           >
-            <ng-icon name="lucideEdit" size="16" class="mr-2" />
+            <ng-icon hlmIcon name="lucideEdit" size="16" class="mr-2" />
             Edit
           </button>
           <button
@@ -128,7 +128,7 @@ import {
             [attr.aria-label]="'Delete project ' + project().title"
             class="text-destructive hover:text-destructive"
           >
-            <ng-icon name="lucideTrash2" size="16" />
+            <ng-icon hlmIcon name="lucideTrash2" size="16" />
           </button>
         </div>
       </div>

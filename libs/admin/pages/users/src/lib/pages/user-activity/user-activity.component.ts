@@ -2,7 +2,6 @@ import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { toast } from 'ngx-sonner';
-import { HlmButton } from '@nyots/ui/button';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
 import {
@@ -40,7 +39,6 @@ interface UserActivity {
   imports: [
     CommonModule,
     FormsModule,
-    HlmButton,
     HlmInput,
     HlmLabel,
     HlmCard,
@@ -80,7 +78,7 @@ export class UserActivityComponent {
   filteredActivities = computed(() => {
     let filtered = this.activities();
     const term = this.searchTerm().toLowerCase();
-    
+
     if (term) {
       filtered = filtered.filter(
         (a) =>
@@ -184,7 +182,7 @@ export class UserActivityComponent {
     if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
     if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
     if (days < 7) return `${days} day${days > 1 ? 's' : ''} ago`;
-    
+
     return date.toLocaleDateString();
   }
 

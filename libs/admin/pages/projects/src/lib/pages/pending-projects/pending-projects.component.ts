@@ -1,6 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
 import { toast } from 'ngx-sonner';
 import {
   IProject,
@@ -8,10 +7,8 @@ import {
   IPageInfo,
 } from '@nyots/data-source';
 import { ProjectService } from '@nyots/data-source/projects';
-import { ProjectTableComponent } from '../../components/project-table/project-table.component';
 import { ApprovalDialogComponent } from '../../components/approval-dialog/approval-dialog.component';
 import { RejectionDialogComponent } from '../../components/rejection-dialog/rejection-dialog.component';
-import { ErrorBoundaryComponent } from '../../components/error-boundary/error-boundary.component';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmCard, HlmCardContent } from '@nyots/ui/card';
 import { HlmDialogService } from '@nyots/ui/dialog';
@@ -25,19 +22,19 @@ import {
 } from '@ng-icons/lucide';
 import { firstValueFrom } from 'rxjs';
 import { retryAsync, getUserFriendlyErrorMessage, isNetworkError } from '../../utils/retry.util';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'nyots-pending-projects',
   standalone: true,
   imports: [
-    CommonModule,
-    ProjectTableComponent,
-    ErrorBoundaryComponent,
     HlmButton,
     HlmCard,
     HlmCardContent,
     HlmIcon,
     NgIcon,
+    CurrencyPipe,
+    DatePipe,
   ],
   providers: [
     provideIcons({
@@ -101,16 +98,23 @@ export class PendingProjectsComponent {
           maxAttempts: 3,
           delayMs: 1000,
           onRetry: (attempt, error) => {
-            console.log(`Retrying pending projects load (attempt ${attempt})...`, error);
+            console.log(
+              `Retrying pending projects load (attempt ${attempt})...`,
+              error,
+            );
             if (isNetworkError(error)) {
               toast.info('Retrying connection...');
             }
           },
-        }
+        },
       );
 
       if (result && result.pageInfo) {
-        this.projects.set(result.edges.map((edge) => edge.node).filter((p): p is IProject => !!p));
+        this.projects.set(
+          result.edges
+            .map((edge) => edge.node)
+            .filter((p): p is IProject => !!p),
+        );
         const pageInfo: IPageInfo = {
           hasNextPage: result.pageInfo.hasNextPage ?? false,
           hasPreviousPage: result.pageInfo.hasPreviousPage ?? false,
@@ -164,7 +168,7 @@ export class PendingProjectsComponent {
    * Handle project approval with optional notes dialog
    */
   async onProjectApprove(projectId: string) {
-    const project = this.projects().find(p => p.id === projectId);
+    const project = this.projects().find((p) => p.id === projectId);
     if (!project) {
       toast.error('Project not found');
       return;
@@ -173,7 +177,8 @@ export class PendingProjectsComponent {
     const dialogRef = this.dialogService.open(ApprovalDialogComponent, {
       context: {
         title: 'Approve Project',
-        message: 'Are you sure you want to approve this project? It will become active.',
+        message:
+          'Are you sure you want to approve this project? It will become active.',
         projectTitle: project.title,
       },
     });
@@ -207,7 +212,7 @@ export class PendingProjectsComponent {
    * Handle project rejection with required reason dialog
    */
   async onProjectReject(projectId: string) {
-    const project = this.projects().find(p => p.id === projectId);
+    const project = this.projects().find((p) => p.id === projectId);
     if (!project) {
       toast.error('Project not found');
       return;

@@ -36,6 +36,7 @@ import {
 } from '@nyots/ui/select';
 import { RichTextEditorComponent } from '../rich-text-editor/rich-text-editor.component';
 import { ICategory, IProjectStatus } from '@nyots/data-source';
+import { HlmFormField } from '@nyots/ui/form-field';
 
 export interface ProjectFormModel {
   title: string;
@@ -58,11 +59,6 @@ export interface ProjectFormModel {
     HlmButton,
     HlmInput,
     HlmLabel,
-    HlmCard,
-    HlmCardContent,
-    HlmCardDescription,
-    HlmCardHeader,
-    HlmCardTitle,
     HlmIcon,
     NgIcon,
     BrnSelectImports,
@@ -72,6 +68,7 @@ export interface ProjectFormModel {
     HlmSelectValue,
     HlmSelectOption,
     HlmSelectContent,
+    HlmFormField,
   ],
   providers: [
     provideIcons({
