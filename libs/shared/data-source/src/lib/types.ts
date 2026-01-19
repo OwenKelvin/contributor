@@ -15,6 +15,74 @@ export type Scalars = {
   DateTime: { input: any; output: any; }
 };
 
+export type IActivity = {
+  action: IActivityAction;
+  createdAt: Scalars['DateTime']['output'];
+  details?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  targetId?: Maybe<Scalars['ID']['output']>;
+  targetType?: Maybe<ITargetType>;
+  updatedAt: Scalars['DateTime']['output'];
+  user: IUser;
+  userId: Scalars['ID']['output'];
+};
+
+export enum IActivityAction {
+  CategoryCreated = 'CATEGORY_CREATED',
+  CategoryDeleted = 'CATEGORY_DELETED',
+  CategoryUpdated = 'CATEGORY_UPDATED',
+  ContributionCreated = 'CONTRIBUTION_CREATED',
+  ContributionDeleted = 'CONTRIBUTION_DELETED',
+  ContributionUpdated = 'CONTRIBUTION_UPDATED',
+  PermissionCreated = 'PERMISSION_CREATED',
+  PermissionDeleted = 'PERMISSION_DELETED',
+  PermissionUpdated = 'PERMISSION_UPDATED',
+  ProjectApproved = 'PROJECT_APPROVED',
+  ProjectArchived = 'PROJECT_ARCHIVED',
+  ProjectCreated = 'PROJECT_CREATED',
+  ProjectDeleted = 'PROJECT_DELETED',
+  ProjectRejected = 'PROJECT_REJECTED',
+  ProjectUpdated = 'PROJECT_UPDATED',
+  RoleAssigned = 'ROLE_ASSIGNED',
+  RoleCreated = 'ROLE_CREATED',
+  RoleDeleted = 'ROLE_DELETED',
+  RoleRevoked = 'ROLE_REVOKED',
+  RoleUpdated = 'ROLE_UPDATED',
+  UserCreated = 'USER_CREATED',
+  UserDeleted = 'USER_DELETED',
+  UserLogin = 'USER_LOGIN',
+  UserLogout = 'USER_LOGOUT',
+  UserUpdated = 'USER_UPDATED'
+}
+
+export type IActivityConnection = {
+  edges: Array<IActivityEdge>;
+  pageInfo: IPageInfo;
+  totalCount: Scalars['Int']['output'];
+};
+
+export type IActivityDateRangeInput = {
+  end: Scalars['DateTime']['input'];
+  start: Scalars['DateTime']['input'];
+};
+
+export type IActivityEdge = {
+  cursor: Scalars['String']['output'];
+  node: IActivity;
+};
+
+export type IActivityFilter = {
+  action?: InputMaybe<IActivityAction>;
+  dateRange?: InputMaybe<IActivityDateRangeInput>;
+  targetType?: InputMaybe<ITargetType>;
+  userId?: InputMaybe<Scalars['ID']['input']>;
+};
+
+export type IActivityPaginationInput = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type IAdminCreateContributionInput = {
   amount: Scalars['Float']['input'];
   notes?: InputMaybe<Scalars['String']['input']>;
@@ -145,6 +213,14 @@ export type IContributionTrend = {
   date: Scalars['String']['output'];
 };
 
+export type ICreateActivityInput = {
+  action: IActivityAction;
+  details?: InputMaybe<Scalars['String']['input']>;
+  targetId?: InputMaybe<Scalars['ID']['input']>;
+  targetType?: InputMaybe<ITargetType>;
+  userId: Scalars['ID']['input'];
+};
+
 export type ICreateCategoryInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
@@ -220,6 +296,7 @@ export type IMutation = {
   deleteCategory: Scalars['Boolean']['output'];
   deleteProject: Scalars['Boolean']['output'];
   deleteUser: Scalars['Boolean']['output'];
+  logActivity: IActivity;
   login: IAuthResponse;
   processContributionPayment: IContribution;
   processContributionRefund: IContribution;
@@ -301,6 +378,11 @@ export type IMutationDeleteProjectArgs = {
 
 export type IMutationDeleteUserArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type IMutationLogActivityArgs = {
+  input: ICreateActivityInput;
 };
 
 
@@ -448,6 +530,8 @@ export type IProjectStatusCount = {
 
 export type IQuery = {
   _empty?: Maybe<Scalars['String']['output']>;
+  activities: IActivityConnection;
+  activity?: Maybe<IActivity>;
   contributionTrends: Array<IContributionTrend>;
   dashboardStats: IDashboardStats;
   getActiveProjects: IProjectConnection;
@@ -467,6 +551,17 @@ export type IQuery = {
   getTransactions: ITransactionConnection;
   getUserById: IUser;
   topProjects: Array<ITopProject>;
+};
+
+
+export type IQueryActivitiesArgs = {
+  filter?: InputMaybe<IActivityFilter>;
+  pagination?: InputMaybe<IActivityPaginationInput>;
+};
+
+
+export type IQueryActivityArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -602,6 +697,15 @@ export type IRole = {
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
 };
+
+export enum ITargetType {
+  Category = 'Category',
+  Contribution = 'Contribution',
+  Permission = 'Permission',
+  Project = 'Project',
+  Role = 'Role',
+  User = 'User'
+}
 
 export type ITimeSeriesPoint = {
   contributionCount: Scalars['Int']['output'];

@@ -93,6 +93,7 @@
       "@nyots/data-source/apollo": ["libs/shared/data-source/apollo/src/index.ts"],
       "@nyots/data-source/constants": ["libs/shared/data-source/constants/src/index.ts"],
       "@nyots/data-source/auth": ["libs/shared/data-source/auth/src/index.ts"],
+      "@nyots/data-source/activity": ["libs/shared/data-source/activity/src/index.ts"],
       "@nyots/data-source/user": ["libs/shared/data-source/user/src/index.ts"],
       "@nyots/data-source/projects": ["libs/shared/data-source/projects/src/index.ts"],
       "@nyots/data-source/contributions": ["libs/shared/data-source/contributions/src/index.ts"],
