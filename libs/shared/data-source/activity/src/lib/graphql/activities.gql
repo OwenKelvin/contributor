@@ -1,0 +1,52 @@
+query GetActivities(
+  $filter: ActivityFilter
+  $pagination: ActivityPaginationInput
+) {
+  activities(filter: $filter, pagination: $pagination) {
+    edges {
+      node {
+        id
+        userId
+        user {
+          id
+          email
+          firstName
+          lastName
+        }
+        action
+        targetId
+        targetType
+        details
+        createdAt
+        updatedAt
+      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
+  }
+}
+
+query GetActivity($id: ID!) {
+  activity(id: $id) {
+    id
+    userId
+    user {
+      id
+      email
+      firstName
+      lastName
+    }
+    action
+    targetId
+    targetType
+    details
+    createdAt
+    updatedAt
+  }
+}
