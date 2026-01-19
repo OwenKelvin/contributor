@@ -22,7 +22,8 @@ import {
   lucideFolderOpen, lucideHistory,
   lucidePlus,
   lucideWallet,
-  lucideChevronDown, lucideChevronUp
+  lucideChevronDown, lucideChevronUp,
+  lucideHome
 } from '@ng-icons/lucide';
 import { HlmCollapsible, HlmCollapsibleContent, HlmCollapsibleTrigger } from '@nyots/ui/collapsible';
 import { NgOptimizedImage } from '@angular/common';
@@ -30,7 +31,7 @@ import { HlmDropdownMenu, HlmDropdownMenuItem, HlmDropdownMenuTrigger } from '@n
 import { ConfirmationDialogComponent, HlmDialogService } from '@nyots/ui/dialog';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '@nyots/data-source/auth';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, RouterLink } from '@angular/router';
 
 @Component({
   imports: [
@@ -59,6 +60,7 @@ import { RouterOutlet } from '@angular/router';
     HlmDropdownMenuItem,
     HlmDropdownMenuTrigger,
     RouterOutlet,
+    RouterLink,
   ],
   template: `
     <div hlmSidebarWrapper>
@@ -74,48 +76,62 @@ import { RouterOutlet } from '@angular/router';
             <div hlmSidebarGroupContent>
               <ul hlmSidebarMenu>
                 @for (item of _items; track item.title) {
-                  <hlm-collapsible
-                    [expanded]="item.defaultOpen"
-                    class="group/collapsible"
-                  >
+                  @if (item.route) {
                     <li hlmSidebarMenuItem>
-                      <button
-                        hlmCollapsibleTrigger
+                      <a
                         hlmSidebarMenuButton
-                        class="flex w-full items-center justify-between"
+                        [routerLink]="item.route"
+                        class="flex items-center gap-2"
                       >
-                        <div class="flex items-center gap-2">
-                          <ng-icon [name]="item.icon" hlm size="sm" />
-                          <span>{{ item.title }}</span>
-                        </div>
-                        <ng-icon
-                          name="lucideChevronRight"
-                          class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90"
-                          hlm
-                        />
-                      </button>
-                      <hlm-collapsible-content>
-                        <ul hlmSidebarMenuSub>
-                          @for (subItem of item.items; track subItem.title) {
-                            <li hlmSidebarMenuSubItem>
-                              <button
-                                hlmSidebarMenuSubButton
-                                class="flex w-full items-center gap-2"
-                              >
-                                <ng-icon
-                                  [name]="subItem.icon"
-                                  hlm
-                                  size="sm"
-                                  class="text-muted-foreground"
-                                />
-                                <span>{{ subItem.title }}</span>
-                              </button>
-                            </li>
-                          }
-                        </ul>
-                      </hlm-collapsible-content>
+                        <ng-icon [name]="item.icon" hlm size="sm" />
+                        <span>{{ item.title }}</span>
+                      </a>
                     </li>
-                  </hlm-collapsible>
+                  } @else {
+                    <hlm-collapsible
+                      [expanded]="!!item.defaultOpen"
+                      class="group/collapsible"
+                    >
+                      <li hlmSidebarMenuItem>
+                        <button
+                          hlmCollapsibleTrigger
+                          hlmSidebarMenuButton
+                          class="flex w-full items-center justify-between"
+                        >
+                          <div class="flex items-center gap-2">
+                            <ng-icon [name]="item.icon" hlm size="sm" />
+                            <span>{{ item.title }}</span>
+                          </div>
+                          <ng-icon
+                            name="lucideChevronRight"
+                            class="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90"
+                            hlm
+                          />
+                        </button>
+                        <hlm-collapsible-content>
+                          <ul hlmSidebarMenuSub>
+                            @for (subItem of item.items; track subItem.title) {
+                              <li hlmSidebarMenuSubItem>
+                                <a
+                                  hlmSidebarMenuSubButton
+                                  [routerLink]="subItem.route"
+                                  class="flex w-full items-center gap-2"
+                                >
+                                  <ng-icon
+                                    [name]="subItem.icon"
+                                    hlm
+                                    size="sm"
+                                    class="text-muted-foreground"
+                                  />
+                                  <span>{{ subItem.title }}</span>
+                                </a>
+                              </li>
+                            }
+                          </ul>
+                        </hlm-collapsible-content>
+                      </li>
+                    </hlm-collapsible>
+                  }
                 }
               </ul>
             </div>
@@ -160,6 +176,7 @@ import { RouterOutlet } from '@angular/router';
       lucideFileText,
       lucideChevronDown,
       lucideChevronUp,
+      lucideHome,
     }),
   ],
 })
@@ -168,59 +185,32 @@ export class Dashboard {
   private readonly dialogService = inject(HlmDialogService);
   protected readonly _items = [
     {
+      title: 'Overview',
+      icon: 'lucideHome',
+      route: '/dashboard/overview',
+    },
+    {
       title: 'Projects',
       icon: 'lucideFolderOpen',
-      defaultOpen: true,
+      defaultOpen: false as boolean,
       items: [
-        { title: 'Browse All Projects', icon: 'lucideFolderOpen' },
-        { title: 'Active Projects', icon: 'lucideBarChart3' },
-        { title: 'Completed Projects', icon: 'lucideHistory' },
-        { title: 'Favorite Projects', icon: 'lucidePlus' },
+        { title: 'Browse All Projects', icon: 'lucideFolderOpen', route: '/dashboard/projects' },
+        { title: 'Active Projects', icon: 'lucideBarChart3', route: '/dashboard/projects' },
       ],
     },
     {
       title: 'My Contributions',
       icon: 'lucideWallet',
-      defaultOpen: false,
+      defaultOpen: false as boolean,
       items: [
-        { title: 'Overview', icon: 'lucideBarChart3' },
-        { title: 'By Project', icon: 'lucideFolderOpen' },
-        { title: 'By Date', icon: 'lucideHistory' },
-        { title: 'Recurring Contributions', icon: 'lucideWallet' },
-        { title: 'Pending Contributions', icon: 'lucideFileText' },
+        { title: 'All Contributions', icon: 'lucideBarChart3', route: '/dashboard/my-contributions' },
+        { title: 'By Project', icon: 'lucideFolderOpen', route: '/dashboard/my-contributions' },
       ],
     },
     {
       title: 'Make Contribution',
       icon: 'lucidePlus',
-      defaultOpen: false,
-      items: [
-        { title: 'One-time Contribution', icon: 'lucidePlus' },
-        { title: 'Set Up Recurring', icon: 'lucideWallet' },
-        { title: 'Quick Contribute', icon: 'lucideChevronRight' },
-        { title: 'Custom Amount', icon: 'lucideFileText' },
-      ],
-    },
-    {
-      title: 'Reports & Analytics',
-      icon: 'lucideBarChart3',
-      defaultOpen: false,
-      items: [
-        { title: 'Contribution Summary', icon: 'lucideBarChart3' },
-        { title: 'Impact Dashboard', icon: 'lucideBarChart3' },
-        { title: 'Monthly Reports', icon: 'lucideFileText' },
-        { title: 'Tax Documents', icon: 'lucideFileText' },
-      ],
-    },
-    {
-      title: 'History',
-      icon: 'lucideHistory',
-      defaultOpen: false,
-      items: [
-        { title: 'Transaction History', icon: 'lucideHistory' },
-        { title: 'Receipts', icon: 'lucideFileText' },
-        { title: 'Export History', icon: 'lucideChevronDown' },
-      ],
+      route: '/dashboard/contributions/create',
     },
   ];
 
