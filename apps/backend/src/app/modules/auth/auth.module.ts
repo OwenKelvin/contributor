@@ -9,8 +9,11 @@ import { JwtStrategy } from './jwt.strategy';
 import { EmailModule } from '../email/email.module';
 import { RoleModule } from '../role/role.module';
 import { ActivityModule } from '../activity/activity.module';
+import { GoogleStrategy } from './google.strategy';
+import { AuthController } from './auth.controller';
 
 @Module({
+  controllers: [AuthController],
   imports: [
     UserModule,
     RoleModule,
@@ -31,7 +34,7 @@ import { ActivityModule } from '../activity/activity.module';
       },
     }),
   ],
-  providers: [AuthService, AuthResolver, JwtStrategy],
+  providers: [AuthService, AuthResolver, JwtStrategy, GoogleStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

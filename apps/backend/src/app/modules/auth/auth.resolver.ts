@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { RegisterInput } from './dto/register.input';
 import { LoginInput } from './dto/login.input';
@@ -9,6 +9,7 @@ import { User } from '../user/user.model';
 import { Roles } from './decorators/roles.decorator';
 import { RolesGuard } from './guards/roles.guard';
 import { AuthResponse } from './types/auth-response.type'; // Assuming this file exists and defines AuthResponse
+import { GoogleOAuthUrl } from './types/google-oauth-url.type';
 
 @Resolver()
 export class AuthResolver {
@@ -22,6 +23,11 @@ export class AuthResolver {
   @Mutation(() => AuthResponse)
   async login(@Args('loginInput') loginInput: LoginInput): Promise<AuthResponse> {
     return this.authService.login(loginInput);
+  }
+
+  @Query(() => GoogleOAuthUrl, { description: 'Returns the Google OAuth initiation URL' })
+  async googleOAuthUrl(): Promise<GoogleOAuthUrl> {
+    return { url: `${process.env.BACKEND_URL}/auth/google` };
   }
 
   // Example of a protected route
