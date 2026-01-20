@@ -12,4 +12,11 @@ export const provideBackendUrl = (url: string) => {
   }
 }
 
+export const provideGoogleClientId = (googleClientId: string) => {
+  return {
+    provide: GOOGLE_CLIENT_ID,
+    useValue: googleClientId,
+  }
+}
+
 

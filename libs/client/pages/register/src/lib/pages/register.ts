@@ -1,4 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit, ElementRef } from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import {
   form,
   Field,
@@ -35,10 +36,14 @@ import { GraphQLError } from 'graphql/error';
 import { IRegisterInput } from '@nyots/data-source';
 import { mapGraphqlValidationErrors } from '@nyots/data-source/helpers';
 import { HttpErrorResponse } from '@angular/common/http';
+import { GOOGLE_CLIENT_ID } from '@nyots/data-source/constants';
+
+declare const google: any;
 
 @Component({
   standalone: true,
   imports: [
+    CommonModule,
     Field,
     HlmButton,
     HlmInput,
@@ -64,9 +69,11 @@ import { HttpErrorResponse } from '@angular/common/http';
   ],
   templateUrl: './register.html',
 })
-export class Register {
+export class Register implements OnInit {
+  private readonly googleClientId = inject(GOOGLE_CLIENT_ID)
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private elementRef = inject(ElementRef);
 
   // Form model
   private signupModel = signal({
@@ -103,6 +110,24 @@ export class Register {
 
   isLoading = signal(false);
   successMessage = signal<string | null>(null);
+  errorMessage = signal<string | null>(null);
+
+  ngOnInit(): void {
+    console.log(this.googleClientId)
+    if (typeof google !== 'undefined') {
+      google.accounts.id.initialize({
+        client_id: this.googleClientId,
+        callback: this.handleGoogleAuthResponse.bind(this),
+        auto_select: false,
+        cancel_on_tap_outside: true,
+      });
+
+      google.accounts.id.renderButton(
+        this.elementRef.nativeElement.querySelector('#google-btn-container-register'),
+        { theme: 'outline', size: 'large', width: '100%' } // customization attributes
+      );
+    }
+  }
 
   async registerNewUser(registrationForm: FieldTree<IRegisterInput>) {
     try {
@@ -138,20 +163,30 @@ export class Register {
     this.isLoading.set(false);
   }
 
-  async onGoogleSignup() {
-    this.isLoading.set(true);
-    this.successMessage.set(null);
+  onGoogleSignup() {
+    // This is now handled by the Google Identity Services button
+  }
 
-    try {
-      const googleOAuthUrl = await this.authService.getGoogleOAuthUrl();
-      window.location.href = googleOAuthUrl;
-    } catch (error: any) {
-      console.error('Google signup initiation error:', error);
+  private async handleGoogleAuthResponse(response: any) {
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+    if (response.credential) {
+      try {
+        const backendResponse = await this.authService.googleLogin(response.credential);
+        if (backendResponse.data?.googleLogin.accessToken) {
+          await this.router.navigate(['/dashboard']);
+        }
+      } catch (error: any) {
+        console.error('Backend Google login error:', error);
+        this.errorMessage.set(
+          error.errors?.[0]?.message || 'Google login failed on backend.',
+        );
+      } finally {
+        this.isLoading.set(false);
+      }
+    } else {
+      this.errorMessage.set('Google authentication failed: No credential received.');
       this.isLoading.set(false);
-      // Assuming you want to display the error, use a dedicated error signal if successMessage is only for success
-      // For now, I'll set successMessage to null and rely on console.error
-      // If there's an errorMessage signal, that would be better here.
-      // For demonstration, let's assume we can set an error message on the form directly or use a shared toast service.
     }
   }
 }

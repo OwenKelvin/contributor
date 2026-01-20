@@ -281,10 +281,6 @@ export type IDateRangeInput = {
   start: Scalars['DateTime']['input'];
 };
 
-export type IGoogleOAuthUrl = {
-  url: Scalars['String']['output'];
-};
-
 export type ILoginInput = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -305,6 +301,7 @@ export type IMutation = {
   deleteCategory: Scalars['Boolean']['output'];
   deleteProject: Scalars['Boolean']['output'];
   deleteUser: Scalars['Boolean']['output'];
+  googleLogin: IAuthResponse;
   logActivity: IActivity;
   login: IAuthResponse;
   processContributionPayment: IContribution;
@@ -386,6 +383,11 @@ export type IMutationDeleteProjectArgs = {
 
 export type IMutationDeleteUserArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type IMutationGoogleLoginArgs = {
+  idToken: Scalars['String']['input'];
 };
 
 
@@ -558,7 +560,6 @@ export type IQuery = {
   getProjectContributions: IContributionConnection;
   getTransactions: ITransactionConnection;
   getUserById: IUser;
-  googleOAuthUrl: IGoogleOAuthUrl;
   topProjects: Array<ITopProject>;
 };
 

@@ -32,8 +32,19 @@ mutation Register($email: String!, $password: String!, $firstName: String!, $las
   }
 }
 
-query GoogleOAuthUrl {
-  googleOAuthUrl {
-    url
+mutation GoogleLogin($idToken: String!) {
+  googleLogin(idToken: $idToken) {
+    accessToken
+    user {
+      id
+      email
+      firstName
+      lastName
+      phoneNumber
+      roles {
+        id
+        name
+      }
+    }
   }
 }

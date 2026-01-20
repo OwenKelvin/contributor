@@ -9,17 +9,16 @@ import { JwtStrategy } from './jwt.strategy';
 import { EmailModule } from '../email/email.module';
 import { RoleModule } from '../role/role.module';
 import { ActivityModule } from '../activity/activity.module';
-import { GoogleStrategy } from './google.strategy';
-import { AuthController } from './auth.controller';
+
 
 @Module({
-  controllers: [AuthController],
   imports: [
     UserModule,
     RoleModule,
     PassportModule,
     EmailModule,
     ActivityModule,
+    ConfigModule, // Ensure ConfigModule is imported
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -34,7 +33,7 @@ import { AuthController } from './auth.controller';
       },
     }),
   ],
-  providers: [AuthService, AuthResolver, JwtStrategy, GoogleStrategy],
+  providers: [AuthService, AuthResolver, JwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}
