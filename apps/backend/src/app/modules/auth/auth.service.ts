@@ -120,4 +120,55 @@ export class AuthService {
     const payload = { sub: userId, email };
     return this.jwtService.sign(payload);
   }
+
+  async socialLogin(email: string, firstName: string, lastName: string, picture: string): Promise<AuthResponse> {
+    let user = await this.userService.findByEmail(email);
+
+    if (!user) {
+      // If user doesn't exist, create a new one
+      const clientRole = await this.roleService.findByName(RoleList.Client);
+      if (!clientRole) {
+        throw new BadRequestException(
+          'Client role not found. Please seed roles.',
+        );
+      }
+
+      user = await this.userService.create({
+        email,
+        firstName,
+        lastName,
+        picture,
+        roles: [clientRole],
+        // Social logins don't have a password, so we don't set one here
+        // Password field is optional in user.model, or we might need to set a dummy password
+      });
+
+      // Log social registration activity
+      await this.activityService.logActivity({
+        userId: user.id,
+        action: ActivityAction.USER_CREATED,
+        targetId: user.id,
+        targetType: 'User' as any,
+        details: JSON.stringify({
+          email: user.email,
+          registeredAt: new Date().toISOString(),
+          method: 'Google OAuth',
+        }),
+      });
+    } else {
+      // If user exists, log social login activity
+      await this.activityService.logActivity({
+        userId: user.id,
+        action: ActivityAction.USER_LOGIN,
+        details: JSON.stringify({
+          email: user.email,
+          loginAt: new Date().toISOString(),
+          method: 'Google OAuth',
+        }),
+      });
+    }
+
+    const accessToken = this.generateJwtToken(user.id, user.email);
+    return { user, accessToken };
+  }
 }

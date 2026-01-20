@@ -22,6 +22,7 @@ export class UserModel {
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
+  picture?: string;
 
   isBanned?: boolean;
   bannedAt?: Date | null;
@@ -104,6 +105,12 @@ export class User extends Model<UserModel> {
     field: 'ban_reason',
   })
   banReason: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  picture: string;
 
   @BeforeCreate
   static async hashPassword(user: User) {
