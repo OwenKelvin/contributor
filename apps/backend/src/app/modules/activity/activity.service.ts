@@ -6,7 +6,7 @@ import { ActivityFilter } from './dto/activity-filter.input';
 import { PaginationInput } from './dto/pagination.input';
 import { ActivityConnection } from './types/activity-connection.type';
 import { PageInfo } from '../../common/types/page-info.type';
-import { Op } from 'sequelize';
+import { Op, Transaction } from 'sequelize';
 import { User } from '../user/user.model';
 
 @Injectable()
@@ -16,14 +16,20 @@ export class ActivityService {
     private activityModel: typeof Activity,
   ) {}
 
-  async logActivity(data: CreateActivityInput): Promise<Activity> {
-    const activity = await this.activityModel.create({
-      userId: data.userId,
-      action: data.action,
-      targetId: data.targetId || null,
-      targetType: data.targetType || null,
-      details: data.details || '{}',
-    });
+  async logActivity(
+    data: CreateActivityInput,
+    t?: Transaction,
+  ): Promise<Activity> {
+    const activity = await this.activityModel.create(
+      {
+        userId: data.userId,
+        action: data.action,
+        targetId: data.targetId || null,
+        targetType: data.targetType || null,
+        details: data.details || '{}',
+      },
+      { transaction: t },
+    );
 
     const result = await this.activityModel.findByPk(activity.id, {
       include: [User],
@@ -68,13 +74,14 @@ export class ActivityService {
       ? parseInt(Buffer.from(pagination.after, 'base64').toString('ascii')) + 1
       : 0;
 
-    const { rows: activities, count } = await this.activityModel.findAndCountAll({
-      where,
-      include: [User],
-      limit: limit + 1, // Fetch one extra to check if there's a next page
-      offset,
-      order: [['createdAt', 'DESC']],
-    });
+    const { rows: activities, count } =
+      await this.activityModel.findAndCountAll({
+        where,
+        include: [User],
+        limit: limit + 1, // Fetch one extra to check if there's a next page
+        offset,
+        order: [['createdAt', 'DESC']],
+      });
 
     const hasNextPage = activities.length > limit;
     const hasPreviousPage = offset > 0;

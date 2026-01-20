@@ -98,6 +98,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    if (user.isBanned) {
+      throw new UnauthorizedException('Your account has been banned.');
+    }
+
     // Log login activity
     await this.activityService.logActivity({
       userId: user.id,

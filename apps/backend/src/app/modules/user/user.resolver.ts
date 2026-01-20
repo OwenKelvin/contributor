@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { User } from './user.model';
 import { CreateUserInput } from './dto/create-user.input';
@@ -8,6 +8,10 @@ import { PaginationInput } from './dto/pagination.input';
 import { BulkUpdateUserInput } from './dto/bulk-update-user.input';
 import { UserConnection } from './types/user-connection.type';
 import { BulkUpdateResult } from './types/bulk-update-result.type';
+import { BanUserInput } from './dto/ban-user.input';
+
+import { UseGuards } from '@nestjs/common';
+import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -27,11 +31,13 @@ export class UserResolver {
     return this.userService.getUserById(id);
   }
 
+  @UseGuards(GqlAuthGuard)
   @Query(() => UserConnection)
   async getBannedUsers(
+    @Args('search', { nullable: true }) search?: string,
     @Args('pagination', { nullable: true }) pagination?: PaginationInput,
   ): Promise<UserConnection> {
-    return this.userService.getBannedUsers(pagination);
+    return this.userService.getBannedUsers(search, pagination);
   }
 
   @Mutation(() => User)
@@ -60,16 +66,20 @@ export class UserResolver {
     return this.userService.bulkUpdateUsers(ids, input);
   }
 
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => User)
   async banUser(
-    @Args('id') id: string,
-    @Args('reason', { nullable: true }) reason?: string,
-  ): Promise<User> {
-    return this.userService.banUser(id, reason);
+    @Args('input') input: BanUserInput,
+    @Context() context: any,
+  ): Promise<User | undefined> {
+    const adminId = context.req.user.id;
+    return this.userService.banUser(input.userId, adminId, input.reason);
   }
 
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => User)
-  async unbanUser(@Args('id') id: string): Promise<User> {
-    return this.userService.unbanUser(id);
+  async unbanUser(@Args('id') id: string, @Context() context: any): Promise<User | undefined> {
+    const adminId = context.req.user.id;
+    return this.userService.unbanUser(id, adminId);
   }
 }

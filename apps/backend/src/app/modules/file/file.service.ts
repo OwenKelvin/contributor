@@ -59,7 +59,8 @@ export class FileService implements OnModuleInit {
   async uploadFile(
     file: Buffer,
     originalName: string,
-    contentType: string
+    contentType: string,
+    userId?: string
   ): Promise<FileUploadResult> {
     try {
       // Validate file type
@@ -78,15 +79,18 @@ export class FileService implements OnModuleInit {
       const fileExtension = this.getFileExtension(originalName);
       const uniqueFilename = `${uuidv4()}${fileExtension}`;
 
+      const metaData = {
+        'Content-Type': contentType,
+        'user-id': userId,
+      };
+
       // Upload to Minio
       await this.minioClient.putObject(
         this.bucketName,
         uniqueFilename,
         file,
         file.length,
-        {
-          'Content-Type': contentType,
-        }
+        metaData
       );
 
       // Generate file URL

@@ -6,12 +6,18 @@ import {
   Param,
   Res,
   Req,
+  UseGuards,
   HttpStatus,
   HttpException,
   Logger,
 } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { FileService } from './file.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RestRolesGuard } from '../auth/guards/rest-roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RoleList } from '../role/role-list';
+import { AuthenticatedRequest } from '../auth/types/authenticated-request.interface';
 
 @Controller('files')
 export class FileController {
@@ -22,11 +28,15 @@ export class FileController {
   /**
    * Upload a file
    * POST /api/files/upload
+   * Requires ADMIN role.
    */
   @Post('upload')
-  async uploadFile(@Req() req: FastifyRequest) {
+  @UseGuards(JwtAuthGuard, RestRolesGuard)
+  @Roles(RoleList.Admin)
+  async uploadFile(@Req() req: AuthenticatedRequest) {
     try {
       const data = await req.file();
+      const user = req.user;
 
       if (!data) {
         throw new HttpException('No file provided', HttpStatus.BAD_REQUEST);
@@ -36,7 +46,8 @@ export class FileController {
       const result = await this.fileService.uploadFile(
         buffer,
         data.filename,
-        data.mimetype
+        data.mimetype,
+        user.id
       );
 
       return {
@@ -64,8 +75,10 @@ export class FileController {
   /**
    * Download a file
    * GET /api/files/:filename
+   * Requires authentication.
    */
   @Get(':filename')
+  @UseGuards(JwtAuthGuard)
   async downloadFile(
     @Param('filename') filename: string,
     @Res() res: FastifyReply
@@ -97,10 +110,25 @@ export class FileController {
   /**
    * Delete a file
    * DELETE /api/files/:filename
+   * Requires file ownership or ADMIN role.
    */
   @Delete(':filename')
-  async deleteFile(@Param('filename') filename: string) {
+  @UseGuards(JwtAuthGuard)
+  async deleteFile(
+    @Param('filename') filename: string,
+    @Req() req: AuthenticatedRequest
+  ) {
     try {
+      const user = req.user;
+      const { stat } = await this.fileService.downloadFile(filename);
+
+      const isOwner = stat.metaData['user-id'] === user.id;
+      const isAdmin = user.roles.some((role) => role.name === RoleList.Admin);
+
+      if (!isOwner && !isAdmin) {
+        throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+      }
+
       const success = await this.fileService.deleteFile(filename);
 
       return {

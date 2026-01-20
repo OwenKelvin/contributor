@@ -7,6 +7,10 @@ type User {
   roles: [Role!]
   createdAt: DateTime!
   updatedAt: DateTime!
+  isBanned: Boolean!
+  bannedAt: DateTime
+  bannedBy: User
+  banReason: String
 }
 
 scalar DateTime
