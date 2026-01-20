@@ -73,6 +73,7 @@
       "@nyots/ui/typography": ["libs/ui/typography/src/index.ts"],
       "@nyots/ui/utils": ["libs/ui/utils/src/index.ts"],
       "@nyots/client-pages": ["libs/client/pages/src/index.ts"],
+      "@nyots/client-pages/auth": ["libs/client/pages/auth/src/index.ts"],
       "@nyots/client-pages/dashboard": ["libs/client/pages/dashboard/src/index.ts"],
       "@nyots/client-pages/login": ["libs/client/pages/login/src/index.ts"],
       "@nyots/client-pages/contributions": ["libs/client/pages/contributions/src/index.ts"],
@@ -81,6 +82,7 @@
       ],
 
       "@nyots/admin-pages": ["libs/admin/pages/src/index.ts"],
+      "@nyots/admin-pages/auth": ["libs/admin/pages/auth/src/index.ts"],
       "@nyots/admin-pages/dashboard": ["libs/admin/pages/dashboard/src/index.ts"],
       "@nyots/admin-pages/login": ["libs/admin/pages/login/src/index.ts"],
       "@nyots/admin-pages/projects": ["libs/admin/pages/projects/src/index.ts"],
