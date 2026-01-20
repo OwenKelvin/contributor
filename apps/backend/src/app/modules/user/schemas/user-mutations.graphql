@@ -10,7 +10,7 @@ type Mutation {
     input: BulkUpdateUserInput!
   ): BulkUpdateResult!
   
-  banUser(id: ID!, reason: String): User!
+  banUser(input: BanUserInput!): User!
   
   unbanUser(id: ID!): User!
 }

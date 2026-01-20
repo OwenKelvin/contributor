@@ -33,3 +33,8 @@ input BulkUpdateUserInput {
   roleIds: [ID!]
   isActive: Boolean
 }
+
+input BanUserInput {
+  userId: ID!
+  reason: String
+}

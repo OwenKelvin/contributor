@@ -273,21 +273,84 @@ export class UserService {
     };
   }
 
-  async banUser(id: string, reason?: string): Promise<User> {
-    const user = await this.getUserById(id);
-    // TODO: Implement ban logic (add isBanned field to model)
-    // For now, just return the user
-    return user;
+  async banUser(id: string, adminId: string, reason?: string): Promise<User | undefined> {
+    return this.userModel.sequelize?.transaction(async (t) => {
+      const user = await this.getUserById(id);
+
+      if (user.isBanned) {
+        throw new BadRequestException(`User with ID ${id} is already banned.`);
+      }
+
+      await user.update(
+        {
+          isBanned: true,
+          bannedAt: new Date(),
+          bannedBy: adminId,
+          banReason: reason,
+        },
+        { transaction: t },
+      );
+
+      await this.activityService.logActivity(
+        {
+          userId: adminId,
+          action: ActivityAction.USER_BANNED,
+          targetId: user.id,
+          targetType: TargetType.USER,
+          details: JSON.stringify({
+            reason,
+            bannedAt: user.bannedAt,
+            bannedBy: adminId,
+          }),
+        },
+        t,
+      );
+
+      return user;
+    });
   }
 
-  async unbanUser(id: string): Promise<User> {
-    const user = await this.getUserById(id);
-    // TODO: Implement unban logic
-    return user;
+  async unbanUser(id: string, adminId: string): Promise<User | undefined> {
+    return this.userModel.sequelize?.transaction(async (t) => {
+      const user = await this.getUserById(id);
+
+      if (!user.isBanned) {
+        throw new BadRequestException(`User with ID ${id} is not banned.`);
+      }
+
+      await user.update(
+        {
+          isBanned: false,
+          bannedAt: null,
+          bannedBy: null,
+          banReason: null,
+        },
+        { transaction: t },
+      );
+
+      await this.activityService.logActivity(
+        {
+          userId: adminId,
+          action: ActivityAction.USER_UNBANNED,
+          targetId: user.id,
+          targetType: TargetType.USER,
+          details: JSON.stringify({
+            unbannedAt: new Date().toISOString(),
+            unbannedBy: adminId,
+          }),
+        },
+        t,
+      );
+
+      return user;
+    });
   }
 
-  async getBannedUsers(pagination?: PaginationInput): Promise<UserConnection> {
-    // TODO: Implement banned users filter when isBanned field is added
-    return this.getAllUsers(undefined, undefined, pagination);
+  async getBannedUsers(
+    search?: string,
+    pagination?: PaginationInput,
+  ): Promise<UserConnection> {
+    const filter: UserFilter = { isBanned: true };
+    return this.getAllUsers(search, filter, pagination);
   }
 }

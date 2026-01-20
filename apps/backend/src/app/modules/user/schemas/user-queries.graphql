@@ -5,7 +5,7 @@ extend type Query {
     pagination: UserPaginationInput
   ): UserConnection!
   getUserById(id: ID!): User!
-  getBannedUsers(pagination: UserPaginationInput): UserConnection!
+  getBannedUsers(search: String, pagination: UserPaginationInput): UserConnection!
 }
 
 type UserConnection {
