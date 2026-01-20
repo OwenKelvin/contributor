@@ -16,6 +16,8 @@ import { GraphQLError } from 'graphql/error';
 import { RoleList } from '../role/role-list';
 import { ActivityService } from '../activity/activity.service';
 import { ActivityAction } from '../activity/activity.model';
+import { OAuth2Client } from 'google-auth-library';
+import { ConfigService } from '@nestjs/config';
 
 interface AuthResponse {
   user: User;
@@ -24,13 +26,20 @@ interface AuthResponse {
 
 @Injectable()
 export class AuthService {
+  private googleClient: OAuth2Client;
+
   constructor(
     private userService: UserService,
     private roleService: RoleService,
     private jwtService: JwtService,
     private activityService: ActivityService,
+    private configService: ConfigService,
     @InjectQueue('email') private emailQueue: Queue,
-  ) {}
+  ) {
+    this.googleClient = new OAuth2Client(
+      this.configService.get<string>('GOOGLE_CLIENT_ID'),
+    );
+  }
 
   async register(registerInput: RegisterInput): Promise<AuthResponse> {
     const { email, password, firstName, lastName, phoneNumber } = registerInput;
@@ -116,13 +125,46 @@ export class AuthService {
     return { user, accessToken };
   }
 
-  private generateJwtToken(userId: string, email: string): string {
-    const payload = { sub: userId, email };
-    return this.jwtService.sign(payload);
+  async googleLogin(idToken: string): Promise<AuthResponse> {
+    try {
+      const ticket = await this.googleClient.verifyIdToken({
+        idToken,
+        audience: this.configService.get<string>('GOOGLE_CLIENT_ID'),
+      });
+      const payload = ticket.getPayload();
+      if (!payload) {
+        throw new UnauthorizedException('Invalid Google ID token payload.');
+      }
+
+      const { email, given_name: firstName, family_name: lastName, picture } = payload;
+
+      if (!email) {
+        throw new BadRequestException('Google account must have an email address.');
+      }
+
+      return this._findOrCreateUserAndGenerateToken({
+        email,
+        firstName,
+        lastName,
+        picture,
+        loginMethod: 'Google OAuth',
+      });
+    } catch (error) {
+      console.error('Google ID token verification failed:', error);
+      throw new UnauthorizedException('Google authentication failed.');
+    }
   }
 
-  async socialLogin(email: string, firstName: string, lastName: string, picture: string): Promise<AuthResponse> {
-    let user = await this.userService.findByEmail(email);
+  private async _findOrCreateUserAndGenerateToken(
+    userDetails: {
+      email: string;
+      firstName?: string;
+      lastName?: string;
+      picture?: string;
+      loginMethod: string;
+    },
+  ): Promise<AuthResponse> {
+    let user = await this.userService.findByEmail(userDetails.email);
 
     if (!user) {
       // If user doesn't exist, create a new one
@@ -134,13 +176,11 @@ export class AuthService {
       }
 
       user = await this.userService.create({
-        email,
-        firstName,
-        lastName,
-        picture,
+        email: userDetails.email,
+        firstName: userDetails.firstName,
+        lastName: userDetails.lastName,
+        picture: userDetails.picture,
         roles: [clientRole],
-        // Social logins don't have a password, so we don't set one here
-        // Password field is optional in user.model, or we might need to set a dummy password
       });
 
       // Log social registration activity
@@ -152,7 +192,7 @@ export class AuthService {
         details: JSON.stringify({
           email: user.email,
           registeredAt: new Date().toISOString(),
-          method: 'Google OAuth',
+          method: userDetails.loginMethod,
         }),
       });
     } else {
@@ -163,12 +203,17 @@ export class AuthService {
         details: JSON.stringify({
           email: user.email,
           loginAt: new Date().toISOString(),
-          method: 'Google OAuth',
+          method: userDetails.loginMethod,
         }),
       });
     }
 
     const accessToken = this.generateJwtToken(user.id, user.email);
     return { user, accessToken };
+  }
+
+  private generateJwtToken(userId: string, email: string): string {
+    const payload = { sub: userId, email };
+    return this.jwtService.sign(payload);
   }
 }

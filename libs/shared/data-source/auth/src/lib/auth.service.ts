@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { IGoogleOAuthUrlGQL, ILoginGQL, IRegisterGQL } from './auth.generated';
+import { IGoogleLoginGQL, ILoginGQL, IRegisterGQL } from './auth.generated';
 import { ILoginInput, IRegisterInput } from '@nyots/data-source';
 import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 export class AuthService {
   loginGQL = inject(ILoginGQL);
   registerGQL = inject(IRegisterGQL);
-  googleOAuthUrlGQL = inject(IGoogleOAuthUrlGQL);
+  googleLoginGQL = inject(IGoogleLoginGQL);
   router = inject(Router);
 
   async login(credentials: ILoginInput) {
@@ -57,23 +57,20 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  async getGoogleOAuthUrl(): Promise<string> {
-    const response = await firstValueFrom(this.googleOAuthUrlGQL.fetch());
-    if (response.data?.googleOAuthUrl.url) {
-      return response.data.googleOAuthUrl.url;
-    }
-    throw new Error('Could not retrieve Google OAuth URL');
-  }
+  async googleLogin(idToken: string) {
+    const response = await firstValueFrom(
+      this.googleLoginGQL.mutate({
+        variables: { idToken },
+      }),
+    );
+    if (response.data?.googleLogin.accessToken) {
+      // Store tokens
+      localStorage.setItem('accessToken', response.data?.googleLogin.accessToken);
+      localStorage.setItem('refreshToken', response.data?.googleLogin.accessToken);
 
-  handleOAuthCallback(token: string): void {
-    if (token) {
-      localStorage.setItem('accessToken', token);
-      localStorage.setItem('refreshToken', token); // Assuming refresh token is same for now or not provided via callback
-      // Optionally fetch user info if not included in token or separate endpoint
-      this.router.navigate(['/dashboard']);
-    } else {
-      console.error('No token received from OAuth callback.');
-      this.router.navigate(['/login'], { queryParams: { error: 'OAuth failed' } });
+      // Store user info
+      localStorage.setItem('user', JSON.stringify(response.data?.googleLogin.user));
     }
+    return response;
   }
 }

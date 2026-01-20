@@ -9,7 +9,7 @@ import { User } from '../user/user.model';
 import { Roles } from './decorators/roles.decorator';
 import { RolesGuard } from './guards/roles.guard';
 import { AuthResponse } from './types/auth-response.type'; // Assuming this file exists and defines AuthResponse
-import { GoogleOAuthUrl } from './types/google-oauth-url.type';
+
 
 @Resolver()
 export class AuthResolver {
@@ -25,9 +25,9 @@ export class AuthResolver {
     return this.authService.login(loginInput);
   }
 
-  @Query(() => GoogleOAuthUrl, { description: 'Returns the Google OAuth initiation URL' })
-  async googleOAuthUrl(): Promise<GoogleOAuthUrl> {
-    return { url: `${process.env.BACKEND_URL}/auth/google` };
+  @Mutation(() => AuthResponse)
+  async googleLogin(@Args('idToken') idToken: string): Promise<AuthResponse> {
+    return this.authService.googleLogin(idToken);
   }
 
   // Example of a protected route

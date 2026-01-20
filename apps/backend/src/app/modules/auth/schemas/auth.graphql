@@ -1,12 +1,5 @@
-type Query {
-  googleOAuthUrl: GoogleOAuthUrl!
-}
-
-type GoogleOAuthUrl {
-  url: String!
-}
-
 type Mutation {
   register(registerInput: RegisterInput!): AuthResponse!
   login(loginInput: LoginInput!): AuthResponse!
+  googleLogin(idToken: String!): AuthResponse!
 }
