@@ -57,7 +57,7 @@ export type IBulkUpdateUsersMutationVariables = Types.Exact<{
 export type IBulkUpdateUsersMutation = { bulkUpdateUsers: { successCount: number, failureCount: number, errors?: Array<string> | null } };
 
 export type IBanUserMutationVariables = Types.Exact<{
-  id: Types.Scalars['ID']['input'];
+  userId: Types.Scalars['ID']['input'];
   reason?: Types.InputMaybe<Types.Scalars['String']['input']>;
 }>;
 
@@ -277,8 +277,8 @@ export const BulkUpdateUsersDocument = gql`
     }
   }
 export const BanUserDocument = gql`
-    mutation BanUser($id: ID!, $reason: String) {
-  banUser(id: $id, reason: $reason) {
+    mutation BanUser($userId: ID!, $reason: String) {
+  banUser(input: {userId: $userId, reason: $reason}) {
     id
     email
     firstName

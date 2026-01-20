@@ -123,8 +123,8 @@ mutation BulkUpdateUsers($ids: [ID!]!, $input: BulkUpdateUserInput!) {
   }
 }
 
-mutation BanUser($id: ID!, $reason: String) {
-  banUser(id: $id, reason: $reason) {
+mutation BanUser($userId: ID!, $reason: String) {
+  banUser(input: { userId: $userId, reason: $reason }) {
     id
     email
     firstName

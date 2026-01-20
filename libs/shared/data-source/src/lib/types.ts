@@ -103,6 +103,11 @@ export type IAuthResponse = {
   user: IUser;
 };
 
+export type IBanUserInput = {
+  reason?: InputMaybe<Scalars['String']['input']>;
+  userId: Scalars['ID']['input'];
+};
+
 export type IBulkUpdateError = {
   contributionId: Scalars['String']['output'];
   error: Scalars['String']['output'];
@@ -276,6 +281,10 @@ export type IDateRangeInput = {
   start: Scalars['DateTime']['input'];
 };
 
+export type IGoogleOAuthUrl = {
+  url: Scalars['String']['output'];
+};
+
 export type ILoginInput = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -322,8 +331,7 @@ export type IMutationApproveProjectArgs = {
 
 
 export type IMutationBanUserArgs = {
-  id: Scalars['ID']['input'];
-  reason?: InputMaybe<Scalars['String']['input']>;
+  input: IBanUserInput;
 };
 
 
@@ -550,6 +558,7 @@ export type IQuery = {
   getProjectContributions: IContributionConnection;
   getTransactions: ITransactionConnection;
   getUserById: IUser;
+  googleOAuthUrl: IGoogleOAuthUrl;
   topProjects: Array<ITopProject>;
 };
 
@@ -605,6 +614,7 @@ export type IQueryGetArchivedProjectsArgs = {
 
 export type IQueryGetBannedUsersArgs = {
   pagination?: InputMaybe<IUserPaginationInput>;
+  search?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -790,10 +800,14 @@ export type IUpdateUserInput = {
 };
 
 export type IUser = {
+  banReason?: Maybe<Scalars['String']['output']>;
+  bannedAt?: Maybe<Scalars['DateTime']['output']>;
+  bannedBy?: Maybe<IUser>;
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
   firstName?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
+  isBanned: Scalars['Boolean']['output'];
   lastName?: Maybe<Scalars['String']['output']>;
   phoneNumber?: Maybe<Scalars['String']['output']>;
   roles?: Maybe<Array<IRole>>;
