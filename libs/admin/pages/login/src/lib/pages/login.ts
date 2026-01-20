@@ -82,17 +82,17 @@ export class Login {
     });
   }
 
-  onGoogleLogin() {
+  async onGoogleLogin() {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    // Implement Google OAuth flow
-    // This is a placeholder - implement actual Google OAuth
-    console.log('Google login clicked');
-
-    // Example: Redirect to Google OAuth endpoint
-    // window.location.href = 'api/auth/google';
-
-    this.isLoading.set(false);
+    try {
+      const googleOAuthUrl = await this.authService.getGoogleOAuthUrl();
+      window.location.href = googleOAuthUrl;
+    } catch (error: any) {
+      console.error('Google login initiation error:', error);
+      this.isLoading.set(false);
+      this.errorMessage.set(error.message || 'Failed to initiate Google login.');
+    }
   }
 }

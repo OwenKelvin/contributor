@@ -10,6 +10,10 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@nyots/client-pages/register')
   },
   {
+    path: 'auth',
+    loadChildren: () => import('@nyots/client-pages/auth')
+  },
+  {
     path: 'dashboard',
     loadChildren: () => import('@nyots/client-pages/dashboard')
   }

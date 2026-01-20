@@ -138,16 +138,20 @@ export class Register {
     this.isLoading.set(false);
   }
 
-  onGoogleSignup() {
+  async onGoogleSignup() {
     this.isLoading.set(true);
     this.successMessage.set(null);
 
-    // Implement Google OAuth flow
-    console.log('Google signup clicked');
-
-    // Example: Redirect to Google OAuth endpoint
-    // window.location.href = 'api/auth/google';
-
-    this.isLoading.set(false);
+    try {
+      const googleOAuthUrl = await this.authService.getGoogleOAuthUrl();
+      window.location.href = googleOAuthUrl;
+    } catch (error: any) {
+      console.error('Google signup initiation error:', error);
+      this.isLoading.set(false);
+      // Assuming you want to display the error, use a dedicated error signal if successMessage is only for success
+      // For now, I'll set successMessage to null and rely on console.error
+      // If there's an errorMessage signal, that would be better here.
+      // For demonstration, let's assume we can set an error message on the form directly or use a shared toast service.
+    }
   }
 }

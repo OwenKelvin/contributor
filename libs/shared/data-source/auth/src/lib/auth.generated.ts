@@ -21,6 +21,11 @@ export type IRegisterMutationVariables = Types.Exact<{
 
 export type IRegisterMutation = { register: { accessToken: string, user: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, roles?: Array<{ id: string, name: string }> | null } } };
 
+export type IGoogleOAuthUrlQueryVariables = Types.Exact<{ [key: string]: never; }>;
+
+
+export type IGoogleOAuthUrlQuery = { googleOAuthUrl: { url: string } };
+
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(loginInput: {email: $email, password: $password}) {
@@ -76,6 +81,24 @@ export const RegisterDocument = gql`
   })
   export class IRegisterGQL extends Apollo.Mutation<IRegisterMutation, IRegisterMutationVariables> {
     override document = RegisterDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const GoogleOAuthUrlDocument = gql`
+    query GoogleOAuthUrl {
+  googleOAuthUrl {
+    url
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class IGoogleOAuthUrlGQL extends Apollo.Query<IGoogleOAuthUrlQuery, IGoogleOAuthUrlQueryVariables> {
+    override document = GoogleOAuthUrlDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

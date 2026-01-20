@@ -31,3 +31,9 @@ mutation Register($email: String!, $password: String!, $firstName: String!, $las
     }
   }
 }
+
+query GoogleOAuthUrl {
+  googleOAuthUrl {
+    url
+  }
+}
