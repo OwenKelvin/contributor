@@ -1,0 +1,49 @@
+<div hlmDialogHeader>
+  <h3 hlmDialogTitle>Process Payment for {{ contributionsText }}</h3>
+</div>
+<p hlmDialogDescription>Enter the phone number and account reference for the payment.</p>
+
+<form [formGroup]="paymentForm" (ngSubmit)="onConfirm()" class="grid gap-4 py-4">
+  <div class="grid grid-cols-4 items-center gap-4">
+    <label hlmLabel for="phoneNumber" class="text-right">
+      Phone Number
+    </label>
+    <input hlmInput
+           id="phoneNumber"
+           type="tel"
+           formControlName="phoneNumber"
+           class="col-span-3"
+           placeholder="+1234567890" />
+    @if (paymentForm.get('phoneNumber')?.invalid && paymentForm.get('phoneNumber')?.touched) {
+      <p class="col-start-2 col-span-3 text-destructive text-sm mt-1">
+        @if (paymentForm.get('phoneNumber')?.errors?.['required']) {
+          Phone number is required.
+        } @else if (paymentForm.get('phoneNumber')?.errors?.['pattern']) {
+          Please enter a valid phone number.
+        }
+      </p>
+    }
+  </div>
+
+  <div class="grid grid-cols-4 items-center gap-4">
+    <label hlmLabel for="accountReference" class="text-right">
+      Account Reference
+    </label>
+    <input hlmInput
+           id="accountReference"
+           type="text"
+           formControlName="accountReference"
+           class="col-span-3"
+           placeholder="Ref12345" />
+    @if (paymentForm.get('accountReference')?.invalid && paymentForm.get('accountReference')?.touched) {
+      <p class="col-start-2 col-span-3 text-destructive text-sm mt-1">
+        Account reference is required.
+      </p>
+    }
+  </div>
+</form>
+
+<div hlmDialogFooter>
+  <button hlmBtn variant="outline" (click)="onCancel()">Cancel</button>
+  <button hlmBtn (click)="onConfirm()" [disabled]="paymentForm.invalid">Process Payment</button>
+</div>

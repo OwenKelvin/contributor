@@ -1,0 +1,32 @@
+<div hlmDialogHeader>
+  <h3 hlmDialogTitle>Refund Contribution {{ _data.contributionId }}</h3>
+</div>
+<p hlmDialogDescription>Please provide a reason for the refund.</p>
+
+<form [formGroup]="refundReasonForm" (ngSubmit)="onConfirm()" class="grid gap-4 py-4">
+  <div class="grid grid-cols-4 items-center gap-4">
+    <label hlmLabel for="reason" class="text-right">
+      Reason
+    </label>
+    <textarea hlmTextarea
+              id="reason"
+              formControlName="reason"
+              class="col-span-3"
+              rows="5"
+              placeholder="e.g., Customer requested a refund due to service unavailability."></textarea>
+    @if (refundReasonForm.get('reason')?.invalid && refundReasonForm.get('reason')?.touched) {
+      <p class="col-start-2 col-span-3 text-destructive text-sm mt-1">
+        @if (refundReasonForm.get('reason')?.errors?.['required']) {
+          Refund reason is required.
+        } @else if (refundReasonForm.get('reason')?.errors?.['minlength']) {
+          Reason must be at least 10 characters long.
+        }
+      </p>
+    }
+  </div>
+</form>
+
+<div hlmDialogFooter>
+  <button hlmBtn variant="outline" (click)="onCancel()">Cancel</button>
+  <button hlmBtn (click)="onConfirm()" [disabled]="refundReasonForm.invalid">Submit Refund</button>
+</div>

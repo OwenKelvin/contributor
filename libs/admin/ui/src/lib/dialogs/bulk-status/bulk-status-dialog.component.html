@@ -1,0 +1,48 @@
+<div hlmDialogHeader>
+  <h3 hlmDialogTitle>Bulk Update Status for Contributions</h3>
+</div>
+<p hlmDialogDescription>
+  You are about to update the status for the following contributions:
+  <span class="font-medium">{{ _data.contributionIds.join(', ') }}</span>.
+  Select a new status and add optional notes.
+</p>
+
+<form [formGroup]="bulkStatusForm" (ngSubmit)="onConfirm()" class="grid gap-4 py-4">
+  <div class="grid grid-cols-4 items-center gap-4">
+    <label hlmLabel for="newStatus" class="text-right">
+      New Status
+    </label>
+    <hlm-select id="newStatus" class="col-span-3" formControlName="newStatus">
+      <hlm-select-trigger>
+        <hlm-select-value />
+      </hlm-select-trigger>
+      <hlm-select-content>
+        @for (status of availableStatuses; track status) {
+          <hlm-option [value]="$any(status)">{{ status | titlecase }}</hlm-option>
+        }
+      </hlm-select-content>
+    </hlm-select>
+    @if (bulkStatusForm.get('newStatus')?.invalid && bulkStatusForm.get('newStatus')?.touched) {
+      <p class="col-start-2 col-span-3 text-destructive text-sm mt-1">
+        New status is required.
+      </p>
+    }
+  </div>
+
+  <div class="grid grid-cols-4 items-center gap-4">
+    <label hlmLabel for="notes" class="text-right">
+      Notes (Optional)
+    </label>
+    <textarea hlmTextarea
+              id="notes"
+              formControlName="notes"
+              class="col-span-3"
+              rows="3"
+              placeholder="Add any relevant notes for this bulk status update."></textarea>
+  </div>
+</form>
+
+<div hlmDialogFooter>
+  <button hlmBtn variant="outline" (click)="onCancel()">Cancel</button>
+  <button hlmBtn (click)="onConfirm()" [disabled]="bulkStatusForm.invalid">Update Status</button>
+</div>

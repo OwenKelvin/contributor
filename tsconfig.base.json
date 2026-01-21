@@ -74,37 +74,65 @@
       "@nyots/ui/utils": ["libs/ui/utils/src/index.ts"],
       "@nyots/client-pages": ["libs/client/pages/src/index.ts"],
       "@nyots/client-pages/auth": ["libs/client/pages/auth/src/index.ts"],
-      "@nyots/client-pages/forgot-password": ["libs/client/pages/forgot-password/src/index.ts"],
-      "@nyots/client-pages/reset-password": ["libs/client/pages/reset-password/src/index.ts"],
-      "@nyots/client-pages/dashboard": ["libs/client/pages/dashboard/src/index.ts"],
+      "@nyots/client-pages/forgot-password": [
+        "libs/client/pages/forgot-password/src/index.ts"
+      ],
+      "@nyots/client-pages/reset-password": [
+        "libs/client/pages/reset-password/src/index.ts"
+      ],
+      "@nyots/client-pages/dashboard": [
+        "libs/client/pages/dashboard/src/index.ts"
+      ],
       "@nyots/client-pages/login": ["libs/client/pages/login/src/index.ts"],
-      "@nyots/client-pages/contributions": ["libs/client/pages/contributions/src/index.ts"],
+      "@nyots/client-pages/contributions": [
+        "libs/client/pages/contributions/src/index.ts"
+      ],
       "@nyots/client-pages/register": [
         "libs/client/pages/register/src/index.ts"
       ],
-
       "@nyots/admin-pages": ["libs/admin/pages/src/index.ts"],
-      "@nyots/admin-pages/forgot-password": ["libs/admin/pages/forgot-password/src/index.ts"],
-      "@nyots/admin-pages/reset-password": ["libs/admin/pages/reset-password/src/index.ts"],
+      "@nyots/admin-pages/forgot-password": [
+        "libs/admin/pages/forgot-password/src/index.ts"
+      ],
+      "@nyots/admin-pages/reset-password": [
+        "libs/admin/pages/reset-password/src/index.ts"
+      ],
       "@nyots/admin-pages/auth": ["libs/admin/pages/auth/src/index.ts"],
-      "@nyots/admin-pages/dashboard": ["libs/admin/pages/dashboard/src/index.ts"],
+      "@nyots/admin-pages/dashboard": [
+        "libs/admin/pages/dashboard/src/index.ts"
+      ],
       "@nyots/admin-pages/login": ["libs/admin/pages/login/src/index.ts"],
       "@nyots/admin-pages/projects": ["libs/admin/pages/projects/src/index.ts"],
-      "@nyots/admin-pages/contributions": ["libs/admin/pages/contributions/src/index.ts"],
-      "@nyots/admin-pages/users": ["libs/admin/pages/users/src/index.ts"],
-      "@nyots/admin-pages/register": [
-        "libs/admin/pages/register/src/index.ts"
+      "@nyots/admin-pages/contributions": [
+        "libs/admin/pages/contributions/src/index.ts"
       ],
+      "@nyots/admin-pages/users": ["libs/admin/pages/users/src/index.ts"],
+      "@nyots/admin-pages/register": ["libs/admin/pages/register/src/index.ts"],
       "@nyots/data-source": ["libs/shared/data-source/src/index.ts"],
-      "@nyots/data-source/apollo": ["libs/shared/data-source/apollo/src/index.ts"],
-      "@nyots/data-source/constants": ["libs/shared/data-source/constants/src/index.ts"],
+      "@nyots/data-source/apollo": [
+        "libs/shared/data-source/apollo/src/index.ts"
+      ],
+      "@nyots/data-source/constants": [
+        "libs/shared/data-source/constants/src/index.ts"
+      ],
       "@nyots/data-source/auth": ["libs/shared/data-source/auth/src/index.ts"],
-      "@nyots/data-source/activity": ["libs/shared/data-source/activity/src/index.ts"],
+      "@nyots/data-source/activity": [
+        "libs/shared/data-source/activity/src/index.ts"
+      ],
       "@nyots/data-source/user": ["libs/shared/data-source/user/src/index.ts"],
-      "@nyots/data-source/projects": ["libs/shared/data-source/projects/src/index.ts"],
-      "@nyots/data-source/contributions": ["libs/shared/data-source/contributions/src/index.ts"],
-      "@nyots/data-source/dashboard": ["libs/shared/data-source/dashboard/src/index.ts"],
-      "@nyots/data-source/helpers": ["libs/shared/data-source/helpers/src/index.ts"]
+      "@nyots/data-source/projects": [
+        "libs/shared/data-source/projects/src/index.ts"
+      ],
+      "@nyots/data-source/contributions": [
+        "libs/shared/data-source/contributions/src/index.ts"
+      ],
+      "@nyots/data-source/dashboard": [
+        "libs/shared/data-source/dashboard/src/index.ts"
+      ],
+      "@nyots/data-source/helpers": [
+        "libs/shared/data-source/helpers/src/index.ts"
+      ],
+      "@nyots/admin/ui/dialogs": ["libs/admin/ui/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
