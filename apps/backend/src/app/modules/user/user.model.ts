@@ -29,6 +29,10 @@ export class UserModel {
   bannedBy?: string | null;
   banReason?: string | null;
 
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
+  passwordResetTokenUsed?: boolean;
+
   roles?: Role[];
 }
 
@@ -111,6 +115,28 @@ export class User extends Model<UserModel> {
     allowNull: true,
   })
   picture: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    field: 'password_reset_token',
+  })
+  passwordResetToken: string;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    field: 'password_reset_expires',
+  })
+  passwordResetExpires: Date;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+    field: 'password_reset_token_used',
+  })
+  passwordResetTokenUsed: boolean;
 
   @BeforeCreate
   static async hashPassword(user: User) {
