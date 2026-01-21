@@ -44,6 +44,8 @@ import {
 import {
   HlmDropdownMenuImports,
 } from '@nyots/ui/dropdown-menu';
+import { HlmDialogService } from '@nyots/ui/dialog';
+import { BulkStatusDialog, StatusUpdateDialog } from '@nyots/admin/ui/dialogs';
 
 @Component({
   selector: 'nyots-contribution-list',
@@ -318,7 +320,7 @@ import {
                                 <ng-icon hlmIcon name="lucideEye" size="base" class="mr-2" />
                                 View Details
                               </button>
-                              <button hlmDropdownMenuItem (click)="updateStatus(contribution.id)">
+                              <button hlmDropdownMenuItem (click)="updateStatus(contribution.id, contribution.paymentStatus)">
                                 <ng-icon name="lucideEdit" size="16" class="mr-2" />
                                 Update Status
                               </button>
@@ -458,6 +460,7 @@ import {
 export class ContributionListComponent {
   private readonly contributionService = inject(ContributionService);
   private readonly router = inject(Router);
+  private readonly dialogService = inject(HlmDialogService);
 
   // State management using signals
   // contributions = signal<IContribution[]>([]);
@@ -686,31 +689,25 @@ export class ContributionListComponent {
       return;
     }
 
-    // TODO: Implement status selection dialog
-    toast.info('Bulk status change coming soon');
+    // Determine a common current status if possible, or use a default
+    const firstSelectedContribution = this.contributions().find(c => c.id === selectedIds[0]);
+    const currentStatus = firstSelectedContribution ? (firstSelectedContribution.paymentStatus) : 'pending'; // Default or infer
+
+    const dialogRef = this.dialogService.open(BulkStatusDialog, {
+      context: { contributionIds: selectedIds, currentStatus },
+    });
+
+    dialogRef.closed$.subscribe(result => {
+      if (result) {
+        toast.success('Bulk status update initiated.');
+        this.clearSelection();
+        this.loadContributions();
+      }
+    });
   }
 
   /**
    * Navigate to create contribution page
-   *
-   * Alternative: Use dialog instead of navigation
-   * To use the dialog approach, uncomment the following code and inject HlmDialogService:
-   *
-   * private dialogService = inject(HlmDialogService);
-   *
-   * openCreateDialog() {
-   *   const dialogRef = this.dialogService.open(ContributionFormDialogComponent, {
-   *     context: {},
-   *   });
-   *
-   *   // Listen for successful creation
-   *   dialogRef.closed$.subscribe((contribution) => {
-   *     if (contribution) {
-   *       // Reload contributions list
-   *       this.loadContributions();
-   *     }
-   *   });
-   * }
    */
   navigateToCreate() {
     this.router.navigate(['/dashboard/contributions/new']);
@@ -727,7 +724,6 @@ export class ContributionListComponent {
    * Process payment for a contribution
    */
   async processPayment(contributionId: string) {
-    // TODO: Implement payment processing dialog
     console.log('Process payment for contribution:', contributionId);
     toast.info('Payment processing coming soon');
   }
@@ -736,7 +732,6 @@ export class ContributionListComponent {
    * Process refund for a contribution
    */
   async processRefund(contributionId: string) {
-    // TODO: Implement refund processing dialog
     console.log('Process refund for contribution:', contributionId);
     toast.info('Refund processing coming soon');
   }
@@ -744,10 +739,17 @@ export class ContributionListComponent {
   /**
    * Update contribution status
    */
-  async updateStatus(contributionId: string) {
-    // TODO: Implement status update dialog
-    console.log('Update status for contribution:', contributionId);
-    toast.info('Status update coming soon');
+  async updateStatus(contributionId: string, currentStatus: IPaymentStatus) {
+    const dialogRef = this.dialogService.open(StatusUpdateDialog, {
+      context: { contributionId, currentStatus: currentStatus },
+    });
+
+    dialogRef.closed$.subscribe(result => {
+      if (result) {
+        toast.success('Contribution status updated.');
+        this.loadContributions();
+      }
+    });
   }
 
   protected readonly IPaymentStatus = IPaymentStatus;

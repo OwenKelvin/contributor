@@ -38,6 +38,8 @@ import {
   HlmCardTitle,
 } from '@nyots/ui/card';
 import { CurrencyPipe, DatePipe } from '@angular/common';
+import { HlmDialogService } from '@nyots/ui/dialog';
+import { PaymentProcessingDialog } from '@nyots/admin/ui/dialogs';
 
 type ContributionNode = NonNullable<
   NonNullable<IGetContributionsQuery['getContributions']>['edges'][0]['node']
@@ -325,6 +327,7 @@ type ContributionNode = NonNullable<
 export class PendingContributionsComponent {
   private readonly contributionService = inject(ContributionService);
   private readonly router = inject(Router);
+  private readonly dialogService = inject(HlmDialogService);
 
   // State management using signals
   contributions = signal<ContributionNode[]>([]);
@@ -493,52 +496,42 @@ export class PendingContributionsComponent {
       return;
     }
 
-    // Confirm action
-    if (
-      !confirm(`Process payment for ${selectedIds.length} contribution(s)?`)
-    ) {
-      return;
-    }
-
     this.isProcessing.set(true);
-    let successCount = 0;
-    let failureCount = 0;
+    const dialogRef = this.dialogService.open(PaymentProcessingDialog, {
+      context: { contributionIds: selectedIds },
+    });
 
-    try {
-      // Process each contribution
-      for (const id of selectedIds) {
-        try {
-          // TODO: Get phone number from user input dialog
-          // For now, this is a placeholder - in production, you'd need to collect phone numbers
-          await this.contributionService.processPayment(id, {
-            phoneNumber: '254700000000', // Placeholder - should be collected from user
-            accountReference: id,
-            transactionDesc: 'Bulk payment processing',
-          });
-          successCount++;
-        } catch (error) {
-          console.error(
-            `Error processing payment for contribution ${id}:`,
-            error,
-          );
-          failureCount++;
+    dialogRef.closed$.subscribe(async (result) => {
+      if (result) {
+        let successCount = 0;
+        let failureCount = 0;
+        for (const id of selectedIds) {
+          try {
+            await this.contributionService.processPayment(id, {
+              phoneNumber: result.phoneNumber,
+              accountReference: result.accountReference,
+              transactionDesc: 'Bulk payment processing',
+            });
+            successCount++;
+          } catch (error) {
+            console.error(
+              `Error processing payment for contribution ${id}:`,
+              error,
+            );
+            failureCount++;
+          }
         }
+        if (successCount > 0) {
+          toast.success(`Successfully processed ${successCount} payment(s)`);
+        }
+        if (failureCount > 0) {
+          toast.error(`Failed to process ${failureCount} payment(s)`);
+        }
+        this.clearSelection();
+        await this.loadPendingContributions();
       }
-
-      // Show results
-      if (successCount > 0) {
-        toast.success(`Successfully processed ${successCount} payment(s)`);
-      }
-      if (failureCount > 0) {
-        toast.error(`Failed to process ${failureCount} payment(s)`);
-      }
-
-      // Reload data and clear selection
-      this.clearSelection();
-      await this.loadPendingContributions();
-    } finally {
       this.isProcessing.set(false);
-    }
+    });
   }
 
   /**
@@ -606,23 +599,27 @@ export class PendingContributionsComponent {
    */
   async processPayment(contributionId: string) {
     this.isProcessing.set(true);
+    const dialogRef = this.dialogService.open(PaymentProcessingDialog, {
+      context: { contributionIds: [contributionId] },
+    });
 
-    try {
-      // TODO: Get phone number from user input dialog
-      // For now, this is a placeholder - in production, you'd need to collect phone numbers
-      await this.contributionService.processPayment(contributionId, {
-        phoneNumber: '254700000000', // Placeholder - should be collected from user
-        accountReference: contributionId,
-        transactionDesc: 'Payment processing',
-      });
-      toast.success('Payment processed successfully');
-      await this.loadPendingContributions();
-    } catch (error) {
-      console.error('Error processing payment:', error);
-      toast.error('Failed to process payment. Please try again.');
-    } finally {
+    dialogRef.closed$.subscribe(async (result) => {
+      if (result) {
+        try {
+          await this.contributionService.processPayment(contributionId, {
+            phoneNumber: result.phoneNumber,
+            accountReference: result.accountReference,
+            transactionDesc: 'Payment processing',
+          });
+          toast.success('Payment processed successfully');
+          await this.loadPendingContributions();
+        } catch (error) {
+          console.error('Error processing payment:', error);
+          toast.error('Failed to process payment. Please try again.');
+        }
+      }
       this.isProcessing.set(false);
-    }
+    });
   }
 
   /**
