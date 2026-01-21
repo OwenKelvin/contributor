@@ -47,7 +47,7 @@ export class AuthResolver {
     );
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => AuthResponse)
   async resetPassword(
     @Args('resetPasswordInput') resetPasswordInput: ResetPasswordInput,
   ): Promise<boolean> {
