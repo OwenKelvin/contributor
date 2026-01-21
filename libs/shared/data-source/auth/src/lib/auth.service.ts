@@ -3,7 +3,7 @@ import { IGoogleLoginGQL, ILoginGQL, IRegisterGQL } from './auth.generated';
 import { ILoginInput, IRegisterInput } from '@nyots/data-source';
 import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
-import { IRequestPasswordResetGQL } from './graphql/password-reset.generated';
+import { IRequestPasswordResetGQL, IResetPasswordGQL } from './graphql/password-reset.generated';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +12,7 @@ export class AuthService {
   loginGQL = inject(ILoginGQL);
   registerGQL = inject(IRegisterGQL);
   requestPasswordResetGQL = inject(IRequestPasswordResetGQL);
+  resetPasswordGQL = inject(IResetPasswordGQL);
   googleLoginGQL = inject(IGoogleLoginGQL);
   router = inject(Router);
 
@@ -93,6 +94,17 @@ export class AuthService {
       this.requestPasswordResetGQL.mutate({
         variables: {
           email,
+        },
+      }),
+    );
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    return await firstValueFrom(
+      this.resetPasswordGQL.mutate({
+        variables: {
+          token,
+          newPassword
         },
       }),
     );
