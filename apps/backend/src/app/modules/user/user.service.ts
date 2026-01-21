@@ -346,6 +346,14 @@ export class UserService {
     });
   }
 
+  async findByPasswordResetToken(token: string): Promise<User | null> {
+    return this.userModel.findOne({
+      where: {
+        passwordResetToken: token,
+      },
+    });
+  }
+
   async getBannedUsers(
     search?: string,
     pagination?: PaginationInput,

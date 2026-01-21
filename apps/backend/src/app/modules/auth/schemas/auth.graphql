@@ -2,4 +2,11 @@ type Mutation {
   register(registerInput: RegisterInput!): AuthResponse!
   login(loginInput: LoginInput!): AuthResponse!
   googleLogin(idToken: String!): AuthResponse!
+  requestPasswordReset(email: String!): Boolean!
+  resetPassword(resetPasswordInput: ResetPasswordInput!): AuthResponse!
+}
+
+input ResetPasswordInput {
+  token: String!
+  newPassword: String!
 }

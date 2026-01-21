@@ -10,6 +10,14 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@nyots/client-pages/register')
   },
   {
+    path: 'forgot-password',
+    loadComponent: () => import('@nyots/client-pages/forgot-password')
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () => import('@nyots/client-pages/reset-password')
+  },
+  {
     path: 'auth',
     loadChildren: () => import('@nyots/client-pages/auth')
   },

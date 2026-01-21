@@ -308,6 +308,8 @@ export type IMutation = {
   processContributionRefund: IContribution;
   register: IAuthResponse;
   rejectProject: IProject;
+  requestPasswordReset: Scalars['Boolean']['output'];
+  resetPassword: IAuthResponse;
   unbanUser: IUser;
   updateCategory: ICategory;
   updateContributionStatus: IContribution;
@@ -421,6 +423,16 @@ export type IMutationRegisterArgs = {
 export type IMutationRejectProjectArgs = {
   id: Scalars['ID']['input'];
   reason: Scalars['String']['input'];
+};
+
+
+export type IMutationRequestPasswordResetArgs = {
+  email: Scalars['String']['input'];
+};
+
+
+export type IMutationResetPasswordArgs = {
+  resetPasswordInput: IResetPasswordInput;
 };
 
 
@@ -702,6 +714,11 @@ export enum IReportType {
   Summary = 'SUMMARY',
   TimeSeries = 'TIME_SERIES'
 }
+
+export type IResetPasswordInput = {
+  newPassword: Scalars['String']['input'];
+  token: Scalars['String']['input'];
+};
 
 export type IRole = {
   description?: Maybe<Scalars['String']['output']>;

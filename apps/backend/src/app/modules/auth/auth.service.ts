@@ -1,3 +1,4 @@
+import { randomBytes } from 'crypto';
 import {
   Injectable,
   UnauthorizedException,
@@ -215,5 +216,71 @@ export class AuthService {
   private generateJwtToken(userId: string, email: string): string {
     const payload = { sub: userId, email };
     return this.jwtService.sign(payload);
+  }
+
+  async requestPasswordReset(email: string): Promise<boolean> {
+    const user = await this.userService.findByEmail(email);
+    if (!user) {
+      // To prevent user enumeration, we don't throw an error here.
+      // We just return true and do nothing.
+      return true;
+    }
+
+    const token = randomBytes(32).toString('hex');
+    user.passwordResetToken = token;
+    user.passwordResetExpires = new Date(Date.now() + 3600000); // 1 hour
+    user.passwordResetTokenUsed = false;
+    await user.save();
+
+    const resetLink = `${this.configService.get<string>(
+      'FRONTEND_URL',
+    )}/reset-password?token=${token}`;
+
+    await this.emailQueue.add('sendPasswordResetEmail', {
+      to: user.email,
+      name: user.firstName,
+      resetLink,
+    });
+
+    await this.activityService.logActivity({
+      userId: user.id,
+      action: ActivityAction.PASSWORD_RESET_REQUEST,
+      details: JSON.stringify({
+        email: user.email,
+        requestedAt: new Date().toISOString(),
+      }),
+    });
+
+    return true;
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<boolean> {
+    const user = await this.userService.findByPasswordResetToken(token);
+
+    if (
+      !user ||
+      !user.passwordResetExpires ||
+      user.passwordResetExpires < new Date() ||
+      user.passwordResetTokenUsed
+    ) {
+      throw new BadRequestException('Invalid or expired password reset token.');
+    }
+
+    user.password = newPassword;
+    user.passwordResetToken = null;
+    user.passwordResetExpires = null;
+    user.passwordResetTokenUsed = true;
+    await user.save();
+
+    await this.activityService.logActivity({
+      userId: user.id,
+      action: ActivityAction.PASSWORD_RESET_SUCCESS,
+      details: JSON.stringify({
+        email: user.email,
+        resetAt: new Date().toISOString(),
+      }),
+    });
+
+    return true;
   }
 }

@@ -28,6 +28,20 @@
           skipTypename: true,
         },
       },
+      [`libs/shared/data-source/auth/src/lib/graphql/password-reset.generated.ts`]: {
+        documents: `libs/shared/data-source/auth/src/lib/graphql/password-reset.graphql`,
+        plugins: ['typescript-operations', 'typescript-apollo-angular'],
+        preset: 'near-operation-file',
+        presetConfig: {
+          extension: '.generated.ts',
+          baseTypesPath: '~@nyots/data-source',
+        },
+        config: {
+          addExplicitOverride: true,
+          typesPrefix: 'I',
+          skipTypename: true,
+        },
+      },
       [`libs/shared/data-source/projects/src/lib/graphql/projects.generated.ts`]: {
         documents: `libs/shared/data-source/projects/src/lib/graphql/projects.gql`,
         plugins: ['typescript-operations', 'typescript-apollo-angular'],
