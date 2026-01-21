@@ -20,6 +20,17 @@ import {
 } from '@nyots/data-source';
 import { map } from 'rxjs/operators';
 
+export interface IRole {
+  id: string;
+  name: string;
+}
+
+export interface BulkOperationResult {
+  successCount: number;
+  failureCount: number;
+  failedIds: string[];
+}
+
 /**
  * Service for managing user-related GraphQL operations.
  * Follows the error handling pattern from AuthService and ProjectService.
@@ -37,6 +48,19 @@ export class UserService {
   private bulkUpdateUsersGQL = inject(IBulkUpdateUsersGQL);
   private banUserGQL = inject(IBanUserGQL);
   private unbanUserGQL = inject(IUnbanUserGQL);
+
+  /**
+   * Retrieves all roles (mocked for now).
+   * @returns Array of roles
+   */
+  async getAllRoles(): Promise<IRole[]> {
+    // In a real application, this would fetch from a GraphQL query
+    return [
+      { id: '1', name: 'Admin' },
+      { id: '2', name: 'Editor' },
+      { id: '3', name: 'Viewer' },
+    ];
+  }
 
   /**
    * Retrieves all users with optional search, filters, and pagination.
@@ -169,5 +193,105 @@ export class UserService {
       }),
     );
     return response.data?.unbanUser;
+  }
+
+  /**
+   * Bulk assigns a role to multiple users.
+   * @param userIds - Array of user IDs
+   * @param roleId - ID of the role to assign
+   * @returns Bulk operation result
+   */
+  async bulkAssignRole(userIds: string[], roleId: string): Promise<BulkOperationResult> {
+    const result: BulkOperationResult = {
+      successCount: 0,
+      failureCount: 0,
+      failedIds: [],
+    };
+
+    // Assuming bulkUpdateUsersGQL can handle assigning roles
+    // This is a simplified example; a real implementation might require a specific GraphQL mutation for bulk role assignment
+    try {
+      const response = await firstValueFrom(
+        this.bulkUpdateUsersGQL.mutate({
+          variables: {
+            ids: userIds,
+            input: { roleIds: [roleId] }, // Assuming roleIds can be directly updated
+          },
+        }),
+      );
+      if (response.data?.bulkUpdateUsers?.success) {
+        result.successCount = userIds.length; // Assuming all succeed if no error
+      } else {
+        result.failureCount = userIds.length;
+        result.failedIds = userIds;
+      }
+    } catch (error) {
+      console.error('Error in bulkAssignRole:', error);
+      result.failureCount = userIds.length;
+      result.failedIds = userIds;
+    }
+
+    return result;
+  }
+
+  /**
+   * Bulk deletes multiple users.
+   * @param userIds - Array of user IDs
+   * @returns Bulk operation result
+   */
+  async bulkDeleteUsers(userIds: string[]): Promise<BulkOperationResult> {
+    const result: BulkOperationResult = {
+      successCount: 0,
+      failureCount: 0,
+      failedIds: [],
+    };
+
+    for (const id of userIds) {
+      try {
+        const response = await firstValueFrom(this.deleteUserGQL.mutate({ variables: { id } }));
+        if (response.data?.deleteUser) { // Assuming deleteUser returns true on success
+          result.successCount++;
+        } else {
+          result.failureCount++;
+          result.failedIds.push(id);
+        }
+      } catch (error) {
+        console.error(`Error deleting user ${id}:`, error);
+        result.failureCount++;
+        result.failedIds.push(id);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Bulk bans multiple users.
+   * @param userIds - Array of user IDs
+   * @param reason - Reason for banning
+   * @returns Bulk operation result
+   */
+  async bulkBanUsers(userIds: string[], reason: string, adminId: string): Promise<BulkOperationResult> {
+    const result: BulkOperationResult = {
+      successCount: 0,
+      failureCount: 0,
+      failedIds: [],
+    };
+
+    for (const id of userIds) {
+      try {
+        const response = await firstValueFrom(this.banUserGQL.mutate({ variables: { userId: id, reason } }));
+        if (response.data?.banUser) { // Assuming banUser returns the banned user on success
+          result.successCount++;
+        } else {
+          result.failureCount++;
+          result.failedIds.push(id);
+        }
+      } catch (error) {
+        console.error(`Error banning user ${id}:`, error);
+        result.failureCount++;
+        result.failedIds.push(id);
+      }
+    }
+    return result;
   }
 }

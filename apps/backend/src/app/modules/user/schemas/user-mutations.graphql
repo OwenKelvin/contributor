@@ -1,22 +1,16 @@
-type Mutation {
+extend type Mutation {
   createUser(input: CreateUserInput!): User!
-  
+
   updateUser(id: ID!, input: UpdateUserInput!): User!
-  
+
   deleteUser(id: ID!): Boolean!
-  
+
   bulkUpdateUsers(
     ids: [ID!]!
     input: BulkUpdateUserInput!
   ): BulkUpdateResult!
-  
-  banUser(input: BanUserInput!): User!
-  
-  unbanUser(id: ID!): User!
-}
 
-type BulkUpdateResult {
-  successCount: Int!
-  failureCount: Int!
-  errors: [String!]
+  banUser(input: BanUserInput!): User!
+
+  unbanUser(id: ID!): User!
 }

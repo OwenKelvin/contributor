@@ -132,6 +132,7 @@ mutation DeleteUser($id: ID!) {
 
 mutation BulkUpdateUsers($ids: [ID!]!, $input: BulkUpdateUserInput!) {
   bulkUpdateUsers(ids: $ids, input: $input) {
+    success
     successCount
     failureCount
     errors

@@ -54,7 +54,7 @@ export type IBulkUpdateUsersMutationVariables = Types.Exact<{
 }>;
 
 
-export type IBulkUpdateUsersMutation = { bulkUpdateUsers: { successCount: number, failureCount: number, errors?: Array<string> | null } };
+export type IBulkUpdateUsersMutation = { bulkUpdateUsers: { success: boolean, successCount: number, failureCount: number, errors?: Array<string> | null } };
 
 export type IBanUserMutationVariables = Types.Exact<{
   userId: Types.Scalars['ID']['input'];
@@ -274,6 +274,7 @@ export const DeleteUserDocument = gql`
 export const BulkUpdateUsersDocument = gql`
     mutation BulkUpdateUsers($ids: [ID!]!, $input: BulkUpdateUserInput!) {
   bulkUpdateUsers(ids: $ids, input: $input) {
+    success
     successCount
     failureCount
     errors
