@@ -41,6 +41,7 @@ import { TopProjectsListComponent } from '../../components/top-projects-list/top
 import { TopContributorsListComponent } from '../../components/top-contributors-list/top-contributors-list.component';
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { PdfExportService } from '../../services/pdf-export.service';
 
 @Component({
   selector: 'nyots-contribution-reports',
@@ -230,7 +231,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
                   type="button"
                   variant="outline"
                   (click)="exportToPDF()"
-                  [disabled]="isLoading()"
+                  [disabled]="isLoading() || isExportingPdf()"
                 >
                   <ng-icon
                     hlmIcon
@@ -469,6 +470,7 @@ export class ContributionReportsComponent {
   private readonly contributionService = inject(ContributionService);
   private readonly projectService = inject(ProjectService);
   private readonly fb = inject(FormBuilder);
+  private readonly pdfExportService = inject(PdfExportService);
 
   // Expose enums to template
   readonly ReportType = IReportType;
@@ -477,6 +479,7 @@ export class ContributionReportsComponent {
   // State signals
   report = signal<IContributionReport | null>(null);
   isLoading = signal(false);
+  isExportingPdf = signal(false);
   error = signal<string | null>(null);
   projects$ = this.projectService.getAllProjects({}).pipe(
     map((result) => {
@@ -615,16 +618,68 @@ export class ContributionReportsComponent {
   /**
    * Export report data to PDF
    */
-  exportToPDF() {
+  async exportToPDF() {
     const reportData = this.report();
     if (!reportData) {
       toast.error('No report data to export');
       return;
     }
 
-    // TODO: Implement PDF export using a library like jsPDF
-    // For now, show a message that this feature is coming soon
-    toast.info('PDF export feature coming soon');
+    this.isExportingPdf.set(true);
+    try {
+      const filters = this.filterForm.value;
+      const dateRange = {
+        start: filters.startDate || 'N/A',
+        end: filters.endDate || 'N/A',
+      };
+
+      let printableData: any[] = [];
+      const reportType = this.currentReportType();
+
+      switch (reportType) {
+        case IReportType.Summary:
+          // For summary, we can present key metrics in a table-like format
+          printableData.push({ metric: 'Total Contributions', count: reportData.totalContributions, amount: reportData.totalAmount });
+          printableData.push({ metric: 'Pending', count: reportData.pendingCount, amount: reportData.pendingAmount });
+          printableData.push({ metric: 'Paid', count: reportData.paidCount, amount: reportData.paidAmount });
+          printableData.push({ metric: 'Failed', count: reportData.failedCount, amount: reportData.failedAmount });
+          printableData.push({ metric: 'Refunded', count: reportData.refundedCount, amount: reportData.refundedAmount });
+          // Note: Success rate is a percentage, might need special handling if included as a number
+          break;
+        case IReportType.ByProject:
+          printableData = reportData.topProjects.map(p => ({
+            projectTitle: p.projectTitle,
+            totalAmount: p.totalAmount,
+            contributionCount: p.contributionCount
+          }));
+          break;
+        case IReportType.ByUser:
+          printableData = reportData.topContributors.map(c => ({
+            userName: c.userName,
+            totalAmount: c.totalAmount,
+            contributionCount: c.contributionCount
+          }));
+          break;
+        case IReportType.TimeSeries:
+          printableData = reportData.timeSeriesData.map(ts => ({
+            date: ts.date,
+            totalAmount: ts.totalAmount,
+            contributionCount: ts.contributionCount
+          }));
+          break;
+        default:
+          toast.error('Unsupported report type for PDF export.');
+          return;
+      }
+
+      this.pdfExportService.exportContributionsReportToPdf(printableData, filters, dateRange);
+      toast.success('Report exported to PDF');
+    } catch (error) {
+      console.error('Error exporting to PDF:', error);
+      toast.error('Failed to export report to PDF');
+    } finally {
+      this.isExportingPdf.set(false);
+    }
   }
 
   /**
