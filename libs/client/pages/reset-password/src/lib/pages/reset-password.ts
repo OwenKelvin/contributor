@@ -1,7 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { form, Field, required, minLength, submit, sameAs } from '@angular/forms/signals';
+import { form, Field, required, minLength, submit, validate } from '@angular/forms/signals';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
@@ -36,7 +36,7 @@ export class ResetPassword implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  private token = signal<string | null>(null);
+  token = signal<string | null>(null);
 
   private resetPasswordModel = signal({
     newPassword: '',
@@ -49,8 +49,16 @@ export class ResetPassword implements OnInit {
       message: 'Password must be at least 8 characters long',
     });
     required(form.confirmPassword, { message: 'Please confirm your password' });
-    sameAs(form.confirmPassword, form.newPassword, {
-      message: 'Passwords do not match',
+    validate(form.confirmPassword, ({ value, valueOf }) => {
+      const confirmPassword = value();
+      const newPassword = valueOf(form.newPassword);
+      if (confirmPassword !== newPassword) {
+        return {
+          kind: 'passwordMismatch',
+          message: 'Passwords do not match',
+        };
+      }
+      return null;
     });
   });
 
@@ -83,7 +91,7 @@ export class ResetPassword implements OnInit {
 
       try {
         const response = await this.authService.resetPassword(
-          this.token()!,
+          this.token() ?? '',
           newPassword,
         );
         this.isLoading.set(false);
