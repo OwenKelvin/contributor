@@ -12,19 +12,14 @@ import * as bcrypt from 'bcryptjs';
 import { RoleService } from '../role/role.service';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-import { User } from '../user/user.model';
 import { GraphQLError } from 'graphql/error';
 import { RoleList } from '../role/role-list';
 import { ActivityService } from '../activity/activity.service';
 import { ActivityAction } from '../activity/activity.model';
 import { OAuth2Client } from 'google-auth-library';
 import { ConfigService } from '@nestjs/config';
-import { AuthResponse } from './types/auth-response.type'; // Import AuthResponse
+import { AuthResponse } from './types/auth-response.type';
 
-interface AuthResponse {
-  user: User;
-  accessToken: string;
-}
 
 @Injectable()
 export class AuthService {

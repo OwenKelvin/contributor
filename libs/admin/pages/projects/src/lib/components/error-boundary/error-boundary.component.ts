@@ -32,7 +32,7 @@ import { lucideAlertTriangle, lucideRefreshCw } from '@ng-icons/lucide';
         <div hlmCardHeader>
           <div class="flex items-center gap-3">
             <div class="flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
-              <ng-icon hlmIcon name="lucideAlertTriangle" size="24" class="text-destructive" />
+              <ng-icon hlmIcon name="lucideAlertTriangle" size="lg" class="text-destructive" />
             </div>
             <div>
               <h3 hlmCardTitle>{{ title() }}</h3>
@@ -49,9 +49,9 @@ import { lucideAlertTriangle, lucideRefreshCw } from '@ng-icons/lucide';
           <div class="flex gap-2">
             <button hlmBtn (click)="onRetry()" [disabled]="isRetrying()">
               @if (isRetrying()) {
-                <ng-icon hlmIcon name="lucideRefreshCw" size="16" class="mr-2 animate-spin" />
+                <ng-icon hlmIcon name="lucideRefreshCw" size="base" class="mr-2 animate-spin" />
               } @else {
-                <ng-icon hlmIcon name="lucideRefreshCw" size="16" class="mr-2" />
+                <ng-icon hlmIcon name="lucideRefreshCw" size="base" class="mr-2" />
               }
               {{ retryLabel() }}
             </button>

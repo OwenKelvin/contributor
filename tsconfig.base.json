@@ -74,6 +74,8 @@
       "@nyots/ui/utils": ["libs/ui/utils/src/index.ts"],
       "@nyots/client-pages": ["libs/client/pages/src/index.ts"],
       "@nyots/client-pages/auth": ["libs/client/pages/auth/src/index.ts"],
+      "@nyots/client-pages/forgot-password": ["libs/client/pages/forgot-password/src/index.ts"],
+      "@nyots/client-pages/reset-password": ["libs/client/pages/reset-password/src/index.ts"],
       "@nyots/client-pages/dashboard": ["libs/client/pages/dashboard/src/index.ts"],
       "@nyots/client-pages/login": ["libs/client/pages/login/src/index.ts"],
       "@nyots/client-pages/contributions": ["libs/client/pages/contributions/src/index.ts"],
@@ -82,6 +84,8 @@
       ],
 
       "@nyots/admin-pages": ["libs/admin/pages/src/index.ts"],
+      "@nyots/admin-pages/forgot-password": ["libs/admin/pages/forgot-password/src/index.ts"],
+      "@nyots/admin-pages/reset-password": ["libs/admin/pages/reset-password/src/index.ts"],
       "@nyots/admin-pages/auth": ["libs/admin/pages/auth/src/index.ts"],
       "@nyots/admin-pages/dashboard": ["libs/admin/pages/dashboard/src/index.ts"],
       "@nyots/admin-pages/login": ["libs/admin/pages/login/src/index.ts"],

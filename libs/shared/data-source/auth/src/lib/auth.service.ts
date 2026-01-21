@@ -3,6 +3,7 @@ import { IGoogleLoginGQL, ILoginGQL, IRegisterGQL } from './auth.generated';
 import { ILoginInput, IRegisterInput } from '@nyots/data-source';
 import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
+import { IRequestPasswordResetGQL } from './graphql/password-reset.generated';
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +11,7 @@ import { Router } from '@angular/router';
 export class AuthService {
   loginGQL = inject(ILoginGQL);
   registerGQL = inject(IRegisterGQL);
+  requestPasswordResetGQL = inject(IRequestPasswordResetGQL);
   googleLoginGQL = inject(IGoogleLoginGQL);
   router = inject(Router);
 
@@ -42,7 +44,10 @@ export class AuthService {
       localStorage.setItem('refreshToken', response.data?.register.accessToken);
 
       // Store user info
-      localStorage.setItem('user', JSON.stringify(response.data?.register.user));
+      localStorage.setItem(
+        'user',
+        JSON.stringify(response.data?.register.user),
+      );
     }
     return response;
   }
@@ -65,12 +70,31 @@ export class AuthService {
     );
     if (response.data?.googleLogin.accessToken) {
       // Store tokens
-      localStorage.setItem('accessToken', response.data?.googleLogin.accessToken);
-      localStorage.setItem('refreshToken', response.data?.googleLogin.accessToken);
+      localStorage.setItem(
+        'accessToken',
+        response.data?.googleLogin.accessToken,
+      );
+      localStorage.setItem(
+        'refreshToken',
+        response.data?.googleLogin.accessToken,
+      );
 
       // Store user info
-      localStorage.setItem('user', JSON.stringify(response.data?.googleLogin.user));
+      localStorage.setItem(
+        'user',
+        JSON.stringify(response.data?.googleLogin.user),
+      );
     }
     return response;
+  }
+
+  async requestPasswordReset(email: string) {
+    return await firstValueFrom(
+      this.requestPasswordResetGQL.mutate({
+        variables: {
+          email,
+        },
+      }),
+    );
   }
 }

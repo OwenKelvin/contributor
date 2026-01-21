@@ -6,6 +6,7 @@ import { UserActivityComponent } from './pages/user-activity/user-activity.compo
 import { BannedUsersComponent } from './pages/banned-users/banned-users.component';
 import { InviteUserComponent } from './pages/invite-user/invite-user.component';
 import { authGuard } from '@nyots/data-source/auth';
+import { UserDetailComponent } from './pages/user-detail/user-detail.component';
 
 export const usersRoutes: Routes = [
   {
@@ -53,11 +54,15 @@ export const usersRoutes: Routes = [
           breadcrumb: 'Invite'
         }
       },
+      // New: User Detail Route
+      {
+        path: ':id/view',
+        component: UserDetailComponent,
+        data: {
+          breadcrumb: 'View'
+        }
+      },
       // TODO: Add more routes as needed
-      // {
-      //   path: ':id/view',
-      //   component: ViewUserComponent,
-      // },
       // {
       //   path: ':id/edit',
       //   component: EditUserComponent,

@@ -38,6 +38,14 @@ query GetUserById($id: ID!) {
     firstName
     lastName
     phoneNumber
+    isBanned
+    bannedAt
+    bannedBy {
+      firstName
+      lastName
+      email
+    }
+    banReason
     roles {
       id
       name
@@ -57,6 +65,13 @@ query GetBannedUsers($pagination: UserPaginationInput) {
         firstName
         lastName
         phoneNumber
+        bannedAt
+        bannedBy {
+          email
+          firstName
+          lastName
+        }
+        banReason
         roles {
           id
           name

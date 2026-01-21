@@ -1,12 +1,11 @@
-import { Component, forwardRef, inject, signal, effect, OnInit } from '@angular/core';
+import { Component, forwardRef, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmIcon } from '@nyots/ui/icon';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideSearch, lucideX, lucideLoader2 } from '@ng-icons/lucide';
-import { IUser } from '@nyots/data-source';
-import { UserService } from '@nyots/data-source/user';
+import { IGetAllUsersQuery, UserService } from '@nyots/data-source/user';
 import { debounceTime, distinctUntilChanged, switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 
@@ -120,16 +119,20 @@ export class UserAutocompleteComponent implements ControlValueAccessor, OnInit {
 
   // Signals
   searchControl = new FormControl('');
-  selectedUser = signal<IUser | null>(null);
-  filteredUsers = signal<IUser[]>([]);
+  selectedUser = signal<IGetAllUsersQuery['getAllUsers']['edges'][number]['node'] | null >(null);
+  filteredUsers = signal<IGetAllUsersQuery['getAllUsers']['edges'][number]['node'][]>([]);
   showDropdown = signal(false);
   loading = signal(false);
   disabled = signal(false);
   placeholder = signal('Search for user...');
 
   // ControlValueAccessor callbacks
-  private onChange: (value: string | null) => void = () => {};
-  private onTouched: () => void = () => {};
+  private onChange: (value: string | null) => void = () => {
+    //
+  };
+  private onTouched: () => void = () => {
+    //
+  };
 
   ngOnInit() {
     // Set up search with debounce and API call
@@ -164,7 +167,7 @@ export class UserAutocompleteComponent implements ControlValueAccessor, OnInit {
   /**
    * Search users via the UserService
    */
-  private async searchUsers(searchTerm: string): Promise<IUser[]> {
+  private async searchUsers(searchTerm: string): Promise<IGetAllUsersQuery['getAllUsers']['edges'][number]['node'][]> {
     try {
       const result = await this.userService.getAllUsers({
         search: searchTerm,
@@ -238,7 +241,7 @@ export class UserAutocompleteComponent implements ControlValueAccessor, OnInit {
     }, 200);
   }
 
-  selectUser(user: IUser): void {
+  selectUser(user: IGetAllUsersQuery['getAllUsers']['edges'][number]['node']): void {
     this.selectedUser.set(user);
     this.searchControl.setValue(this.getUserName(user), { emitEvent: false });
     this.showDropdown.set(false);
@@ -252,7 +255,7 @@ export class UserAutocompleteComponent implements ControlValueAccessor, OnInit {
     this.filteredUsers.set([]);
   }
 
-  getUserName(user: IUser): string {
+  getUserName(user: IGetAllUsersQuery['getAllUsers']['edges'][number]['node']): string {
     if (user.firstName && user.lastName) {
       return `${user.firstName} ${user.lastName}`;
     }

@@ -11,10 +11,6 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('@nyots/admin-pages/login')
   },
   {
-    path: 'auth/callback',
-    loadComponent: () => import('@nyots/data-source/auth').then(m => m.OAuthCallbackComponent)
-  },
-  {
     path: 'dashboard',
     data: {
       breadcrumb: 'Dashboard'

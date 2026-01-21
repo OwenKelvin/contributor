@@ -17,14 +17,14 @@ export type IGetUserByIdQueryVariables = Types.Exact<{
 }>;
 
 
-export type IGetUserByIdQuery = { getUserById: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, createdAt: any, updatedAt: any, roles?: Array<{ id: string, name: string, description?: string | null }> | null } };
+export type IGetUserByIdQuery = { getUserById: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, isBanned: boolean, bannedAt?: any | null, banReason?: string | null, createdAt: any, updatedAt: any, bannedBy?: { firstName?: string | null, lastName?: string | null, email: string } | null, roles?: Array<{ id: string, name: string, description?: string | null }> | null } };
 
 export type IGetBannedUsersQueryVariables = Types.Exact<{
   pagination?: Types.InputMaybe<Types.IUserPaginationInput>;
 }>;
 
 
-export type IGetBannedUsersQuery = { getBannedUsers: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, createdAt: any, updatedAt: any, roles?: Array<{ id: string, name: string, description?: string | null }> | null } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type IGetBannedUsersQuery = { getBannedUsers: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, bannedAt?: any | null, banReason?: string | null, createdAt: any, updatedAt: any, bannedBy?: { email: string, firstName?: string | null, lastName?: string | null } | null, roles?: Array<{ id: string, name: string, description?: string | null }> | null } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
 
 export type ICreateUserMutationVariables = Types.Exact<{
   input: Types.ICreateUserInput;
@@ -120,6 +120,14 @@ export const GetUserByIdDocument = gql`
     firstName
     lastName
     phoneNumber
+    isBanned
+    bannedAt
+    bannedBy {
+      firstName
+      lastName
+      email
+    }
+    banReason
     roles {
       id
       name
@@ -151,6 +159,13 @@ export const GetBannedUsersDocument = gql`
         firstName
         lastName
         phoneNumber
+        bannedAt
+        bannedBy {
+          email
+          firstName
+          lastName
+        }
+        banReason
         roles {
           id
           name

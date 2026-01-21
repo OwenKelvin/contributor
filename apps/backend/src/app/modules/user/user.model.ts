@@ -6,7 +6,7 @@ import {
   Default,
   DataType,
   BeforeCreate,
-  BelongsToMany,
+  BelongsToMany, BelongsTo
 } from 'sequelize-typescript';
 import { Role } from '../role/role.model';
 import { UserRole } from '../role/user-role.model';
@@ -26,7 +26,8 @@ export class UserModel {
 
   isBanned?: boolean;
   bannedAt?: Date | null;
-  bannedBy?: string | null;
+  bannedById?: string | null;
+  bannedBy?: User | null;
   banReason?: string | null;
 
   passwordResetToken?: string | null;
@@ -99,9 +100,16 @@ export class User extends Model<UserModel> {
   @Column({
     type: DataType.UUID,
     allowNull: true,
-    field: 'banned_by',
+    field: 'banned_by_id',
   })
-  bannedBy: string;
+  bannedById: string;
+
+  @BelongsTo(() => User, {
+    foreignKey: 'bannedById',
+    targetKey: 'id',
+    as: 'bannedBy',
+  })
+  bannedBy: User;
 
   @Column({
     type: DataType.STRING,

@@ -3,8 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { toast } from 'ngx-sonner';
-import { IUser } from '@nyots/data-source';
-import { UserService } from '@nyots/data-source/user';
+import { IGetBannedUsersQuery, UserService } from '@nyots/data-source/user';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
@@ -25,11 +24,7 @@ import {
   lucideAlertCircle,
 } from '@ng-icons/lucide';
 
-interface BannedUser extends IUser {
-  bannedAt: Date;
-  bannedBy: string;
-  banReason: string;
-}
+type BannedUser = IGetBannedUsersQuery['getBannedUsers']['edges'][number]['node'];
 
 @Component({
   selector: 'nyots-banned-users',
@@ -83,7 +78,7 @@ export class BannedUsersComponent {
         u.email.toLowerCase().includes(term) ||
         u.firstName?.toLowerCase().includes(term) ||
         u.lastName?.toLowerCase().includes(term) ||
-        u.banReason.toLowerCase().includes(term)
+        u.banReason?.toLowerCase().includes(term)
     );
   });
 
@@ -101,14 +96,9 @@ export class BannedUsersComponent {
       });
 
       if (result) {
-        // Map to BannedUser type with mock ban data
-        // TODO: Update backend to include ban information
         const users = result.edges.map(edge => ({
           ...edge.node,
-          bannedAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
-          bannedBy: 'Admin',
-          banReason: 'Violation of terms of service',
-        })) as BannedUser[];
+        })) ;
 
         this.bannedUsers.set(users);
         this.totalUsers.set(result.totalCount);
