@@ -1,0 +1,32 @@
+<div hlmDialogHeader>
+  <h3 hlmDialogTitle>Bulk Assign Role for {{ usersText }}</h3>
+</div>
+<p hlmDialogDescription>Select a role to assign to the selected users.</p>
+
+<form [formGroup]="assignRoleForm" (ngSubmit)="onConfirm()" class="grid gap-4 py-4">
+  <div class="grid grid-cols-4 items-center gap-4">
+    <label hlmLabel for="role" class="text-right">
+      Role
+    </label>
+    <hlm-select id="role" class="col-span-3" formControlName="roleId">
+      <hlm-select-trigger>
+        <hlm-select-value />
+      </hlm-select-trigger>
+      <hlm-select-content>
+        @for (role of _data.availableRoles; track role.id) {
+          <hlm-option [value]="$any(role.id)">{{ role.name }}</hlm-option>
+        }
+      </hlm-select-content>
+    </hlm-select>
+    @if (assignRoleForm.get('roleId')?.invalid && assignRoleForm.get('roleId')?.touched) {
+      <p class="col-start-2 col-span-3 text-destructive text-sm mt-1">
+        Role selection is required.
+      </p>
+    }
+  </div>
+</form>
+
+<div hlmDialogFooter>
+  <button hlmBtn variant="outline" (click)="onCancel()">Cancel</button>
+  <button hlmBtn (click)="onConfirm()" [disabled]="assignRoleForm.invalid">Assign Role</button>
+</div>

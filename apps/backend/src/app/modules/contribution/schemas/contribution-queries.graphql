@@ -1,4 +1,4 @@
-type Query {
+extend type Query {
   getContribution(id: String!): Contribution!
   getContributions(filter: ContributionFilter, pagination: ContributionPaginationInput): ContributionConnection!
   getMyContributions(filter: ContributionFilter, pagination: ContributionPaginationInput): ContributionConnection!

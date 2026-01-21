@@ -4,7 +4,7 @@ type CreateContributionResult {
   data: Contribution!
 }
 
-type Mutation {
+extend type Mutation {
   adminCreateContribution(input: AdminCreateContributionInput!): Contribution!
   bulkUpdateContributionStatus(contributionIds: [String!]!, reason: String, status: PaymentStatus!): ContributionBulkUpdateResult!
   createContribution(input: CreateContributionInput!): CreateContributionResult!

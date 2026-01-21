@@ -1,3 +1,10 @@
+type BulkUpdateResult {
+  success: Boolean!
+  successCount: Int!
+  failureCount: Int!
+  errors: [String!]
+}
+
 type Query {
   _empty: String
 }

@@ -1,4 +1,4 @@
-type Mutation {
+extend type Mutation {
   register(registerInput: RegisterInput!): AuthResponse!
   login(loginInput: LoginInput!): AuthResponse!
   googleLogin(idToken: String!): AuthResponse!

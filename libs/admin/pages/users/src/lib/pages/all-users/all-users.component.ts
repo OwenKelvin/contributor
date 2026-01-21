@@ -28,7 +28,17 @@ import {
   lucideEye,
   lucideShield,
   lucideUserCheck,
+  lucideUserX,
+  lucideUsers,
 } from '@ng-icons/lucide';
+import { ConfirmationDialogComponent, HlmDialogService } from '@nyots/ui/dialog';
+import { BulkAssignRoleDialog, BulkBanUsersDialog, IRole } from '@nyots/admin/ui/dialogs';
+
+export interface BulkOperationResult {
+  successCount: number;
+  failureCount: number;
+  failedIds: string[];
+}
 
 @Component({
   selector: 'nyots-all-users',
@@ -60,6 +70,8 @@ import {
       lucideEye,
       lucideShield,
       lucideUserCheck,
+      lucideUserX,
+      lucideUsers,
     }),
   ],
   templateUrl: './all-users.component.html',
@@ -68,13 +80,16 @@ import {
 export class AllUsersComponent {
   private readonly router = inject(Router);
   private readonly userService = inject(UserService);
+  private readonly dialogService = inject(HlmDialogService);
 
   // State management using signals
   users = signal<IUser[]>([]);
   isLoading = signal(false);
+  isProcessing = signal(false);
   searchTerm = signal('');
   debouncedSearchTerm = signal('');
   selectedUsers = signal<Set<string>>(new Set());
+  availableRoles = signal<IRole[]>([]);
 
   // Pagination state
   pagination = signal<IPageInfo>({
@@ -97,6 +112,7 @@ export class AllUsersComponent {
   constructor() {
     // Load initial data
     this.loadUsers();
+    this.loadRoles();
 
     // Set up search debouncing
     effect(() => {
@@ -146,6 +162,18 @@ export class AllUsersComponent {
   }
 
   /**
+   * Load available roles (mock for now)
+   */
+  async loadRoles() {
+    // In a real application, fetch roles from a service
+    this.availableRoles.set([
+      { id: '1', name: 'Admin' },
+      { id: '2', name: 'Editor' },
+      { id: '3', name: 'Viewer' },
+    ]);
+  }
+
+  /**
    * Handle search input change
    */
   onSearchChange(value: string) {
@@ -184,16 +212,33 @@ export class AllUsersComponent {
    * Handle user delete action
    */
   async onUserDelete(userId: string) {
-    if (confirm('Are you sure you want to delete this user?')) {
-      try {
-        await this.userService.deleteUser(userId);
-        toast.success('User deleted successfully');
-        await this.loadUsers();
-      } catch (error) {
-        console.error('Error deleting user:', error);
-        toast.error('Failed to delete user');
+    const dialogRef = this.dialogService.open(ConfirmationDialogComponent, {
+      context: {
+        title: 'Delete User',
+        message: 'Are you sure you want to delete this user? This action cannot be undone.',
+        confirmLabel: 'Delete',
+        cancelLabel: 'Cancel',
+        variant: 'destructive',
+      },
+    });
+
+    dialogRef.closed$.subscribe(async (confirmed) => {
+      if (confirmed) {
+        this.isProcessing.set(true);
+        try {
+          // Assuming a deleteUser method in UserService
+          await this.userService.deleteUser(userId);
+          toast.success('User deleted successfully');
+          this.loadUsers();
+          this.clearSelection();
+        } catch (error) {
+          console.error('Error deleting user:', error);
+          toast.error('Failed to delete user');
+        } finally {
+          this.isProcessing.set(false);
+        }
       }
-    }
+    });
   }
 
   /**
@@ -224,6 +269,133 @@ export class AllUsersComponent {
       this.selectedUsers.set(new Set());
     } else {
       this.selectedUsers.set(new Set(this.users().map(u => u.id)));
+    }
+  }
+
+  /**
+   * Clear selection
+   */
+  clearSelection() {
+    this.selectedUsers.set(new Set());
+  }
+
+  /**
+   * Handle bulk assign role
+   */
+  async handleBulkAssignRole() {
+    const selectedIds = Array.from(this.selectedUsers());
+    if (selectedIds.length === 0) {
+      toast.error('No users selected');
+      return;
+    }
+
+    this.isProcessing.set(true);
+    const dialogRef = this.dialogService.open(BulkAssignRoleDialog, {
+      context: { userIds: selectedIds, availableRoles: this.availableRoles() },
+    });
+
+    dialogRef.closed$.subscribe(async (selectedRole) => {
+      if (selectedRole) {
+        try {
+          const result = await this.userService.bulkAssignRole(selectedIds, selectedRole.id);
+          this.showBulkOperationResult(result, `Assigned role '${selectedRole.name}'`);
+          this.loadUsers();
+          this.clearSelection();
+        } catch (error) {
+          console.error('Error bulk assigning roles:', error);
+          toast.error('Failed to assign roles');
+        } finally {
+          this.isProcessing.set(false);
+        }
+      } else {
+        this.isProcessing.set(false);
+      }
+    });
+  }
+
+  /**
+   * Handle bulk delete users
+   */
+  async handleBulkDeleteUsers() {
+    const selectedIds = Array.from(this.selectedUsers());
+    if (selectedIds.length === 0) {
+      toast.error('No users selected');
+      return;
+    }
+
+    const dialogRef = this.dialogService.open(ConfirmationDialogComponent, {
+      context: {
+        title: 'Delete Selected Users',
+        message: `Are you sure you want to delete ${selectedIds.length} selected user(s)? This action cannot be undone.`,
+        confirmLabel: 'Delete All',
+        cancelLabel: 'Cancel',
+        variant: 'destructive',
+      },
+    });
+
+    dialogRef.closed$.subscribe(async (confirmed) => {
+      if (confirmed) {
+        this.isProcessing.set(true);
+        try {
+          const result = await this.userService.bulkDeleteUsers(selectedIds);
+          this.showBulkOperationResult(result, 'Deleted');
+          this.loadUsers();
+          this.clearSelection();
+        } catch (error) {
+          console.error('Error bulk deleting users:', error);
+          toast.error('Failed to delete users');
+        } finally {
+          this.isProcessing.set(false);
+        }
+      }
+    });
+  }
+
+  /**
+   * Handle bulk ban users
+   */
+  async handleBulkBanUsers() {
+    const selectedIds = Array.from(this.selectedUsers());
+    if (selectedIds.length === 0) {
+      toast.error('No users selected');
+      return;
+    }
+
+    this.isProcessing.set(true);
+    const dialogRef = this.dialogService.open(BulkBanUsersDialog, {
+      context: { userIds: selectedIds },
+    });
+
+    dialogRef.closed$.subscribe(async (reason) => {
+      if (reason) {
+        try {
+          // Assuming adminId is available, e.g., from an auth service
+          const adminId = 'currentAdminUserId'; // Placeholder
+          const result = await this.userService.bulkBanUsers(selectedIds, reason, adminId);
+          this.showBulkOperationResult(result, 'Banned');
+          this.loadUsers();
+          this.clearSelection();
+        } catch (error) {
+          console.error('Error bulk banning users:', error);
+          toast.error('Failed to ban users');
+        } finally {
+          this.isProcessing.set(false);
+        }
+      } else {
+        this.isProcessing.set(false);
+      }
+    });
+  }
+
+  /**
+   * Helper to show bulk operation results
+   */
+  private showBulkOperationResult(result: BulkOperationResult, action: string) {
+    if (result.successCount > 0) {
+      toast.success(`Successfully ${action} ${result.successCount} user(s)`);
+    }
+    if (result.failureCount > 0) {
+      toast.error(`Failed to ${action} ${result.failureCount} user(s). Failed IDs: ${result.failedIds.join(', ')}`);
     }
   }
 

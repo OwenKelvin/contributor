@@ -1,22 +1,17 @@
-type Mutation {
+extend type Mutation {
   createProject(input: CreateProjectInput!): Project!
-  
+
   updateProject(id: ID!, input: UpdateProjectInput!): Project!
-  
+
   deleteProject(id: ID!): Boolean!
-  
+
   bulkUpdateProjects(
     ids: [ID!]!
     input: BulkUpdateInput!
   ): BulkUpdateResult!
-  
+
   approveProject(id: ID!, notes: String): Project!
-  
+
   rejectProject(id: ID!, reason: String!): Project!
 }
 
-type BulkUpdateResult {
-  successCount: Int!
-  failureCount: Int!
-  errors: [String!]
-}

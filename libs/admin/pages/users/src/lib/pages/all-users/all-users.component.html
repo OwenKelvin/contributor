@@ -53,13 +53,35 @@
         </div>
         @if (hasSelection()) {
           <div class="flex gap-2">
-            <button hlmBtn variant="outline" size="sm">
+            <button
+              hlmBtn
+              variant="outline"
+              size="sm"
+              (click)="handleBulkAssignRole()"
+              [disabled]="isLoading() || isProcessing()"
+            >
               <ng-icon hlmIcon name="lucideUserCheck" size="sm" class="mr-2" />
               Assign Role
             </button>
-            <button hlmBtn variant="destructive" size="sm">
+            <button
+              hlmBtn
+              variant="destructive"
+              size="sm"
+              (click)="handleBulkDeleteUsers()"
+              [disabled]="isLoading() || isProcessing()"
+            >
               <ng-icon hlmIcon name="lucideTrash2" size="sm" class="mr-2" />
               Delete Selected
+            </button>
+            <button
+              hlmBtn
+              variant="destructive"
+              size="sm"
+              (click)="handleBulkBanUsers()"
+              [disabled]="isLoading() || isProcessing()"
+            >
+              <ng-icon hlmIcon name="lucideUserX" size="sm" class="mr-2" />
+              Ban Users
             </button>
           </div>
         }

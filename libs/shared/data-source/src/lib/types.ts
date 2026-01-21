@@ -121,6 +121,7 @@ export type IBulkUpdateInput = {
 export type IBulkUpdateResult = {
   errors?: Maybe<Array<Scalars['String']['output']>>;
   failureCount: Scalars['Int']['output'];
+  success: Scalars['Boolean']['output'];
   successCount: Scalars['Int']['output'];
 };
 

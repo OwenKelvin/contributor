@@ -1,0 +1,32 @@
+<div hlmDialogHeader>
+  <h3 hlmDialogTitle>Bulk Ban {{ usersText }}</h3>
+</div>
+<p hlmDialogDescription>Please provide a reason for banning the selected users.</p>
+
+<form [formGroup]="banReasonForm" (ngSubmit)="onConfirm()" class="grid gap-4 py-4">
+  <div class="grid grid-cols-4 items-center gap-4">
+    <label hlmLabel for="reason" class="text-right">
+      Reason
+    </label>
+    <textarea hlmTextarea
+              id="reason"
+              formControlName="reason"
+              class="col-span-3"
+              rows="5"
+              placeholder="e.g., Violation of terms of service."></textarea>
+    @if (banReasonForm.get('reason')?.invalid && banReasonForm.get('reason')?.touched) {
+      <p class="col-start-2 col-span-3 text-destructive text-sm mt-1">
+        @if (banReasonForm.get('reason')?.errors?.['required']) {
+          Ban reason is required.
+        } @else if (banReasonForm.get('reason')?.errors?.['minlength']) {
+          Reason must be at least 10 characters long.
+        }
+      </p>
+    }
+  </div>
+</form>
+
+<div hlmDialogFooter>
+  <button hlmBtn variant="outline" (click)="onCancel()">Cancel</button>
+  <button hlmBtn (click)="onConfirm()" [disabled]="banReasonForm.invalid">Ban Users</button>
+</div>
