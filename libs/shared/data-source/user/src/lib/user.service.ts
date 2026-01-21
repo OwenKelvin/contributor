@@ -18,6 +18,7 @@ import {
   IUserPaginationInput,
   IBulkUpdateUserInput,
 } from '@nyots/data-source';
+import { map } from 'rxjs/operators';
 
 /**
  * Service for managing user-related GraphQL operations.
@@ -54,7 +55,7 @@ export class UserService {
           filter: params.filters,
           pagination: params.pagination,
         },
-      })
+      }),
     );
     return response.data?.getAllUsers;
   }
@@ -66,7 +67,7 @@ export class UserService {
    */
   async getUserById(id: string) {
     const response = await firstValueFrom(
-      this.getUserByIdGQL.fetch({ variables: { id } })
+      this.getUserByIdGQL.fetch({ variables: { id } }),
     );
     return response.data?.getUserById;
   }
@@ -92,7 +93,7 @@ export class UserService {
     const response = await firstValueFrom(
       this.createUserGQL.mutate({
         variables: { input },
-      })
+      }),
     );
     return response.data?.createUser;
   }
@@ -107,7 +108,7 @@ export class UserService {
     const response = await firstValueFrom(
       this.updateUserGQL.mutate({
         variables: { id, input },
-      })
+      }),
     );
     return response.data?.updateUser;
   }
@@ -121,7 +122,7 @@ export class UserService {
     const response = await firstValueFrom(
       this.deleteUserGQL.mutate({
         variables: { id },
-      })
+      }),
     );
     return response.data?.deleteUser;
   }
@@ -136,22 +137,22 @@ export class UserService {
     const response = await firstValueFrom(
       this.bulkUpdateUsersGQL.mutate({
         variables: { ids, input },
-      })
+      }),
     );
     return response.data?.bulkUpdateUsers;
   }
 
   /**
    * Bans a user.
-   * @param id - User ID
+   * @param userId - User ID
    * @param reason - Optional ban reason
    * @returns Banned user
    */
-  async banUser(id: string, reason?: string) {
+  async banUser(userId: string, reason?: string) {
     const response = await firstValueFrom(
       this.banUserGQL.mutate({
-        variables: { id, reason },
-      })
+        variables: { userId, reason },
+      }),
     );
     return response.data?.banUser;
   }
@@ -165,7 +166,7 @@ export class UserService {
     const response = await firstValueFrom(
       this.unbanUserGQL.mutate({
         variables: { id },
-      })
+      }),
     );
     return response.data?.unbanUser;
   }

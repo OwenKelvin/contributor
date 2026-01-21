@@ -50,7 +50,7 @@ export class AuthResolver {
   @Mutation(() => AuthResponse)
   async resetPassword(
     @Args('resetPasswordInput') resetPasswordInput: ResetPasswordInput,
-  ): Promise<boolean> {
+  ): Promise<AuthResponse> {
     return this.authService.resetPassword(
       resetPasswordInput.token,
       resetPasswordInput.newPassword,

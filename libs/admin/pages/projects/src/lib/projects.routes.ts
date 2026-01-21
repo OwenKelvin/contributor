@@ -9,6 +9,7 @@ import { EditProjectComponent } from './pages/edit-project/edit-project.componen
 import { CreateProjectComponent } from './pages/create-project/create-project.component';
 import { ProjectCategoriesComponent } from './pages/project-categories/project-categories.component';
 import { authGuard } from '@nyots/data-source/auth';
+import { ProjectDetailComponent } from './pages/project-detail/project-detail.component';
 
 export const projectsRoutes: Routes = [
   {
@@ -62,6 +63,14 @@ export const projectsRoutes: Routes = [
         component: ArchivedProjectsComponent,
         data: {
           breadcrumb: 'Archived'
+        }
+      },
+      // New: Project Detail Route
+      {
+        path: ':id/view',
+        component: ProjectDetailComponent,
+        data: {
+          breadcrumb: 'View'
         }
       },
       // Categories management route

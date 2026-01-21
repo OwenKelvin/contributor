@@ -12,7 +12,7 @@ module.exports = {
       type: Sequelize.DATE,
       allowNull: true,
     });
-    await queryInterface.addColumn('users', 'banned_by', {
+    await queryInterface.addColumn('users', 'banned_by_id', {
       type: Sequelize.UUID,
       allowNull: true,
       references: {
@@ -31,7 +31,7 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     await queryInterface.removeColumn('users', 'is_banned');
     await queryInterface.removeColumn('users', 'banned_at');
-    await queryInterface.removeColumn('users', 'banned_by');
+    await queryInterface.removeColumn('users', 'banned_by_id');
     await queryInterface.removeColumn('users', 'ban_reason');
   },
 };

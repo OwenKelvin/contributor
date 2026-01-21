@@ -1,2 +1,2 @@
 export * from './lib/user.service';
-export type { IGetAllUsersQuery } from './lib/graphql/users.generated';
+export type { IGetAllUsersQuery, IGetUserByIdQuery, IGetBannedUsersQuery } from './lib/graphql/users.generated';

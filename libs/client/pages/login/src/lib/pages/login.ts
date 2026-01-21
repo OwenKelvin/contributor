@@ -11,7 +11,6 @@ import { provideIcons } from '@ng-icons/core';
 import { lucideLoader2, lucideMail, lucideLock } from '@ng-icons/lucide';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@nyots/data-source/auth';
-import { firstValueFrom } from 'rxjs';
 import { GOOGLE_CLIENT_ID } from '@nyots/data-source/constants';
 
 // Declare google as a global variable
@@ -19,7 +18,6 @@ declare const google: any;
 
 @Component({
   imports: [
-    CommonModule,
     Field,
     HlmButton,
     HlmInput,

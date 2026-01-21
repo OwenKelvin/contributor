@@ -1,0 +1,132 @@
+<div class="container mx-auto py-6 space-y-6">
+  @if (hasError()) {
+    <hlm-error-boundary
+      [title]="'Failed to Load Project'"
+      [message]="errorMessage() ?? ''"
+      [details]="errorDetails()"
+      [retryLabel]="'Retry Loading'"
+      (retry)="loadProjectDetails(projectId()!)"
+    />
+  } @else if (isLoading()) {
+    <div class="flex justify-center items-center h-64">
+      <hlm-spinner size="lg" />
+    </div>
+  } @else if (project()) {
+    <!-- Header Section -->
+    <div class="flex items-center justify-between flex-wrap gap-4">
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight">
+          {{ project()!.title }}
+        </h1>
+        <p class="text-muted-foreground">
+          Project ID: {{ project()!.id }}
+        </p>
+      </div>
+      <div hlmButtonGroup class="flex-wrap">
+        <button hlmBtn variant="outline" (click)="onEditProject()">
+          <ng-icon hlmIcon name="lucideEdit" class="mr-2" />
+          Edit
+        </button>
+        <button hlmBtn variant="outline" (click)="onArchiveProject()">
+          <ng-icon hlmIcon name="lucideArchive" class="mr-2" />
+          Archive
+        </button>
+        <button hlmBtn variant="destructive" (click)="onDeleteProject()">
+          <ng-icon hlmIcon name="lucideTrash2" class="mr-2" />
+          Delete
+        </button>
+      </div>
+    </div>
+
+    <!-- Project Information Card -->
+    <div hlmCard>
+      <div hlmCardHeader>
+        <h3 hlmCardTitle>Project Information</h3>
+        <p hlmCardDescription>Overview of the project details.</p>
+      </div>
+      <div hlmCardContent class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <span hlmLabel>Title</span>
+          <p class="text-lg font-medium">{{ project()!.title }}</p>
+        </div>
+        <div>
+          <span hlmLabel>Status</span>
+          <span hlmBadge [variant]="project()!.status === 'ACTIVE' ? 'default' : 'outline'">
+            {{ project()!.status }}
+          </span>
+        </div>
+        <div>
+          <span hlmLabel>Category</span>
+          <p>{{ project()!.category.name }}</p>
+        </div>
+        <div>
+          <span hlmLabel>Goal Amount</span>
+          <p>{{ project()!.goalAmount | currency }}</p>
+        </div>
+        <div>
+          <span hlmLabel>Current Amount</span>
+          <p>{{ project()!.currentAmount | currency }}</p>
+        </div>
+        <div>
+          <span hlmLabel>Start Date</span>
+          <p>{{ project()!.startDate | date }}</p>
+        </div>
+        <div>
+          <span hlmLabel>End Date</span>
+          <p>{{ project()!.endDate | date }}</p>
+        </div>
+        <div class="md:col-span-2">
+          <span hlmLabel>Description</span>
+          <p>{{ project()!.description }}</p>
+        </div>
+        <div class="md:col-span-2">
+          <span hlmLabel>Detailed Description</span>
+          <div [innerHTML]="project()!.detailedDescription"></div>
+        </div>
+        @if (project()!.featuredImage) {
+          <div class="md:col-span-2">
+            <span hlmLabel>Featured Image</span>
+            <img [src]="project()!.featuredImage" alt="Featured Project Image" class="w-full h-auto object-cover rounded-md mt-2" />
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Project Statistics (Placeholder) -->
+    <div hlmCard>
+      <div hlmCardHeader>
+        <h3 hlmCardTitle>Project Statistics</h3>
+        <p hlmCardDescription>Key performance indicators for the project.</p>
+      </div>
+      <div hlmCardContent>
+        <p>Total Contributions: [Implement Count]</p>
+        <p>Amount Raised: [Implement Sum]</p>
+        <!-- More statistics can be added here -->
+      </div>
+    </div>
+
+    <!-- Associated Contributions (Placeholder) -->
+    <div hlmCard>
+      <div hlmCardHeader>
+        <h3 hlmCardTitle>Associated Contributions</h3>
+        <p hlmCardDescription>List of contributions made to this project.</p>
+      </div>
+      <div hlmCardContent>
+        <p>Table of contributions with filtering and pagination goes here.</p>
+        <!-- Example: <nyots-contributions-table [projectId]="projectId()" /> -->
+      </div>
+    </div>
+
+    <!-- Activity Log (Placeholder) -->
+    <div hlmCard>
+      <div hlmCardHeader>
+        <h3 hlmCardTitle>Activity Log</h3>
+        <p hlmCardDescription>Recent activities related to this project.</p>
+      </div>
+      <div hlmCardContent>
+        <p>Activity log component goes here.</p>
+        <!-- Example: <nyots-activity-log [targetId]="projectId()" targetType="Project" /> -->
+      </div>
+    </div>
+  }
+</div>

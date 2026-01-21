@@ -285,7 +285,7 @@ export class UserService {
         {
           isBanned: true,
           bannedAt: new Date(),
-          bannedBy: adminId,
+          bannedById: adminId,
           banReason: reason,
         },
         { transaction: t },
@@ -300,7 +300,7 @@ export class UserService {
           details: JSON.stringify({
             reason,
             bannedAt: user.bannedAt,
-            bannedBy: adminId,
+            bannedById: adminId,
           }),
         },
         t,
@@ -336,7 +336,7 @@ export class UserService {
           targetType: TargetType.USER,
           details: JSON.stringify({
             unbannedAt: new Date().toISOString(),
-            unbannedBy: adminId,
+            unbannedById: adminId,
           }),
         },
         t,

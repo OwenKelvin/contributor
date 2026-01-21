@@ -1,0 +1,153 @@
+<div class="container mx-auto py-6 space-y-6">
+  @if (hasError()) {
+    <hlm-error-boundary
+      [title]="'Failed to Load User'"
+      [message]="errorMessage() ?? ''"
+      [details]="errorDetails()"
+      [retryLabel]="'Retry Loading'"
+      (retry)="loadUserDetails(userId()!)"
+    />
+  } @else if (isLoading()) {
+    <div class="flex justify-center items-center h-64">
+      <hlm-spinner size="lg" />
+    </div>
+  } @else if (user()) {
+    <!-- Header Section -->
+    <div class="flex items-center justify-between flex-wrap gap-4">
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight">
+          {{ user()!.firstName }} {{ user()!.lastName }}
+        </h1>
+        <p class="text-muted-foreground">
+          User ID: {{ user()!.id }}
+        </p>
+      </div>
+      <div hlmButtonGroup class="flex-wrap">
+        <button hlmBtn variant="outline" (click)="onEditUser()">
+          <ng-icon hlmIcon name="lucideEdit" class="mr-2" />
+          Edit
+        </button>
+        <button hlmBtn variant="outline" (click)="onBanUnbanUser()">
+          <ng-icon hlmIcon name="lucideBan" class="mr-2" />
+          {{ user()!.isBanned ? 'Unban' : 'Ban' }}
+        </button>
+        <button hlmBtn variant="secondary" (click)="onResetPassword()">
+          <ng-icon hlmIcon name="lucideRotateCcw" class="mr-2" />
+          Reset Password
+        </button>
+      </div>
+    </div>
+
+    <!-- User Information Card -->
+    <div hlmCard>
+      <div hlmCardHeader>
+        <h3 hlmCardTitle>User Information</h3>
+        <p hlmCardDescription>Overview of the user's profile.</p>
+      </div>
+      <div hlmCardContent class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <span hlmLabel>Email</span>
+          <p class="text-lg font-medium">{{ user()!.email }}</p>
+        </div>
+        <div>
+          <span hlmLabel>Full Name</span>
+          <p>{{ user()!.firstName }} {{ user()!.lastName }}</p>
+        </div>
+        @if (user()!.phoneNumber) {
+          <div>
+            <span hlmLabel>Phone Number</span>
+            <p>{{ user()!.phoneNumber }}</p>
+          </div>
+        }
+        <div>
+          <span hlmLabel>Status</span>
+          <span hlmBadge [variant]="user()!.isBanned ? 'destructive' : 'default'">
+            {{ user()!.isBanned ? 'Banned' : 'Active' }}
+          </span>
+        </div>
+        @if (user()!.isBanned && user()!.bannedAt) {
+          <div>
+            <span hlmLabel>Banned At</span>
+            <p>{{ user()!.bannedAt | date:'medium' }}</p>
+          </div>
+        }
+        @if (user()!.isBanned && user()!.bannedBy) {
+          <div>
+            <span hlmLabel>Banned By</span>
+            <p>{{ user()!.bannedBy?.email }}</p>
+          </div>
+        }
+        @if (user()!.isBanned && user()!.banReason) {
+          <div class="md:col-span-2">
+            <span hlmLabel>Ban Reason</span>
+            <p>{{ user()!.banReason }}</p>
+          </div>
+        }
+        <div>
+          <span hlmLabel>Created At</span>
+          <p>{{ user()!.createdAt | date:'medium' }}</p>
+        </div>
+        <div>
+          <span hlmLabel>Last Updated</span>
+          <p>{{ user()!.updatedAt | date:'medium' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Roles and Permissions (Placeholder) -->
+    <div hlmCard>
+      <div hlmCardHeader>
+        <h3 hlmCardTitle>Roles and Permissions</h3>
+        <p hlmCardDescription>User's assigned roles and their permissions.</p>
+      </div>
+      <div hlmCardContent>
+        @if (user()?.roles && (user()?.roles?.length ?? 0) > 0) {
+          <div class="flex gap-2 flex-wrap">
+            @for (role of user()!.roles; track role.id) {
+              <span hlmBadge variant="outline">{{ role.name }}</span>
+            }
+          </div>
+          <!-- Permissions display can go here -->
+        } @else {
+          <p>No roles assigned.</p>
+        }
+      </div>
+    </div>
+
+    <!-- User Contributions (Placeholder) -->
+    <div hlmCard>
+      <div hlmCardHeader>
+        <h3 hlmCardTitle>Contributions</h3>
+        <p hlmCardDescription>List of contributions made by this user.</p>
+      </div>
+      <div hlmCardContent>
+        <p>Table of user contributions with filtering and pagination goes here.</p>
+        <!-- Example: <nyots-user-contributions-table [userId]="userId()" /> -->
+      </div>
+    </div>
+
+    <!-- User Projects (Placeholder) -->
+    <div hlmCard>
+      <div hlmCardHeader>
+        <h3 hlmCardTitle>Projects</h3>
+        <p hlmCardDescription>List of projects created or managed by this user.</p>
+      </div>
+      <div hlmCardContent>
+        <p>Table of user projects goes here.</p>
+        <!-- Example: <nyots-user-projects-table [userId]="userId()" /> -->
+      </div>
+    </div>
+
+    <!-- User Activity Log (Placeholder) -->
+    <div hlmCard>
+      <div hlmCardHeader>
+        <h3 hlmCardTitle>Activity Log</h3>
+        <p hlmCardDescription>Recent activities performed by this user.</p>
+      </div>
+      <div hlmCardContent>
+        <p>Activity log component goes here.</p>
+        <!-- Example: <nyots-activity-log [targetId]="userId()" targetType="User" /> -->
+      </div>
+    </div>
+  }
+</div>
