@@ -14,6 +14,14 @@ export class EmailService {
     });
   }
 
+  async sendPasswordResetEmail(to: string, name: string, resetLink: string) {
+    await this.emailQueue.add('sendPasswordResetEmail', {
+      to,
+      name,
+      resetLink,
+    });
+  }
+
   /**
    * Send payment success email to contributor
    * @param contribution - Contribution with user and project relationships loaded

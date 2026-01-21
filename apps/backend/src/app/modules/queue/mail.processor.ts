@@ -47,6 +47,12 @@ interface AdminContributionConfirmationEmailData {
   notes?: string;
 }
 
+interface PasswordResetEmailData {
+  to: string;
+  name: string;
+  resetLink: string;
+}
+
 @Processor('email')
 export class MailProcessor {
   private readonly logger = new Logger(MailProcessor.name);
@@ -72,6 +78,35 @@ export class MailProcessor {
     await new Promise((resolve) => setTimeout(resolve, 1000));
     this.logger.debug(`Welcome email sent to ${job.data.to}`);
     return {};
+  }
+
+  @Process('sendPasswordResetEmail')
+  async sendPasswordResetEmail(job: Job<PasswordResetEmailData>) {
+    this.logger.debug(`Sending password reset email to ${job.data.to}`);
+
+    try {
+      const template = this.loadTemplate('password-reset.html');
+      const html = this.renderTemplate(template, {
+        ...job.data,
+        organizationName: this.organizationName,
+        year: new Date().getFullYear(),
+      });
+
+      this.logger.log(`Password reset email rendered for ${job.data.to}`);
+      this.logger.debug(`Email content length: ${html.length} characters`);
+
+      // Simulate email sending
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      this.logger.debug(`Password reset email sent to ${job.data.to}`);
+      return { success: true };
+    } catch (error) {
+      this.logger.error(
+        `Failed to send password reset email: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
   }
 
   @Process('sendPaymentSuccessEmail')

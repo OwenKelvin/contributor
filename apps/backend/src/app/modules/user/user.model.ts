@@ -29,8 +29,8 @@ export class UserModel {
   bannedBy?: string | null;
   banReason?: string | null;
 
-  passwordResetToken?: string;
-  passwordResetExpires?: Date;
+  passwordResetToken?: string | null;
+  passwordResetExpires?: Date | null;
   passwordResetTokenUsed?: boolean;
 
   roles?: Role[];
@@ -121,14 +121,14 @@ export class User extends Model<UserModel> {
     allowNull: true,
     field: 'password_reset_token',
   })
-  passwordResetToken: string;
+  passwordResetToken: string | null;
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
     field: 'password_reset_expires',
   })
-  passwordResetExpires: Date;
+  passwordResetExpires: Date | null;
 
   @Column({
     type: DataType.BOOLEAN,
