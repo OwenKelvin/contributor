@@ -19,6 +19,7 @@ import { ActivityService } from '../activity/activity.service';
 import { ActivityAction } from '../activity/activity.model';
 import { OAuth2Client } from 'google-auth-library';
 import { ConfigService } from '@nestjs/config';
+import { AuthResponse } from './types/auth-response.type'; // Import AuthResponse
 
 interface AuthResponse {
   user: User;
@@ -254,7 +255,10 @@ export class AuthService {
     return true;
   }
 
-  async resetPassword(token: string, newPassword: string): Promise<boolean> {
+  async resetPassword(
+    token: string,
+    newPassword: string,
+  ): Promise<AuthResponse> {
     const user = await this.userService.findByPasswordResetToken(token);
 
     if (
@@ -281,6 +285,7 @@ export class AuthService {
       }),
     });
 
-    return true;
+    const accessToken = this.generateJwtToken(user.id, user.email);
+    return { user, accessToken };
   }
 }
