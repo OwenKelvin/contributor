@@ -34,7 +34,7 @@ type TopProject {
 }
 
 extend type Query {
-  dashboardStats(startDate: DateTime, endDate: DateTime): DashboardStats!
+  dashboardStats(startDate: DateTime, endDate: DateTime, userId: ID, projectId: ID): DashboardStats!
   contributionTrends(startDate: DateTime!, endDate: DateTime!, groupBy: String): [ContributionTrend!]!
   topProjects(limit: Int, startDate: DateTime, endDate: DateTime): [TopProject!]!
 }
