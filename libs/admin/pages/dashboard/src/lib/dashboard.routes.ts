@@ -20,6 +20,13 @@ export const dashboardRoutes: Routes = [
         }
       },
       {
+        path: 'system-health',
+        data: {
+          breadcrumb: 'System Health'
+        },
+        loadChildren: () => import('@nyots/admin-pages/system-health')
+      },
+      {
         path: 'projects',
         data: {
           breadcrumb: 'Projects'
