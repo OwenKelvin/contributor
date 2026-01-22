@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { toast } from 'ngx-sonner';
 import {
   IContributionFilter,
-  IContributionPaginationInput, IPaymentStatus
+  IContributionPaginationInput, IPaymentStatus, ISortOrder
 } from '@nyots/data-source';
 import { ContributionService, IGetContributionsQuery } from '@nyots/data-source/contributions';
 import {
@@ -513,7 +513,7 @@ export class ContributionListComponent {
       const pagination: IContributionPaginationInput = {
         first: this.pageSize(),
         sortBy: this.sortField() || undefined,
-        sortOrder: this.sortDirection()?.toUpperCase() as 'ASC' | 'DESC' || undefined,
+        sortOrder: this.sortDirection()?.toUpperCase() as ISortOrder || undefined,
       };
 
       if (this.currentCursor()) {
