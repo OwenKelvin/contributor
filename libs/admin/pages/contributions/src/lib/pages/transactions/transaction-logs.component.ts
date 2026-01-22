@@ -44,12 +44,13 @@ import { HlmBadge } from '@nyots/ui/badge';
 import { HlmLabel } from '@nyots/ui/label';
 import { HlmInput } from '@nyots/ui/input';
 import {
-  HlmSelect,
+  HlmSelect, HlmSelectContent,
   HlmSelectOption,
   HlmSelectTrigger,
-  HlmSelectValue,
+  HlmSelectValue
 } from '@nyots/ui/select';
 import { HlmSpinner } from '@nyots/ui/spinner';
+import { BrnSelectImports, provideBrnSelect } from '@spartan-ng/brain/select';
 
 type TransactionNode = NonNullable<
   NonNullable<IGetTransactionsQuery['getTransactions']>['edges'][0]['node']
@@ -92,6 +93,8 @@ type TransactionNode = NonNullable<
     HlmSelectTrigger,
     HlmSelectValue,
     HlmSpinner,
+    HlmSelectContent,
+    BrnSelectImports
   ],
   providers: [
     provideIcons({
@@ -134,26 +137,32 @@ type TransactionNode = NonNullable<
                   <hlm-select-trigger>
                     <hlm-select-value></hlm-select-value>
                   </hlm-select-trigger>
-                  <hlm-option [value]="">All Statuses</hlm-option>
-                  <hlm-option [value]="$any(TransactionStatus.Pending)">Pending</hlm-option>
-                  <hlm-option [value]="$any(TransactionStatus.Success)">Success</hlm-option>
-                  <hlm-option [value]="$any(TransactionStatus.Failed)">Failed</hlm-option>
+                  <hlm-select-content>
+                    <hlm-option [value]="">All Statuses</hlm-option>
+                    <hlm-option [value]="$any(TransactionStatus.Pending)">Pending</hlm-option>
+                    <hlm-option [value]="$any(TransactionStatus.Success)">Success</hlm-option>
+                    <hlm-option [value]="$any(TransactionStatus.Failed)">Failed</hlm-option>
+                  </hlm-select-content>
                 </hlm-select>
               </div>
 
               <!-- Transaction Type Filter -->
               <div class="space-y-2">
                 <label hlmLabel for="type">Type</label>
-                <select
-                  hlmSelect
+                <hlm-select
                   id="type"
                   formControlName="transactionType"
                   class="w-full"
                 >
-                  <option value="">All Types</option>
-                  <option [value]="TransactionType.Payment">Payment</option>
-                  <option [value]="TransactionType.Refund">Refund</option>
-                </select>
+                  <hlm-select-trigger>
+                    <hlm-select-value></hlm-select-value>
+                  </hlm-select-trigger>
+                  <hlm-select-content>
+                    <hlm-option value="">All Types</hlm-option>
+                    <hlm-option [value]="TransactionType.Payment">Payment</hlm-option>
+                    <hlm-option [value]="TransactionType.Refund">Refund</hlm-option>
+                  </hlm-select-content>
+                </hlm-select>
               </div>
 
               <!-- Start Date Filter -->
@@ -250,15 +259,15 @@ type TransactionNode = NonNullable<
             <div class="relative overflow-x-auto">
               <table hlmTable>
                 <thead hlmTHead>
-                  <tr hlmTr>
-                    <th hlmTh>Contribution</th>
-                    <th hlmTh>Type</th>
-                    <th hlmTh>Amount</th>
-                    <th hlmTh>Status</th>
-                    <th hlmTh>Gateway ID</th>
-                    <th hlmTh>Timestamp</th>
-                    <th hlmTh class="text-right">Actions</th>
-                  </tr>
+                <tr hlmTr>
+                  <th hlmTh>Contribution</th>
+                  <th hlmTh>Type</th>
+                  <th hlmTh>Amount</th>
+                  <th hlmTh>Status</th>
+                  <th hlmTh>Gateway ID</th>
+                  <th hlmTh>Timestamp</th>
+                  <th hlmTh class="text-right">Actions</th>
+                </tr>
                 </thead>
                 <tbody hlmTBody>
                   @for (transaction of transactions(); track transaction.id) {
@@ -364,8 +373,8 @@ type TransactionNode = NonNullable<
 
                     <!-- Error Details Row (for failed transactions) -->
                     @if (transaction.status === TransactionStatus.Failed &&
-                         (transaction.errorCode || transaction.errorMessage) &&
-                         expandedTransactionId() === transaction.id) {
+                    (transaction.errorCode || transaction.errorMessage) &&
+                    expandedTransactionId() === transaction.id) {
                       <tr hlmTr class="bg-red-50 dark:bg-red-950/20">
                         <td hlmTd colspan="7">
                           <div class="p-4 space-y-2">
@@ -399,7 +408,8 @@ type TransactionNode = NonNullable<
                                     <summary class="text-sm font-medium text-red-900 dark:text-red-100 cursor-pointer">
                                       Gateway Response
                                     </summary>
-                                    <pre class="text-xs bg-red-100 dark:bg-red-900 p-2 rounded mt-1 overflow-x-auto">{{ transaction.gatewayResponse }}</pre>
+                                    <pre
+                                      class="text-xs bg-red-100 dark:bg-red-900 p-2 rounded mt-1 overflow-x-auto">{{ transaction.gatewayResponse }}</pre>
                                   </details>
                                 }
                               </div>
@@ -425,20 +435,22 @@ type TransactionNode = NonNullable<
       </div>
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
+  styles: [
+    `
+      :host {
+        display: block;
+      }
 
-    code {
-      font-family: 'Courier New', Courier, monospace;
-    }
+      code {
+        font-family: 'Courier New', Courier, monospace;
+      }
 
-    pre {
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-  `],
+      pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+    `,
+  ],
 })
 export class TransactionLogsComponent {
   private readonly contributionService = inject(ContributionService);
@@ -521,7 +533,7 @@ export class TransactionLogsComponent {
       });
 
       if (result) {
-        this.transactions.set(result.edges.map(edge => edge.node));
+        this.transactions.set(result.edges.map((edge) => edge.node));
         this.totalCount.set(result.totalCount);
 
         // Build pagination info
@@ -609,7 +621,10 @@ export class TransactionLogsComponent {
       }
     } else {
       // Navigate to contribution detail page for successful transactions
-      this.router.navigate(['/dashboard/contributions', transaction.contribution.id]);
+      this.router.navigate([
+        '/dashboard/contributions',
+        transaction.contribution.id,
+      ]);
     }
   }
 }
