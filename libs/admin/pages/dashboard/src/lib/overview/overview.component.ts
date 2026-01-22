@@ -1,6 +1,6 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { toast } from 'ngx-sonner';
 import { DashboardService } from '@nyots/data-source/dashboard';
@@ -16,12 +16,8 @@ import { DateRangeFilterComponent } from './components/date-range-filter.compone
 import { UserService } from '@nyots/data-source/user';
 import { ProjectService } from '@nyots/data-source/projects';
 import { IUser } from '@nyots/data-source';
-import { map, debounceTime, distinctUntilChanged, switchMap, startWith, Observable, of, forkJoin, firstValueFrom } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { HlmLabel } from '@nyots/ui/label';
-import { HlmInput } from '@nyots/ui/input';
-import { HlmCheckbox } from '@nyots/ui/checkbox';
-import { FormsModule } from '@angular/forms'; // Ensure FormsModule is imported for ngModel
+import { debounceTime, distinctUntilChanged, Observable, of, forkJoin, firstValueFrom } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'nyots-overview',
@@ -39,9 +35,6 @@ import { FormsModule } from '@angular/forms'; // Ensure FormsModule is imported 
     TopProjectsChartComponent,
     RecentActivityComponent,
     DateRangeFilterComponent,
-    HlmLabel,
-    HlmInput,
-    HlmCheckbox,
   ],
   template: `
     <div class="p-6 space-y-6">
@@ -216,7 +209,7 @@ export class OverviewComponent implements OnInit {
       }
 
       // Fetch all projects
-      const allProjectsResult = await  firstValueFrom(this.projectService.getAllProjects({
+      const allProjectsResult = await firstValueFrom(this.projectService.getAllProjects({
         pagination: { first: 1000 }, // Fetch a reasonable number of projects for dropdown
       })); // Convert observable to promise
       if (allProjectsResult?.edges) {
@@ -240,23 +233,26 @@ export class OverviewComponent implements OnInit {
 
     try {
       // Fetch current period stats
-      const currentStatsObservable = this.dashboardService.getDashboardStats(
-        currentStartDate,
-        currentEndDate,
+      const currentStatsObservable = this.dashboardService.getDashboardStats({
+        startDate: currentStartDate,
+        endDate: currentEndDate,
         userId,
         projectId,
-      );
+      });
 
       // Fetch previous period stats if comparison is enabled
       let previousStatsObservable: Observable<any | null> = of(null);
       if (compare && currentStartDate && currentEndDate) {
-        const { startDate: prevStartDate, endDate: prevEndDate } = this.getPreviousPeriodDateRange(currentStartDate, currentEndDate);
-        previousStatsObservable = this.dashboardService.getDashboardStats(
-          prevStartDate,
-          prevEndDate,
+        const {
+          startDate: prevStartDate,
+          endDate: prevEndDate
+        } = this.getPreviousPeriodDateRange(currentStartDate, currentEndDate);
+        previousStatsObservable = this.dashboardService.getDashboardStats({
+          startDate: prevStartDate,
+          endDate: prevEndDate,
           userId,
           projectId,
-        );
+        });
       }
 
       // Combine observables to wait for both (or just current if no comparison)
@@ -353,3 +349,4 @@ export class OverviewComponent implements OnInit {
       currency: 'USD',
     }).format(value);
   }
+}

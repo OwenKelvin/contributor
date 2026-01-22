@@ -1,8 +1,10 @@
 query GetDashboardStats(
   $startDate: DateTime
   $endDate: DateTime
+  $userId: ID
+  $projectId: ID
 ) {
-  dashboardStats(startDate: $startDate, endDate: $endDate) {
+  dashboardStats(startDate: $startDate, endDate: $endDate, userId: $userId, projectId: $projectId) {
     totalUsers
     totalProjects
     totalContributions

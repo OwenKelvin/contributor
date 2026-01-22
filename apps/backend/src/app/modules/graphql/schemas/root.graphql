@@ -1,3 +1,5 @@
+scalar DateTime
+
 type BulkUpdateResult {
   success: Boolean!
   successCount: Int!

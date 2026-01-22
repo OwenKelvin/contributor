@@ -9,10 +9,13 @@ import {
   GetRecentUsersGQL,
 } from './dashboard.generated';
 
-export interface DashboardDateRange {
+export interface DashboardStatsFilter {
   startDate?: Date;
   endDate?: Date;
+  userId?: string;
+  projectId?: string;
 }
+
 
 @Injectable({
   providedIn: 'root',
@@ -25,12 +28,14 @@ export class DashboardService {
   private getRecentProjectsGQL = inject(GetRecentProjectsGQL);
   private getRecentUsersGQL = inject(GetRecentUsersGQL);
 
-  getDashboardStats(dateRange?: DashboardDateRange) {
+  getDashboardStats(filter?: DashboardStatsFilter) {
     return from(
       this.getDashboardStatsGQL.fetch({
         variables: {
-          startDate: dateRange?.startDate,
-          endDate: dateRange?.endDate,
+          startDate: filter?.startDate,
+          endDate: filter?.endDate,
+          userId: filter?.userId,
+          projectId: filter?.projectId,
         },
       })
     ).pipe(map((result) => result.data?.dashboardStats));
@@ -52,7 +57,7 @@ export class DashboardService {
     ).pipe(map((result) => result.data?.contributionTrends));
   }
 
-  getTopProjects(limit = 10, dateRange?: DashboardDateRange) {
+  getTopProjects(limit = 10, dateRange?: DashboardStatsFilter) {
     return from(
       this.getTopProjectsGQL.fetch({
         variables: {
@@ -94,7 +99,7 @@ export class DashboardService {
     );
   }
 
-  exportDashboardData(dateRange?: DashboardDateRange): Observable<Blob> {
+  exportDashboardData(dateRange?: DashboardStatsFilter): Observable<Blob> {
     // This will be implemented to export dashboard data as CSV/Excel
     return new Observable((observer) => {
       // Placeholder for export functionality
