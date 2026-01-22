@@ -88,6 +88,15 @@
           </div>
         </form>
       </div>
+
+      @if (categoryForm().errors().length > 0) {
+        <ul class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mx-4">
+          @for (error of categoryForm().errors(); track error.kind) {
+            <li class="text-sm">{{ error.message }}</li>
+          }
+        </ul>
+      }
+
     </div>
   }
 

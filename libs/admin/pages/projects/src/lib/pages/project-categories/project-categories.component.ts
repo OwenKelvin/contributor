@@ -64,7 +64,6 @@ export class ProjectCategoriesComponent {
   // State management
   categories = signal<ICategory[]>([]);
   isLoading = signal(false);
-  isSubmitting = signal(false);
 
   // Form state
   isFormVisible = signal(false);
@@ -77,13 +76,15 @@ export class ProjectCategoriesComponent {
   });
 
   // Create form with validation schema
-  protected categoryForm = form(this.categoryModel, (form) => {
+  protected readonly categoryForm = form(this.categoryModel, (form) => {
     // Name validation
     required(form.name, { message: 'Category name is required' });
     minLength(form.name, 2, { message: 'Name must be at least 2 characters' });
 
     // Description is optional, no validation needed
   });
+
+  isSubmitting = computed(() =>  this.categoryForm().submitting() )
 
   // Computed properties
   isEditing = computed(() => this.editingCategoryId() !== null);
@@ -172,6 +173,9 @@ export class ProjectCategoriesComponent {
       };
 
       await this.categoryService.createCategory(input);
+
+      console.log({ formValue });
+
       toast.success('Category created successfully');
 
       // Refresh categories list and hide form
@@ -181,18 +185,23 @@ export class ProjectCategoriesComponent {
       // Handle GraphQL validation errors
       const graphqlError = (e as { errors: GraphQLError[] }).errors;
       if (graphqlError?.length > 0) {
-        // Check for uniqueness error
-        const uniquenessError = graphqlError.find(err =>
-          err.message.toLowerCase().includes('unique') ||
-          err.message.toLowerCase().includes('already exists') ||
-          err.message.toLowerCase().includes('duplicate')
-        );
 
-        if (uniquenessError) {
-          toast.error('A category with this name already exists');
+        if (graphqlError?.length > 0) {
+          return mapGraphqlValidationErrors(graphqlError, categoryForm);
         }
 
-        return mapGraphqlValidationErrors(graphqlError, categoryForm);
+
+        return [
+          {
+            kind: 'server',
+            message:
+              (e as HttpErrorResponse)?.error?.message ??
+              (e as Error).message ??
+              'An unknown error occurred.',
+            fieldTree: categoryForm,
+          },
+        ];
+
       }
 
       // Handle other errors
@@ -282,8 +291,6 @@ export class ProjectCategoriesComponent {
    * Handle form submission (create or update)
    */
   async onSubmit() {
-    this.isSubmitting.set(true);
-
     await submit(this.categoryForm, async (fieldTree) => {
       if (this.isEditing()) {
         return await this.updateCategory(fieldTree);
@@ -291,8 +298,6 @@ export class ProjectCategoriesComponent {
         return await this.createCategory(fieldTree);
       }
     });
-
-    this.isSubmitting.set(false);
   }
 
   /**
