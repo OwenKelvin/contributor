@@ -188,6 +188,8 @@ export type IContributionPaginationInput = {
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+  sortBy?: InputMaybe<Scalars['String']['input']>;
+  sortOrder?: InputMaybe<ISortOrder>;
 };
 
 export type IContributionReport = {
@@ -729,6 +731,11 @@ export type IRole = {
   name: Scalars['String']['output'];
 };
 
+export enum ISortOrder {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}
+
 export enum ITargetType {
   Category = 'Category',
   Contribution = 'Contribution',
@@ -865,4 +872,6 @@ export type IUserPaginationInput = {
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+  sortBy?: InputMaybe<Scalars['String']['input']>;
+  sortOrder?: InputMaybe<ISortOrder>;
 };
