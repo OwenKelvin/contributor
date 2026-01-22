@@ -13,4 +13,3 @@ type User {
   banReason: String
 }
 
-scalar DateTime

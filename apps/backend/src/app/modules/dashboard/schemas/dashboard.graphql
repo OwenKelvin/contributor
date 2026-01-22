@@ -38,5 +38,3 @@ extend type Query {
   contributionTrends(startDate: DateTime!, endDate: DateTime!, groupBy: String): [ContributionTrend!]!
   topProjects(limit: Int, startDate: DateTime, endDate: DateTime): [TopProject!]!
 }
-
-scalar DateTime

@@ -32,6 +32,8 @@ export interface TopProject {
 export interface GetDashboardStatsQueryVariables {
   startDate?: Date;
   endDate?: Date;
+  userId?: string;
+  projectId?: string;
 }
 
 export interface GetContributionTrendsQueryVariables {

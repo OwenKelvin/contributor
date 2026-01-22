@@ -597,7 +597,9 @@ export type IQueryContributionTrendsArgs = {
 
 export type IQueryDashboardStatsArgs = {
   endDate?: InputMaybe<Scalars['DateTime']['input']>;
+  projectId?: InputMaybe<Scalars['ID']['input']>;
   startDate?: InputMaybe<Scalars['DateTime']['input']>;
+  userId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 
