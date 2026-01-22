@@ -2,10 +2,14 @@ import { Global, Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailProcessor } from './mail.processor';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { Activity } from '../activity';
+import { EmailLogService } from './email-log.service';
 
 @Global()
 @Module({
   imports: [
+    SequelizeModule.forFeature([Activity]),
     BullModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -20,7 +24,7 @@ import { MailProcessor } from './mail.processor';
       name: 'email',
     }),
   ],
-  providers: [MailProcessor],
+  providers: [MailProcessor, EmailLogService],
   exports: [BullModule],
 })
 export class QueueModule {}
