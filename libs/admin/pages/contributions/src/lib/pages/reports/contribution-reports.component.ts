@@ -42,6 +42,8 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
 import { map } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { PdfExportService } from '../../services/pdf-export.service';
+import { BrnSelectImports } from '@spartan-ng/brain/select';
+import { HlmFormField } from '@nyots/ui/form-field';
 
 @Component({
   selector: 'nyots-contribution-reports',
@@ -60,14 +62,18 @@ import { PdfExportService } from '../../services/pdf-export.service';
     HlmSpinner,
     HlmLabel,
     HlmInput,
+
     HlmSelect,
     HlmSelectContent,
     HlmSelectOption,
     HlmSelectTrigger,
     HlmSelectValue,
+
+    BrnSelectImports,
     ContributionChartComponent,
     TopProjectsListComponent,
     TopContributorsListComponent,
+    HlmFormField,
   ],
   providers: [
     provideIcons({
@@ -98,20 +104,26 @@ import { PdfExportService } from '../../services/pdf-export.service';
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <!-- Report Type -->
               <div class="space-y-2">
-                <label hlmLabel for="reportType">Report Type</label>
-                <hlm-select
-                  id="reportType"
-                  formControlName="reportType"
-                  class="w-full"
-                >
-                  <hlm-select-trigger class="w-full">
-                    <hlm-select-value />
-                  </hlm-select-trigger>
-                  <hlm-option [value]="$any(ReportType.Summary)">Summary Report</hlm-option>
-                  <hlm-option [value]="$any(ReportType.ByProject)">By Project</hlm-option>
-                  <hlm-option [value]="$any(ReportType.ByUser)">By User</hlm-option>
-                  <hlm-option [value]="$any(ReportType.TimeSeries)">Time Series</hlm-option>
-                </hlm-select>
+                <hlm-form-field>
+                  <label hlmLabel for="reportType">Report Type</label>
+                  <hlm-select
+                    id="reportType"
+                    formControlName="reportType"
+                    class="w-full"
+                  >
+                    <hlm-select-trigger class="w-full">
+                      <hlm-select-value />
+                    </hlm-select-trigger>
+                    <hlm-select-content>
+                      <hlm-option [value]="$any(ReportType.Summary)">Summary Report</hlm-option>
+                      <hlm-option [value]="$any(ReportType.ByProject)">By Project</hlm-option>
+                      <hlm-option [value]="$any(ReportType.ByUser)">By User</hlm-option>
+                      <hlm-option [value]="$any(ReportType.TimeSeries)">Time Series</hlm-option>
+                    </hlm-select-content>
+
+                  </hlm-select>
+                </hlm-form-field>
+
               </div>
 
               <!-- Start Date -->
@@ -149,10 +161,12 @@ import { PdfExportService } from '../../services/pdf-export.service';
                   <hlm-select-trigger class="w-full">
                     <hlm-select-value />
                   </hlm-select-trigger>
-                  <hlm-option [value]="">All Projects</hlm-option>
-                  @for (project of projects(); track project.id) {
-                    <hlm-option [value]="project.id">{{ project.title }}</hlm-option>
-                  }
+                  <hlm-select-content>
+                    <hlm-option [value]="">All Projects</hlm-option>
+                    @for (project of projects(); track project.id) {
+                      <hlm-option [value]="project.id">{{ project.title }}</hlm-option>
+                    }
+                  </hlm-select-content>
                 </hlm-select>
               </div>
 
@@ -492,7 +506,7 @@ export class ContributionReportsComponent {
       return [];
     }),
   );
-  projects = toSignal(this.projects$, {initialValue: []})
+  projects = toSignal(this.projects$, { initialValue: [] });
 
   // Form
   filterForm = this.fb.group({
@@ -639,32 +653,52 @@ export class ContributionReportsComponent {
       switch (reportType) {
         case IReportType.Summary:
           // For summary, we can present key metrics in a table-like format
-          printableData.push({ metric: 'Total Contributions', count: reportData.totalContributions, amount: reportData.totalAmount });
-          printableData.push({ metric: 'Pending', count: reportData.pendingCount, amount: reportData.pendingAmount });
-          printableData.push({ metric: 'Paid', count: reportData.paidCount, amount: reportData.paidAmount });
-          printableData.push({ metric: 'Failed', count: reportData.failedCount, amount: reportData.failedAmount });
-          printableData.push({ metric: 'Refunded', count: reportData.refundedCount, amount: reportData.refundedAmount });
+          printableData.push({
+            metric: 'Total Contributions',
+            count: reportData.totalContributions,
+            amount: reportData.totalAmount,
+          });
+          printableData.push({
+            metric: 'Pending',
+            count: reportData.pendingCount,
+            amount: reportData.pendingAmount,
+          });
+          printableData.push({
+            metric: 'Paid',
+            count: reportData.paidCount,
+            amount: reportData.paidAmount,
+          });
+          printableData.push({
+            metric: 'Failed',
+            count: reportData.failedCount,
+            amount: reportData.failedAmount,
+          });
+          printableData.push({
+            metric: 'Refunded',
+            count: reportData.refundedCount,
+            amount: reportData.refundedAmount,
+          });
           // Note: Success rate is a percentage, might need special handling if included as a number
           break;
         case IReportType.ByProject:
-          printableData = reportData.topProjects.map(p => ({
+          printableData = reportData.topProjects.map((p) => ({
             projectTitle: p.projectTitle,
             totalAmount: p.totalAmount,
-            contributionCount: p.contributionCount
+            contributionCount: p.contributionCount,
           }));
           break;
         case IReportType.ByUser:
-          printableData = reportData.topContributors.map(c => ({
+          printableData = reportData.topContributors.map((c) => ({
             userName: c.userName,
             totalAmount: c.totalAmount,
-            contributionCount: c.contributionCount
+            contributionCount: c.contributionCount,
           }));
           break;
         case IReportType.TimeSeries:
-          printableData = reportData.timeSeriesData.map(ts => ({
+          printableData = reportData.timeSeriesData.map((ts) => ({
             date: ts.date,
             totalAmount: ts.totalAmount,
-            contributionCount: ts.contributionCount
+            contributionCount: ts.contributionCount,
           }));
           break;
         default:
@@ -672,7 +706,11 @@ export class ContributionReportsComponent {
           return;
       }
 
-      this.pdfExportService.exportContributionsReportToPdf(printableData, filters, dateRange);
+      this.pdfExportService.exportContributionsReportToPdf(
+        printableData,
+        filters,
+        dateRange,
+      );
       toast.success('Report exported to PDF');
     } catch (error) {
       console.error('Error exporting to PDF:', error);
