@@ -24,6 +24,13 @@ input ContributionPaginationInput {
   before: String
   first: Int
   last: Int
+  sortBy: String
+  sortOrder: SortOrder
+}
+
+enum SortOrder {
+  ASC
+  DESC
 }
 
 input CreateContributionInput {

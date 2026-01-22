@@ -52,7 +52,7 @@ export class ContributionResolver {
 
     if (isAdmin) {
       // Admin can see all contributions
-      return this.contributionService.getContributions(filter, pagination);
+      return this.contributionService.getContributions(filter, pagination?.sortBy, pagination?.sortOrder, pagination);
     } else {
       // Regular users can only see their own contributions
       return this.contributionService.getUserContributions(user.id, filter, pagination);

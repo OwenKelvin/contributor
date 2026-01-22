@@ -399,6 +399,8 @@ export class ContributionService {
    */
   async getContributions(
     filter: ContributionFilter = {},
+    sortBy: string = 'createdAt',
+    sortOrder: 'ASC' | 'DESC' = 'DESC',
     pagination: PaginationInput = {}
   ): Promise<ContributionConnection> {
     this.logger.log('Fetching contributions with filters and pagination');
@@ -422,7 +424,7 @@ export class ContributionService {
           ],
           limit: limit + 1, // Fetch one extra to determine hasNextPage
           offset,
-          order: [['createdAt', 'DESC']], // Most recent first
+          order: [[sortBy || 'createdAt', sortOrder || 'DESC']], // Server-side sorting
         });
 
       // Calculate total amount for all matching contributions (without pagination)
@@ -493,7 +495,7 @@ export class ContributionService {
       userId,
     };
 
-    return this.getContributions(userFilter, pagination);
+    return this.getContributions(userFilter, pagination?.sortBy, pagination?.sortOrder, pagination);
   }
 
   /**
@@ -522,7 +524,7 @@ export class ContributionService {
       projectId,
     };
 
-    return this.getContributions(projectFilter, pagination);
+    return this.getContributions(projectFilter, pagination?.sortBy, pagination?.sortOrder, pagination);
   }
 
   /**

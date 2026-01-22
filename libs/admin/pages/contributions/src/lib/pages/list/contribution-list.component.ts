@@ -512,6 +512,8 @@ export class ContributionListComponent {
       // Build pagination object
       const pagination: IContributionPaginationInput = {
         first: this.pageSize(),
+        sortBy: this.sortField() || undefined,
+        sortOrder: this.sortDirection()?.toUpperCase() as 'ASC' | 'DESC' || undefined,
       };
 
       if (this.currentCursor()) {
@@ -600,44 +602,7 @@ export class ContributionListComponent {
       this.sortField.set(field);
       this.sortDirection.set('asc');
     }
-
-    // Apply sorting (in a real implementation, this would be done server-side)
-    const contributions = [...this.contributions()];
-    contributions.sort((a, b) => {
-      let aValue: string | number;
-      let bValue: string | number;
-
-      switch (field) {
-        case 'contributor':
-          aValue = `${a.user.firstName} ${a.user.lastName}`.toLowerCase();
-          bValue = `${b.user.firstName} ${b.user.lastName}`.toLowerCase();
-          break;
-        case 'project':
-          aValue = a.project.title.toLowerCase();
-          bValue = b.project.title.toLowerCase();
-          break;
-        case 'amount':
-          aValue = a.amount;
-          bValue = b.amount;
-          break;
-        case 'status':
-          aValue = a.paymentStatus;
-          bValue = b.paymentStatus;
-          break;
-        case 'date':
-          aValue = new Date(a.createdAt).getTime();
-          bValue = new Date(b.createdAt).getTime();
-          break;
-        default:
-          return 0;
-      }
-
-      if (aValue < bValue) return this.sortDirection() === 'asc' ? -1 : 1;
-      if (aValue > bValue) return this.sortDirection() === 'asc' ? 1 : -1;
-      return 0;
-    });
-
-    this.contributions.set(contributions);
+    this.loadContributions();
   }
 
   /**
