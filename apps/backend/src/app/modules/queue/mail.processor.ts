@@ -4,6 +4,9 @@ import { Logger } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import Handlebars from 'handlebars';
+import { EmailSenderService } from './email-sender.service';
+import { EmailLogService } from './email-log.service';
+import { ActivityAction, TargetType } from '../activity/activity.model';
 
 interface PaymentSuccessEmailData {
   to: string;
@@ -61,7 +64,9 @@ export class MailProcessor {
   private readonly dashboardUrl = process.env.FRONTEND_URL ? `${process.env.FRONTEND_URL}/dashboard/contributions` : 'http://localhost:4200/dashboard/contributions';
   private readonly supportUrl = process.env.FRONTEND_URL ? `${process.env.FRONTEND_URL}/support` : 'http://localhost:4200/support';
 
-  constructor() {
+  private readonly emailSender = new EmailSenderService();
+
+  constructor(private emailLogService: EmailLogService ) {
     // Register Handlebars helpers
     Handlebars.registerHelper('if', function(conditional, options) {
       if (conditional) {
@@ -74,9 +79,35 @@ export class MailProcessor {
   @Process('sendWelcomeEmail')
   async sendWelcomeEmail(job: Job<{ to: string; name: string }>) {
     this.logger.debug(`Sending welcome email to ${job.data.to}`);
-    // Simulate email sending
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    const html = `<p>Welcome, ${job.data.name}!</p>`;
+    const text = `Welcome, ${job.data.name}!`;
+    let attempt = 0;
+    let sent = false;
+    let lastError;
+    while (!sent && attempt < 3) {
+      try {
+        await this.emailSender.sendMail({
+          to: job.data.to,
+          subject: 'Welcome',
+          html,
+          text,
+        });
+        sent = true;
+      } catch (err) {
+        attempt++;
+        lastError = err;
+        this.logger.warn(`Retrying welcome email (${attempt}/3): ${err.message}`);
+      }
+    }
+    if (!sent) throw lastError;
     this.logger.debug(`Welcome email sent to ${job.data.to}`);
+    await this.emailLogService.logEmailSend({
+      userId: job.data.to,
+      action: ActivityAction.USER_CREATED,
+      targetId: undefined,
+      targetType: TargetType.USER,
+      details: JSON.stringify({ email: job.data.to, type: 'welcome' }),
+    });
     return {};
   }
 
@@ -95,10 +126,35 @@ export class MailProcessor {
       this.logger.log(`Password reset email rendered for ${job.data.to}`);
       this.logger.debug(`Email content length: ${html.length} characters`);
 
-      // Simulate email sending
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      // Send email with retry logic
+      const text = `Hi ${job.data.name},\nReset your password: ${job.data.resetLink}`;
+      let attempt = 0;
+      let sent = false;
+      let lastError;
+      while (!sent && attempt < 3) {
+        try {
+          await this.emailSender.sendMail({
+            to: job.data.to,
+            subject: 'Password Reset',
+            html,
+            text,
+          });
+          sent = true;
+        } catch (err) {
+          attempt++;
+          lastError = err;
+          this.logger.warn(`Retrying password reset email (${attempt}/3): ${err.message}`);
+        }
+      }
+      if (!sent) throw lastError;
       this.logger.debug(`Password reset email sent to ${job.data.to}`);
+      await this.emailLogService.logEmailSend({
+        userId: job.data.to,
+        action: ActivityAction.PASSWORD_RESET_REQUEST,
+        targetId: undefined,
+        targetType: TargetType.USER,
+        details: JSON.stringify({ email: job.data.to, type: 'password-reset' }),
+      });
       return { success: true };
     } catch (error) {
       this.logger.error(
@@ -112,7 +168,7 @@ export class MailProcessor {
   @Process('sendPaymentSuccessEmail')
   async sendPaymentSuccessEmail(job: Job<PaymentSuccessEmailData>) {
     this.logger.debug(`Sending payment success email to ${job.data.to}`);
-    
+
     try {
       const template = this.loadTemplate('payment-success.html');
       const html = this.renderTemplate(template, {
@@ -124,15 +180,37 @@ export class MailProcessor {
         year: new Date().getFullYear(),
       });
 
-      // In a real implementation, you would send the email using a service like SendGrid, AWS SES, etc.
-      // For now, we'll just log it
       this.logger.log(`Payment success email rendered for ${job.data.to}`);
       this.logger.debug(`Email content length: ${html.length} characters`);
-      
-      // Simulate email sending
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+      const text = `Hi ${job.data.contributorName},\nYour payment of ${job.data.amount} for ${job.data.projectTitle} was successful.`;
+      // Send email with retry logic
+      let attempt = 0;
+      let sent = false;
+      let lastError;
+      while (!sent && attempt < 3) {
+        try {
+          await this.emailSender.sendMail({
+            to: job.data.to,
+            subject: 'Payment Success',
+            html,
+            text,
+          });
+          sent = true;
+        } catch (err) {
+          attempt++;
+          lastError = err;
+          this.logger.warn(`Retrying payment success email (${attempt}/3): ${err.message}`);
+        }
+      }
+      if (!sent) throw lastError;
       this.logger.debug(`Payment success email sent to ${job.data.to}`);
+      await this.emailLogService.logEmailSend({
+        userId: job.data.to,
+        action: ActivityAction.CONTRIBUTION_CREATED,
+        targetId: job.data.contributionId,
+        targetType: TargetType.CONTRIBUTION,
+        details: JSON.stringify({ email: job.data.to, type: 'payment-success' }),
+      });
       return { success: true };
     } catch (error) {
       this.logger.error(`Failed to send payment success email: ${error.message}`, error.stack);
@@ -143,7 +221,7 @@ export class MailProcessor {
   @Process('sendPaymentFailureEmail')
   async sendPaymentFailureEmail(job: Job<PaymentFailureEmailData>) {
     this.logger.debug(`Sending payment failure email to ${job.data.to}`);
-    
+
     try {
       const template = this.loadTemplate('payment-failure.html');
       const html = this.renderTemplate(template, {
@@ -157,11 +235,35 @@ export class MailProcessor {
 
       this.logger.log(`Payment failure email rendered for ${job.data.to}`);
       this.logger.debug(`Email content length: ${html.length} characters`);
-      
-      // Simulate email sending
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+      const text = `Hi ${job.data.contributorName},\nYour payment for ${job.data.projectTitle} failed. Reason: ${job.data.errorMessage}`;
+      // Send email with retry logic
+      let attempt = 0;
+      let sent = false;
+      let lastError;
+      while (!sent && attempt < 3) {
+        try {
+          await this.emailSender.sendMail({
+            to: job.data.to,
+            subject: 'Payment Failure',
+            html,
+            text,
+          });
+          sent = true;
+        } catch (err) {
+          attempt++;
+          lastError = err;
+          this.logger.warn(`Retrying payment failure email (${attempt}/3): ${err.message}`);
+        }
+      }
+      if (!sent) throw lastError;
       this.logger.debug(`Payment failure email sent to ${job.data.to}`);
+      await this.emailLogService.logEmailSend({
+        userId: job.data.to,
+        action: ActivityAction.CONTRIBUTION_UPDATED,
+        targetId: job.data.contributionId,
+        targetType: TargetType.CONTRIBUTION,
+        details: JSON.stringify({ email: job.data.to, type: 'payment-failure' }),
+      });
       return { success: true };
     } catch (error) {
       this.logger.error(`Failed to send payment failure email: ${error.message}`, error.stack);
@@ -172,7 +274,7 @@ export class MailProcessor {
   @Process('sendRefundNotificationEmail')
   async sendRefundNotificationEmail(job: Job<RefundNotificationEmailData>) {
     this.logger.debug(`Sending refund notification email to ${job.data.to}`);
-    
+
     try {
       const template = this.loadTemplate('refund-notification.html');
       const html = this.renderTemplate(template, {
@@ -184,14 +286,35 @@ export class MailProcessor {
         organizationName: this.organizationName,
         year: new Date().getFullYear(),
       });
-
-      this.logger.log(`Refund notification email rendered for ${job.data.to}`);
-      this.logger.debug(`Email content length: ${html.length} characters`);
-      
-      // Simulate email sending
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+      const text = `Hi ${job.data.contributorName},\nYour refund for ${job.data.projectTitle} has been processed. Amount: ${job.data.amount}`;
+      // Send email with retry logic
+      let attempt = 0;
+      let sent = false;
+      let lastError;
+      while (!sent && attempt < 3) {
+        try {
+          await this.emailSender.sendMail({
+            to: job.data.to,
+            subject: 'Refund Notification',
+            html,
+            text,
+          });
+          sent = true;
+        } catch (err) {
+          attempt++;
+          lastError = err;
+          this.logger.warn(`Retrying refund notification email (${attempt}/3): ${err.message}`);
+        }
+      }
+      if (!sent) throw lastError;
       this.logger.debug(`Refund notification email sent to ${job.data.to}`);
+      await this.emailLogService.logEmailSend({
+        userId: job.data.to,
+        action: ActivityAction.CONTRIBUTION_UPDATED,
+        targetId: job.data.contributionId,
+        targetType: TargetType.CONTRIBUTION,
+        details: JSON.stringify({ email: job.data.to, type: 'refund-notification' }),
+      });
       return { success: true };
     } catch (error) {
       this.logger.error(`Failed to send refund notification email: ${error.message}`, error.stack);
@@ -202,7 +325,7 @@ export class MailProcessor {
   @Process('sendAdminContributionConfirmationEmail')
   async sendAdminContributionConfirmationEmail(job: Job<AdminContributionConfirmationEmailData>) {
     this.logger.debug(`Sending admin contribution confirmation email to ${job.data.to}`);
-    
+
     try {
       const template = this.loadTemplate('admin-contribution-confirmation.html');
       const html = this.renderTemplate(template, {
@@ -216,11 +339,36 @@ export class MailProcessor {
 
       this.logger.log(`Admin contribution confirmation email rendered for ${job.data.to}`);
       this.logger.debug(`Email content length: ${html.length} characters`);
-      
-      // Simulate email sending
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
+      const text = `Contribution ${job.data.contributionId} for ${job.data.projectTitle} by ${job.data.contributorName} has been confirmed.`;
+      // Send email with retry logic
+      let attempt = 0;
+      let sent = false;
+      let lastError;
+      while (!sent && attempt < 3) {
+        try {
+          await this.emailSender.sendMail({
+            to: job.data.to,
+            subject: 'Contribution Confirmation',
+            html,
+            text,
+          });
+          sent = true;
+        } catch (err) {
+          attempt++;
+          lastError = err;
+          this.logger.warn(`Retrying admin contribution confirmation email (${attempt}/3): ${err.message}`);
+        }
+      }
+      if (!sent) throw lastError;
       this.logger.debug(`Admin contribution confirmation email sent to ${job.data.to}`);
+      await this.emailLogService.logEmailSend({
+        userId: job.data.to,
+        action: ActivityAction.CONTRIBUTION_UPDATED,
+        targetId: job.data.contributionId,
+        targetType: TargetType.CONTRIBUTION,
+        details: JSON.stringify({ email: job.data.to, type: 'admin-contribution-confirmation' }),
+      });
       return { success: true };
     } catch (error) {
       this.logger.error(`Failed to send admin contribution confirmation email: ${error.message}`, error.stack);
