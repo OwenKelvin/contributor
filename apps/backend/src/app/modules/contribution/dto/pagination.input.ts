@@ -16,4 +16,10 @@ export class PaginationInput {
 
   @IsOptional()
   before?: string;
+
+  @IsOptional()
+  sortBy?: string;
+
+  @IsOptional()
+  sortOrder?: 'ASC' | 'DESC';
 }

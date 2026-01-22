@@ -27,6 +27,13 @@ input UserPaginationInput {
   after: String
   last: Int
   before: String
+  sortBy: String
+  sortOrder: SortOrder
+}
+
+enum SortOrder {
+  ASC
+  DESC
 }
 
 input BulkUpdateUserInput {

@@ -22,9 +22,11 @@ export class UserResolver {
   async getAllUsers(
     @Args('search', { nullable: true }) search?: string,
     @Args('filter', { nullable: true }) filter?: UserFilter,
+    @Args('sortBy', { nullable: true }) sortBy?: string,
+    @Args('sortOrder', { nullable: true }) sortOrder?: 'ASC' | 'DESC',
     @Args('pagination', { nullable: true }) pagination?: PaginationInput,
   ): Promise<UserConnection> {
-    return this.userService.getAllUsers(search, filter, pagination);
+    return this.userService.getAllUsers(search, filter, sortBy, sortOrder, pagination);
   }
 
   @Query(() => User)

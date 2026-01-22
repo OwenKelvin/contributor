@@ -76,6 +76,8 @@ export class UserService {
   async getAllUsers(
     search?: string,
     filter?: UserFilter,
+    sortBy: string = 'createdAt',
+    sortOrder: 'ASC' | 'DESC' = 'DESC',
     pagination?: PaginationInput,
   ): Promise<UserConnection> {
     const where: any = {};
@@ -111,7 +113,7 @@ export class UserService {
       include,
       limit: limit + 1, // Fetch one extra to check if there's a next page
       offset,
-      order: [['createdAt', 'DESC']],
+      order: [[sortBy || 'createdAt', sortOrder || 'DESC']],
     });
 
     const hasNextPage = users.length > limit;
@@ -390,6 +392,6 @@ export class UserService {
     pagination?: PaginationInput,
   ): Promise<UserConnection> {
     const filter: UserFilter = { isBanned: true };
-    return this.getAllUsers(search, filter, pagination);
+    return this.getAllUsers(search, filter, undefined, undefined, pagination);
   }
 }
