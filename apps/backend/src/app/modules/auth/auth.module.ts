@@ -17,7 +17,6 @@ import { ActivityModule } from '../activity/activity.module';
     RoleModule,
     PassportModule,
     EmailModule,
-    ActivityModule,
     ConfigModule, // Ensure ConfigModule is imported
     JwtModule.registerAsync({
       imports: [ConfigModule],

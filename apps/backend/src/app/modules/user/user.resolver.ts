@@ -1,4 +1,5 @@
-import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { UserService } from './user.service';
 import { User } from './user.model';
 import { CreateUserInput } from './dto/create-user.input';
@@ -41,21 +42,22 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  async createUser(@Args('input') input: CreateUserInput): Promise<User> {
-    return this.userService.createUser(input);
+  async createUser(@Args('input') input: CreateUserInput, @CurrentUser() user: any): Promise<User> {
+    return this.userService.createUser(input, user?.id);
   }
 
   @Mutation(() => User)
   async updateUser(
     @Args('id') id: string,
     @Args('input') input: UpdateUserInput,
+    @CurrentUser() user: any,
   ): Promise<User> {
-    return this.userService.updateUser(id, input);
+    return this.userService.updateUser(id, input, user?.id);
   }
 
   @Mutation(() => Boolean)
-  async deleteUser(@Args('id') id: string): Promise<boolean> {
-    return this.userService.deleteUser(id);
+  async deleteUser(@Args('id') id: string, @CurrentUser() user: any): Promise<boolean> {
+    return this.userService.deleteUser(id, user?.id);
   }
 
   @Mutation(() => BulkUpdateResult)
@@ -70,7 +72,7 @@ export class UserResolver {
   @Mutation(() => User)
   async banUser(
     @Args('input') input: BanUserInput,
-    @Context() context: any,
+    @CurrentUser() context: any,
   ): Promise<User | undefined> {
     const adminId = context.req.user.id;
     return this.userService.banUser(input.userId, adminId, input.reason);
@@ -78,7 +80,7 @@ export class UserResolver {
 
   @UseGuards(GqlAuthGuard)
   @Mutation(() => User)
-  async unbanUser(@Args('id') id: string, @Context() context: any): Promise<User | undefined> {
+  async unbanUser(@Args('id') id: string, @CurrentUser() context: any): Promise<User | undefined> {
     const adminId = context.req.user.id;
     return this.userService.unbanUser(id, adminId);
   }

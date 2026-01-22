@@ -44,7 +44,6 @@ import { ContributionEventListener } from './contribution.event-listener';
     ProjectModule,
     UserModule,
     EmailModule,
-    ActivityModule,
     EventEmitterModule.forRoot(),
   ],
   providers: [
