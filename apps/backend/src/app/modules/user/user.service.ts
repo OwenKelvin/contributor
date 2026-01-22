@@ -27,11 +27,25 @@ export class UserService {
     private activityService: ActivityService,
   ) {}
 
-  async create(userData: Partial<User> & { roles?: Role[] }): Promise<User> {
+  async create(userData: Partial<User> & { roles?: Role[] }, createdByUserId?: string): Promise<User> {
     const user = await this.userModel.create(userData as User);
 
     if (userData.roles && userData.roles.length > 0) {
       await user.$set('roles', userData.roles);
+    }
+    if (createdByUserId) {
+      await this.activityService.logActivity({
+        userId: createdByUserId,
+        action: ActivityAction.USER_CREATED,
+        targetId: user.id,
+        targetType: TargetType.USER,
+        details: JSON.stringify({
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          roleIds: userData.roles?.map(r => r.id),
+        }),
+      });
     }
     return user;
   }
@@ -232,13 +246,22 @@ export class UserService {
     return this.getUserById(id);
   }
 
-  async deleteUser(id: string): Promise<boolean> {
+  async deleteUser(id: string, deletedByUserId?: string): Promise<boolean> {
     const user = await this.getUserById(id);
     await user.destroy();
+    if (deletedByUserId) {
+      await this.activityService.logActivity({
+        userId: deletedByUserId,
+        action: ActivityAction.USER_DELETED,
+        targetId: id,
+        targetType: TargetType.USER,
+        details: JSON.stringify({ email: user.email, firstName: user.firstName, lastName: user.lastName }),
+      });
+    }
     return true;
   }
 
-  async bulkUpdateUsers(ids: string[], input: BulkUpdateUserInput): Promise<BulkUpdateResult> {
+  async bulkUpdateUsers(ids: string[], input: BulkUpdateUserInput, updatedByUserId?: string): Promise<BulkUpdateResult> {
     const errors: string[] = [];
     let successCount = 0;
     let failureCount = 0;
@@ -258,7 +281,15 @@ export class UserService {
             await user.$set('roles', []);
           }
         }
-
+        if (updatedByUserId) {
+          await this.activityService.logActivity({
+            userId: updatedByUserId,
+            action: ActivityAction.USER_UPDATED,
+            targetId: user.id,
+            targetType: TargetType.USER,
+            details: JSON.stringify({ changes: input, updatedAt: new Date().toISOString() }),
+          });
+        }
         successCount++;
       } catch (error) {
         failureCount++;

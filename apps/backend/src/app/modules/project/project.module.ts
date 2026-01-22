@@ -7,7 +7,7 @@ import { CategoryModule } from '../category/category.module';
 import { ActivityModule } from '../activity/activity.module';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Project]), CategoryModule, ActivityModule],
+  imports: [SequelizeModule.forFeature([Project]), CategoryModule],
   providers: [ProjectService, ProjectResolver],
   exports: [ProjectService],
 })

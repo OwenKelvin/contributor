@@ -1,4 +1,6 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { ActivityService } from '../activity/activity.service';
+import { ActivityAction, TargetType } from '../activity/activity.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { Category } from './category.model';
 import { CreateCategoryInput } from './dto/create-category.input';
@@ -10,6 +12,7 @@ export class CategoryService {
   constructor(
     @InjectModel(Category)
     private categoryModel: typeof Category,
+    private activityService: ActivityService,
   ) {}
 
   async getAllCategories(): Promise<Category[]> {
@@ -31,12 +34,19 @@ export class CategoryService {
     return category;
   }
 
-  async createCategory(input: CreateCategoryInput): Promise<Category> {
+  async createCategory(input: CreateCategoryInput, userId: string): Promise<Category> {
     try {
       const category = await this.categoryModel.create({
         name: input.name,
         description: input.description,
       } as any);
+      await this.activityService.logActivity({
+        userId,
+        action: ActivityAction.CATEGORY_CREATED,
+        targetType: TargetType.CATEGORY,
+        targetId: category.id,
+        details: JSON.stringify({ name: category.name })
+      });
       return this.getCategoryById(category.id);
     } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') {
@@ -46,11 +56,18 @@ export class CategoryService {
     }
   }
 
-  async updateCategory(id: string, input: UpdateCategoryInput): Promise<Category> {
+  async updateCategory(id: string, input: UpdateCategoryInput, userId: string): Promise<Category> {
     const category = await this.getCategoryById(id);
 
     try {
       await category.update(input);
+      await this.activityService.logActivity({
+        userId,
+        action: ActivityAction.CATEGORY_UPDATED,
+        targetType: TargetType.CATEGORY,
+        targetId: category.id,
+        details: JSON.stringify({ name: category.name })
+      });
       return this.getCategoryById(id);
     } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') {
@@ -60,7 +77,7 @@ export class CategoryService {
     }
   }
 
-  async deleteCategory(id: string): Promise<boolean> {
+  async deleteCategory(id: string, userId: string): Promise<boolean> {
     const category = await this.getCategoryById(id);
 
     // Check if category has projects
@@ -72,6 +89,13 @@ export class CategoryService {
     }
 
     await category.destroy();
+    await this.activityService.logActivity({
+      userId,
+      action: ActivityAction.CATEGORY_DELETED,
+      targetType: TargetType.CATEGORY,
+      targetId: category.id,
+      details: JSON.stringify({ name: category.name })
+    });
     return true;
   }
 }
