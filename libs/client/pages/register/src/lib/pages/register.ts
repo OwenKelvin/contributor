@@ -138,7 +138,6 @@ export class Register implements OnInit {
       if (graphqlError?.length > 0) {
         return mapGraphqlValidationErrors(graphqlError, registrationForm);
       }
-      console.log({ e });
       return [
         {
           kind: 'server',
