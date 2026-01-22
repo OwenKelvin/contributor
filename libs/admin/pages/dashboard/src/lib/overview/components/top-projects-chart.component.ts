@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, inject, signal } from '@angular/core';
+import { Component, input, output, EventEmitter, OnInit, OnChanges, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { DashboardService } from '@nyots/data-source/dashboard';
@@ -54,7 +54,7 @@ import { HlmSpinner } from '@nyots/ui/spinner';
   `,
 })
 export class TopProjectsChartComponent implements OnInit, OnChanges {
-  @Input() dateRange: { startDate?: Date; endDate?: Date } = {};
+  dateRange = input<{ startDate?: Date; endDate?: Date }>({});
 
   private dashboardService = inject(DashboardService);
 
@@ -72,7 +72,7 @@ export class TopProjectsChartComponent implements OnInit, OnChanges {
   loadData() {
     this.loading.set(true);
 
-    this.dashboardService.getTopProjects(10, this.dateRange).subscribe({
+    this.dashboardService.getTopProjects(10, this.dateRange()).subscribe({
       next: (data) => {
         if (!data) {
           this.loading.set(false);

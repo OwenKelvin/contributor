@@ -19,8 +19,8 @@ export class DashboardService {
     private transactionModel: typeof Transaction,
   ) {}
 
-  async getDashboardStats(startDate?: Date, endDate?: Date) {
-    const dateFilter = this.buildDateFilter(startDate, endDate);
+  async getDashboardStats(startDate?: Date, endDate?: Date, userId?: string, projectId?: string) {
+    const commonFilter = this.buildCombinedFilter(startDate, endDate);
 
     const [
       totalUsers,
@@ -33,19 +33,47 @@ export class DashboardService {
       projectsByStatus,
       contributionsByStatus,
     ] = await Promise.all([
-      this.userModel.count({ where: dateFilter }),
-      this.projectModel.count({ where: dateFilter }),
-      this.contributionModel.count({ where: dateFilter }),
-      this.getTotalRevenue(dateFilter),
+      // Total Users: Filter by userId if provided
+      this.userModel.count({ where: { ...commonFilter, ...(userId && { id: userId }) } }),
+
+      // Total Projects: Filter by projectId if provided
+      this.projectModel.count({ where: { ...commonFilter, ...(projectId && { id: projectId }) } }),
+
+      // Total Contributions: Filter by both userId and projectId if provided
       this.contributionModel.count({
-        where: { ...dateFilter, paymentStatus: PaymentStatus.Pending },
+        where: {
+          ...commonFilter,
+          ...(userId && { userId }),
+          ...(projectId && { projectId }),
+        },
       }),
-      this.getPendingContributionsAmount(dateFilter),
+
+      // Total Revenue: Filter by both userId and projectId if provided
+      this.getTotalRevenue({ ...commonFilter, ...(userId && { userId }), ...(projectId && { projectId }) }),
+
+      // Pending Contributions: Filter by both userId and projectId if provided
+      this.contributionModel.count({
+        where: {
+          ...commonFilter,
+          paymentStatus: PaymentStatus.Pending,
+          ...(userId && { userId }),
+          ...(projectId && { projectId }),
+        },
+      }),
+
+      // Pending Contributions Amount: Filter by both userId and projectId if provided
+      this.getPendingContributionsAmount({ ...commonFilter, ...(userId && { userId }), ...(projectId && { projectId }) }),
+
+      // Active Projects: Filter by projectId if provided
       this.projectModel.count({
-        where: { ...dateFilter, status: ProjectStatus.Active },
+        where: { ...commonFilter, status: ProjectStatus.Active, ...(projectId && { id: projectId }) },
       }),
-      this.getProjectsByStatus(dateFilter),
-      this.getContributionsByStatus(dateFilter),
+
+      // Projects By Status: Filter by projectId if provided
+      this.getProjectsByStatus({ ...commonFilter, ...(projectId && { id: projectId }) }),
+
+      // Contributions By Status: Filter by both userId and projectId if provided
+      this.getContributionsByStatus({ ...commonFilter, ...(userId && { userId }), ...(projectId && { projectId }) }),
     ]);
 
     return {
@@ -65,12 +93,14 @@ export class DashboardService {
     startDate: Date,
     endDate: Date,
     groupBy: string = 'day',
+    userId?: string, // Add userId filter here
+    projectId?: string, // Add projectId filter here
   ) {
+    const trendFilter = this.buildCombinedFilter(startDate, endDate, userId, projectId);
+
     const contributions = await this.contributionModel.findAll({
       where: {
-        createdAt: {
-          [Op.between]: [startDate, endDate],
-        },
+        ...trendFilter,
         paymentStatus: PaymentStatus.Paid,
       },
       attributes: ['createdAt', 'amount'],
@@ -91,12 +121,17 @@ export class DashboardService {
     return Object.values(grouped);
   }
 
-  async getTopProjects(limit: number = 10, startDate?: Date, endDate?: Date) {
-    const dateFilter = this.buildDateFilter(startDate, endDate);
+  async getTopProjects(
+    limit: number = 10,
+    startDate?: Date,
+    endDate?: Date,
+    userId?: string, // Add userId filter here
+  ) {
+    const topProjectsFilter = this.buildCombinedFilter(startDate, endDate, userId);
 
     const contributions = await this.contributionModel.findAll({
       where: {
-        ...dateFilter,
+        ...topProjectsFilter,
         paymentStatus: PaymentStatus.Paid,
       },
       include: [
@@ -129,48 +164,48 @@ export class DashboardService {
       .slice(0, limit);
   }
 
-  private async getTotalRevenue(dateFilter: any): Promise<number> {
+  private async getTotalRevenue(filter: any): Promise<number> {
     const result = await this.contributionModel.sum('amount', {
       where: {
-        ...dateFilter,
+        ...filter,
         paymentStatus: PaymentStatus.Paid,
       },
     });
     return result || 0;
   }
 
-  private async getPendingContributionsAmount(dateFilter: any): Promise<number> {
+  private async getPendingContributionsAmount(filter: any): Promise<number> {
     const result = await this.contributionModel.sum('amount', {
       where: {
-        ...dateFilter,
+        ...filter,
         paymentStatus: PaymentStatus.Pending,
       },
     });
     return result || 0;
   }
 
-  private async getProjectsByStatus(dateFilter: any) {
+  private async getProjectsByStatus(filter: any) {
     const statuses = Object.values(ProjectStatus);
     const results = await Promise.all(
       statuses.map(async (status) => ({
         status,
         count: await this.projectModel.count({
-          where: { ...dateFilter, status },
+          where: { ...filter, status },
         }),
       })),
     );
     return results.filter((r) => r.count > 0);
   }
 
-  private async getContributionsByStatus(dateFilter: any) {
+  private async getContributionsByStatus(filter: any) {
     const statuses = Object.values(PaymentStatus);
     const results = await Promise.all(
       statuses.map(async (status) => {
         const count = await this.contributionModel.count({
-          where: { ...dateFilter, paymentStatus: status },
+          where: { ...filter, paymentStatus: status },
         });
         const amount = await this.contributionModel.sum('amount', {
-          where: { ...dateFilter, paymentStatus: status },
+          where: { ...filter, paymentStatus: status },
         });
         return {
           status,
@@ -182,24 +217,23 @@ export class DashboardService {
     return results.filter((r) => r.count > 0);
   }
 
-  private buildDateFilter(startDate?: Date, endDate?: Date) {
-    if (!startDate && !endDate) {
-      return {};
+  private buildCombinedFilter(startDate?: Date, endDate?: Date, userId?: string, projectId?: string) {
+    const filter: any = {};
+
+    if (startDate && endDate) {
+      filter.createdAt = { [Op.between]: [startDate, endDate] };
+    } else if (startDate) {
+      filter.createdAt = { [Op.gte]: startDate };
+    } else if (endDate) {
+      filter.createdAt = { [Op.lte]: endDate };
     }
 
-    const filter: any = {};
-    if (startDate && endDate) {
-      filter.createdAt = {
-        [Op.between]: [startDate, endDate],
-      };
-    } else if (startDate) {
-      filter.createdAt = {
-        [Op.gte]: startDate,
-      };
-    } else if (endDate) {
-      filter.createdAt = {
-        [Op.lte]: endDate,
-      };
+    if (userId) {
+      filter.userId = userId;
+    }
+
+    if (projectId) {
+      filter.projectId = projectId;
     }
     return filter;
   }

@@ -1,4 +1,4 @@
-import { Resolver, Query, Args } from '@nestjs/graphql';
+import { Resolver, Query, Args, ID } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
@@ -21,8 +21,10 @@ export class DashboardResolver {
   async dashboardStats(
     @Args('startDate', { type: () => Date, nullable: true }) startDate?: Date,
     @Args('endDate', { type: () => Date, nullable: true }) endDate?: Date,
+    @Args('userId', { type: () => ID, nullable: true }) userId?: string,
+    @Args('projectId', { type: () => ID, nullable: true }) projectId?: string,
   ) {
-    return this.dashboardService.getDashboardStats(startDate, endDate);
+    return this.dashboardService.getDashboardStats(startDate, endDate, userId, projectId);
   }
 
   @Query(() => [ContributionTrend])
@@ -32,11 +34,15 @@ export class DashboardResolver {
     @Args('endDate', { type: () => Date }) endDate: Date,
     @Args('groupBy', { type: () => String, nullable: true, defaultValue: 'day' })
     groupBy?: string,
+    @Args('userId', { type: () => ID, nullable: true }) userId?: string,
+    @Args('projectId', { type: () => ID, nullable: true }) projectId?: string,
   ) {
     return this.dashboardService.getContributionTrends(
       startDate,
       endDate,
       groupBy,
+      userId,
+      projectId,
     );
   }
 
@@ -47,7 +53,8 @@ export class DashboardResolver {
     limit?: number,
     @Args('startDate', { type: () => Date, nullable: true }) startDate?: Date,
     @Args('endDate', { type: () => Date, nullable: true }) endDate?: Date,
+    @Args('userId', { type: () => ID, nullable: true }) userId?: string,
   ) {
-    return this.dashboardService.getTopProjects(limit, startDate, endDate);
+    return this.dashboardService.getTopProjects(limit, startDate, endDate, userId);
   }
 }
