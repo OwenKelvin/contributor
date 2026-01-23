@@ -1,0 +1,8 @@
+query HealthChecks {
+  healthChecks {
+    name
+    status
+    details
+    responseTime
+  }
+}

@@ -121,6 +121,9 @@
       "@nyots/data-source/activity": [
         "libs/shared/data-source/activity/src/index.ts"
       ],
+      "@nyots/data-source/health-check": [
+        "libs/shared/data-source/health-check/src/index.ts"
+      ],
       "@nyots/data-source/user": ["libs/shared/data-source/user/src/index.ts"],
       "@nyots/data-source/projects": [
         "libs/shared/data-source/projects/src/index.ts"

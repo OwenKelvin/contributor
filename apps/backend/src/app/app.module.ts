@@ -15,6 +15,7 @@ import { PaymentModule } from './modules/payment/payment.module';
 import { ContributionModule } from './modules/contribution/contribution.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { ActivityModule } from './modules/activity/activity.module';
+import { HealthModule } from './modules/health/health.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { ActivityModule } from './modules/activity/activity.module';
     ContributionModule,
     DashboardModule,
     ActivityModule,
+    HealthModule,
   ],
 })
 export class AppModule {}

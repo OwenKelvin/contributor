@@ -1,0 +1,10 @@
+type HealthCheck {
+  name: String!
+  status: String!
+  details: String
+  responseTime: Float!
+}
+
+extend type Query {
+  healthChecks: [HealthCheck!]!
+}

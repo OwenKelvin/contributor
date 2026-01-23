@@ -284,6 +284,13 @@ export type IDateRangeInput = {
   start: Scalars['DateTime']['input'];
 };
 
+export type IHealthCheck = {
+  details?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  responseTime: Scalars['Float']['output'];
+  status: Scalars['String']['output'];
+};
+
 export type ILoginInput = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -575,6 +582,7 @@ export type IQuery = {
   getProjectContributions: IContributionConnection;
   getTransactions: ITransactionConnection;
   getUserById: IUser;
+  healthChecks: Array<IHealthCheck>;
   topProjects: Array<ITopProject>;
 };
 
