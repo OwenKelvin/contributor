@@ -184,7 +184,7 @@ import {
               <span class="text-sm font-medium">Admin Panel</span>
             </div>
           </div>
-          
+
           <nav hlmBreadcrumb>
             <ol hlmBreadcrumbList>
               @for (breadcrumb of breadcrumbs(); track breadcrumb.label) {
@@ -252,7 +252,7 @@ export class Dashboard {
         {
           title: 'Recent Activity',
           icon: 'lucideHistory',
-          route: ['/dashboard/recent-activity'],
+          route: ['/dashboard/activities/recent'],
         },
       ],
     },

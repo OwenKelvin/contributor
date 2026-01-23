@@ -41,6 +41,13 @@ export const dashboardRoutes: Routes = [
         loadChildren: () => import('@nyots/admin-pages/contributions').then(m => m.contributionsRoutes)
       },
       {
+        path: 'activities',
+        data: {
+          breadcrumb: 'Activities'
+        },
+        loadChildren: () => import('@nyots/admin-pages/activities')
+      },
+      {
         path: 'users',
         data: {
           breadcrumb: 'Users'

@@ -102,6 +102,7 @@
         "libs/admin/pages/dashboard/src/index.ts"
       ],
       "@nyots/admin-pages/login": ["libs/admin/pages/login/src/index.ts"],
+      "@nyots/admin-pages/activities": ["libs/admin/pages/activities/src/index.ts"],
       "@nyots/admin-pages/projects": ["libs/admin/pages/projects/src/index.ts"],
       "@nyots/admin-pages/system-health": ["libs/admin/pages/system-health/src/index.ts"],
 
