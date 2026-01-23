@@ -1,0 +1,276 @@
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight">System Activity Log</h1>
+      <p class="text-muted-foreground mt-2">
+        Complete audit trail of all actions across the platform
+      </p>
+    </div>
+    <button hlmBtn variant="outline" (click)="refresh()" [disabled]="isLoading()">
+      <ng-icon hlmIcon name="lucideRefreshCw" size="sm" [class.animate-spin]="isLoading()" />
+      Refresh
+    </button>
+  </div>
+
+  <!-- Filters Card -->
+  <div hlmCard>
+    <div hlmCardHeader>
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 hlmCardTitle class="flex items-center gap-2">
+            <ng-icon hlmIcon name="lucideFilter" size="sm" />
+            Filters
+          </h3>
+          <p hlmCardDescription>Filter activities by user, action type, target, and date range</p>
+        </div>
+        @if (hasActiveFilters()) {
+          <button hlmBtn variant="ghost" size="sm" (click)="clearFilters()">
+            <ng-icon hlmIcon name="lucideX" size="sm" />
+            Clear Filters
+          </button>
+        }
+      </div>
+    </div>
+    <div hlmCardContent>
+      <form [formGroup]="filterForm" class="space-y-4">
+        <!-- First Row: User ID and Action -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label hlmLabel for="userId">User ID</label>
+            <input
+              hlmInput
+              id="userId"
+              type="text"
+              placeholder="Enter user ID to filter..."
+              formControlName="userId"
+            />
+            <p class="text-xs text-muted-foreground mt-1">
+              Leave empty to show all users
+            </p>
+          </div>
+
+          <div>
+            <label hlmLabel for="action">Action Type</label>
+            <select hlmInput id="action" formControlName="action">
+              @for (option of actionOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <!-- Second Row: Target Type and Page Size -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label hlmLabel for="targetType">Target Type</label>
+            <select hlmInput id="targetType" formControlName="targetType">
+              @for (option of targetTypeOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </div>
+
+          <div>
+            <label hlmLabel for="pageSize">Results Per Page</label>
+            <select hlmInput id="pageSize" formControlName="pageSize">
+              <option [value]="10">10</option>
+              <option [value]="20">20</option>
+              <option [value]="50">50</option>
+              <option [value]="100">100</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Third Row: Date Range -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label hlmLabel for="startDate">Start Date</label>
+            <input
+              hlmInput
+              id="startDate"
+              type="datetime-local"
+              formControlName="startDate"
+            />
+          </div>
+
+          <div>
+            <label hlmLabel for="endDate">End Date</label>
+            <input
+              hlmInput
+              id="endDate"
+              type="datetime-local"
+              formControlName="endDate"
+            />
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Results Card -->
+  <div hlmCard>
+    <div hlmCardHeader>
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 hlmCardTitle class="flex items-center gap-2">
+            <ng-icon hlmIcon name="lucideHistory" size="sm" />
+            Activity Timeline
+          </h3>
+          <p hlmCardDescription>
+            @if (totalCount() > 0) {
+              Showing {{ activities().length }} of {{ totalCount() }} total activities
+            } @else {
+              No activities found
+            }
+          </p>
+        </div>
+      </div>
+    </div>
+    <div hlmCardContent>
+      @if (isLoading()) {
+        <!-- Loading State -->
+        <div class="flex items-center justify-center py-12">
+          <div class="text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+            <p class="mt-4 text-sm text-muted-foreground">Loading activities...</p>
+          </div>
+        </div>
+      } @else if (activities().length === 0) {
+        <!-- Empty State -->
+        <div class="text-center py-12">
+          <ng-icon hlmIcon name="lucideHistory" size="xl" class="text-muted-foreground mx-auto mb-4" />
+          <h3 class="text-lg font-semibold mb-2">No activities found</h3>
+          <p class="text-sm text-muted-foreground mb-4">
+            @if (hasActiveFilters()) {
+              Try adjusting your filters to see more results
+            } @else {
+              No system activities have been recorded yet
+            }
+          </p>
+          @if (hasActiveFilters()) {
+            <button hlmBtn variant="outline" (click)="clearFilters()">
+              Clear Filters
+            </button>
+          }
+        </div>
+      } @else {
+        <!-- Activity Timeline -->
+        <div class="space-y-0">
+          @for (activity of activities(); track activity.id; let isLast = $last) {
+            <div class="flex gap-4 p-4 border-b last:border-b-0 hover:bg-muted/50 transition-colors">
+              <!-- Timeline Icon -->
+              <div class="flex flex-col items-center">
+                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <ng-icon 
+                    hlmIcon 
+                    [name]="getActionIcon(activity.action)" 
+                    class="text-primary" 
+                    size="sm" 
+                  />
+                </div>
+                @if (!isLast) {
+                  <div class="w-0.5 flex-1 bg-border mt-2 min-h-[20px]"></div>
+                }
+              </div>
+
+              <!-- Activity Content -->
+              <div class="flex-1 min-w-0 pt-1">
+                <!-- Header Row -->
+                <div class="flex items-start justify-between gap-4 mb-2">
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 mb-1 flex-wrap">
+                      <span class="font-semibold">{{ getUserName(activity) }}</span>
+                      <span 
+                        [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + getActionBadgeClass(activity.action)"
+                      >
+                        {{ getActionLabel(activity.action) }}
+                      </span>
+                      @if (activity.targetType) {
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-muted text-muted-foreground">
+                          {{ activity.targetType }}
+                        </span>
+                      }
+                    </div>
+                    <p class="text-sm text-muted-foreground">{{ activity.user.email }}</p>
+                  </div>
+                  
+                  <!-- Timestamp -->
+                  <div class="text-right flex-shrink-0">
+                    <div 
+                      class="text-sm text-muted-foreground flex items-center gap-1 cursor-help" 
+                      [title]="formatFullTimestamp(activity.createdAt)"
+                    >
+                      <ng-icon hlmIcon name="lucideCalendar" size="sm" />
+                      {{ formatTimestamp(activity.createdAt) }}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Description -->
+                <p class="text-sm mb-2">{{ getActivityDescription(activity) }}</p>
+
+                <!-- Metadata -->
+                <div class="flex items-center gap-4 text-xs text-muted-foreground">
+                  @if (activity.targetId) {
+                    <div class="flex items-center gap-1">
+                      <ng-icon hlmIcon name="lucideFileText" size="xs" />
+                      <span>Target: {{ activity.targetId.substring(0, 8) }}...</span>
+                    </div>
+                  }
+                  <div class="flex items-center gap-1">
+                    <ng-icon hlmIcon name="lucideUser" size="xs" />
+                                          <span>User: {{ activity.userId.substring(0, 8) }}...</span>                  </div>
+                </div>
+
+                <!-- Details Expansion (if available) -->
+                @if (activity.details) {
+                  <details class="mt-2">
+                    <summary class="text-xs text-muted-foreground cursor-pointer hover:text-foreground">
+                      View Details
+                    </summary>
+                    <pre class="mt-2 p-2 bg-muted rounded text-xs overflow-x-auto">{{ activity.details }}</pre>
+                  </details>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex items-center justify-between pt-4 border-t">
+          <div class="text-sm text-muted-foreground">
+            Showing {{ activities().length }} activities
+            @if (totalCount() > activities().length) {
+              of {{ totalCount() }} total
+            }
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <button
+              hlmBtn
+              variant="outline"
+              size="sm"
+              (click)="previousPage()"
+              [disabled]="!hasPreviousPage() || isLoading()"
+            >
+              <ng-icon hlmIcon name="lucideChevronLeft" size="sm" />
+              Previous
+            </button>
+            
+            <button
+              hlmBtn
+              variant="outline"
+              size="sm"
+              (click)="nextPage()"
+              [disabled]="!hasNextPage() || isLoading()"
+            >
+              Next
+              <ng-icon hlmIcon name="lucideChevronRight" size="sm" />
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
