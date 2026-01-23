@@ -165,8 +165,8 @@ import {
               </button>
               <ng-template #menu>
                 <hlm-dropdown-menu class="w-60">
-                  <button hlmDropdownMenuItem>Profile</button>
-                  <button hlmDropdownMenuItem>Settings</button>
+<!--                  <button hlmDropdownMenuItem>Profile</button>-->
+<!--                  <button hlmDropdownMenuItem>Settings</button>-->
                   <button hlmDropdownMenuItem (click)="signOut()">Sign out</button>
                 </hlm-dropdown-menu>
               </ng-template>
@@ -354,134 +354,6 @@ export class Dashboard {
           title: 'Transaction Logs',
           icon: 'lucideFileText',
           route: ['/dashboard/contributions/transactions'],
-        },
-      ],
-    },
-    {
-      title: 'Financial Management',
-      icon: 'lucideDollarSign',
-      defaultOpen: false,
-      items: [
-        {
-          title: 'Revenue Overview',
-          icon: 'lucideBarChart3',
-          route: ['/dashboard/financial/revenue'],
-        },
-        {
-          title: 'Withdrawal Requests',
-          icon: 'lucideWallet',
-          route: ['/dashboard/financial/withdrawals'],
-        },
-        {
-          title: 'Tax Reports',
-          icon: 'lucideFileText',
-          route: ['/dashboard/financial/tax'],
-        },
-        {
-          title: 'Financial Statements',
-          icon: 'lucideFileText',
-          route: ['/dashboard/financial/statements'],
-        },
-        {
-          title: 'Payment Gateways',
-          icon: 'lucideSettings',
-          route: ['/dashboard/financial/gateways'],
-        },
-      ],
-    },
-    {
-      title: 'Analytics & Reports',
-      icon: 'lucideTrendingUp',
-      defaultOpen: false,
-      items: [
-        {
-          title: 'Project Analytics',
-          icon: 'lucideBarChart3',
-          route: ['/dashboard/analytics/projects'],
-        },
-        {
-          title: 'User Engagement',
-          icon: 'lucideUsers',
-          route: ['/dashboard/analytics/engagement'],
-        },
-        {
-          title: 'Financial Reports',
-          icon: 'lucideDollarSign',
-          route: ['/dashboard/analytics/financial'],
-        },
-        {
-          title: 'Export Data',
-          icon: 'lucideFileText',
-          route: ['/dashboard/analytics/export'],
-        },
-        {
-          title: 'Custom Reports',
-          icon: 'lucidePlus',
-          route: ['/dashboard/analytics/custom'],
-        },
-      ],
-    },
-    {
-      title: 'System Settings',
-      icon: 'lucideSettings',
-      defaultOpen: false,
-      items: [
-        {
-          title: 'General Settings',
-          icon: 'lucideSettings',
-          route: ['/dashboard/settings/general'],
-        },
-        {
-          title: 'Project Settings',
-          icon: 'lucideFolderOpen',
-          route: ['/dashboard/settings/projects'],
-        },
-        {
-          title: 'Payment Settings',
-          icon: 'lucideWallet',
-          route: ['/dashboard/settings/payment'],
-        },
-        {
-          title: 'Email Templates',
-          icon: 'lucideFileText',
-          route: ['/dashboard/settings/email'],
-        },
-        {
-          title: 'Security Settings',
-          icon: 'lucideShield',
-          route: ['/dashboard/settings/security'],
-        },
-        {
-          title: 'Backup & Restore',
-          icon: 'lucideArchive',
-          route: ['/dashboard/settings/backup'],
-        },
-      ],
-    },
-    {
-      title: 'Audit Log',
-      icon: 'lucideHistory',
-      defaultOpen: false,
-      items: [
-        {
-          title: 'System Logs',
-          icon: 'lucideHistory',
-          route: ['/dashboard/audit/system'],
-        },
-        {
-          title: 'User Actions',
-          icon: 'lucideUsers',
-          route: ['/dashboard/audit/user-actions'],
-        },
-        {
-          title: 'Security Events',
-          icon: 'lucideShield',
-          route: ['/dashboard/audit/security'],
-        },
-        {
-          title: 'Export Logs',
-          icon: 'lucideFileText',
-          route: ['/dashboard/audit/export'],
         },
       ],
     },
