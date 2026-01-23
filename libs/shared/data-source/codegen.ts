@@ -126,6 +126,20 @@
           skipTypename: true,
         },
       },
+      [`libs/shared/data-source/health-check/src/lib/graphql/health-check.generated.ts`]: {
+        documents: `libs/shared/data-source/health-check/src/lib/graphql/health-check.gql`,
+        plugins: ['typescript-operations', 'typescript-apollo-angular'],
+        preset: 'near-operation-file',
+        presetConfig: {
+          extension: '.generated.ts',
+          baseTypesPath: '~@nyots/data-source',
+        },
+        config: {
+          addExplicitOverride: true,
+          typesPrefix: 'I',
+          skipTypename: true,
+        },
+      },
     },
     overwrite: true,
   };
