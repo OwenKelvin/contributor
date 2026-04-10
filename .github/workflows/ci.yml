@@ -59,9 +59,9 @@ jobs:
       - name: Deploy to Contabo
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ vars.CONTABO_SERVER }}
-          username: ${{ vars.CONTABO_USERNAME }}
-          password: ${{ vars.CONTABO_PASSWORD }}
+          host: ${{ secrets.CONTABO_SERVER }}
+          username: ${{ secrets.CONTABO_USERNAME }}
+          password: ${{ secrets.CONTABO_PASSWORD }}
           script: |
             # Backend
             docker pull ghcr.io/${{ env.REPO_LOWER }}/apps-backend:latest
