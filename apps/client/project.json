@@ -82,6 +82,20 @@
         "staticFilePath": "dist/apps/client/browser",
         "spa": true
       }
+    },
+    "docker:build": {
+      "dependsOn": ["build", "prune"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build . --tag apps-client -f apps/client/Dockerfile"
+      }
+    },
+    "docker:run": {
+      "dependsOn": ["docker:build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker rm -f apps-client || true && docker run -d -p 51000:3000 -e NODE_ENV --name apps-client  apps-client"
+      }
     }
   }
 }
