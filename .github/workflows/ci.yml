@@ -61,7 +61,7 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm exec nx run-many -t docker:build --projects=backend --no-cloud
+      - run: pnpm exec nx docker:build backend --no-cloud
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -96,7 +96,7 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm exec nx run-many -t docker:build --projects=admin --no-cloud
+      - run: pnpm exec nx docker:build admin --no-cloud
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -131,7 +131,7 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm exec nx run-many -t docker:build --projects=client --no-cloud
+      - run: pnpm exec nx docker:build client --no-cloud
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -147,7 +147,7 @@ jobs:
 
   deploy-backend:
     runs-on: ubuntu-latest
-    needs: [setup, build-backend]
+    needs: [build-backend]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - name: Deploy backend to Contabo
@@ -164,7 +164,7 @@ jobs:
 
   deploy-admin:
     runs-on: ubuntu-latest
-    needs: [setup, build-admin]
+    needs: [build-admin]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - name: Deploy admin to Contabo
@@ -181,7 +181,7 @@ jobs:
 
   deploy-client:
     runs-on: ubuntu-latest
-    needs: [setup, build-client]
+    needs: [build-client]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
       - name: Deploy client to Contabo
