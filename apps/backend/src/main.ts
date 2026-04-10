@@ -17,14 +17,14 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
   );
-  
+
   // Register multipart plugin for file uploads
   await app.register(multipart, {
     limits: {
       fileSize: 5 * 1024 * 1024, // 5MB
     },
   });
-  
+
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
   app.enableCors();

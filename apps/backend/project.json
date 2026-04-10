@@ -84,7 +84,7 @@
     "db:migrate": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "sequelize-cli db:migrate",
+        "command": "sequelize-cli db:migrate --debug",
         "cwd": "apps/backend"
       }
     },
@@ -96,10 +96,10 @@
       }
     },
     "docker:run": {
-      "dependsOn": ["^docker:build"],
+      "dependsOn": ["docker:build"],
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker run -d -p 3000:3000 --name apps-backend apps-backend"
+        "command": "docker rm -f apps-backend || true && docker run -d -p 3000:3000 -e NODE_ENV -e PORT -e DATABASE_HOST -e DATABASE_PORT -e DATABASE_USERNAME -e DATABASE_PASSWORD -e DATABASE_NAME -e DATABASE_SYNCHRONIZE -e REDIS_HOST -e REDIS_PORT -e JWT_SECRET -e JWT_EXPIRES_IN -e MINIO_ENDPOINT -e MINIO_PORT -e MINIO_ACCESS_KEY -e MINIO_SECRET_KEY -e MINIO_USE_SSL -e MINIO_BUCKET_NAME -e MPESA_CONSUMER_KEY -e MPESA_CONSUMER_SECRET -e MPESA_BUSINESS_SHORT_CODE -e MPESA_PASSKEY -e MPESA_CALLBACK_URL -e MPESA_ENVIRONMENT -e MPESA_API_URL --name apps-backend apps-backend"
       }
     }
   }
