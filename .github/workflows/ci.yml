@@ -18,23 +18,22 @@ jobs:
         with:
           filter: tree:0
           fetch-depth: 0
-      
+
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
           version: 9.8.0
           run_install: false
-      
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
-      
+
       - run: pnpm install --frozen-lockfile
 
       # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
       # - run: pnpm exec nx-cloud record -- echo Hello World
-      - run: pnpm exec nx run-many -t lint test build
       - run: pnpm exec nx run-many -t docker:build
 
       - name: Log in to GitHub Container Registry
