@@ -87,6 +87,20 @@
         "command": "sequelize-cli db:migrate",
         "cwd": "apps/backend"
       }
+    },
+    "docker:build": {
+      "dependsOn": ["build", "prune"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build . --tag apps-backend -f apps/backend/Dockerfile"
+      }
+    },
+    "docker:run": {
+      "dependsOn": ["^docker:build"],
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker run -d -p 3000:3000 --name apps-backend apps-backend"
+      }
     }
   }
 }
