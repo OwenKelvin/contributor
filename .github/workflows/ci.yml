@@ -42,6 +42,46 @@ jobs:
       # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
       # - run: pnpm exec nx-cloud record -- echo Hello World
       - run: pnpm exec nx run-many -t lint test build
-      # Nx Cloud recommends fixes for failures to help you get CI green faster. Learn more: https://nx.dev/ci/features/self-healing-ci
-      - run: pnpm exec nx fix-ci
-        if: always()
+      - run: pnpm exec nx run-many -t docker:build
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push to GitHub Container Registry
+        run: |
+          docker tag apps-backend ghcr.io/${{ github.repository }}/apps-backend:latest
+          docker push ghcr.io/${{ github.repository }}/apps-backend:latest
+          docker tag apps-admin ghcr.io/${{ github.repository }}/apps-admin:latest
+          docker push ghcr.io/${{ github.repository }}/apps-admin:latest
+          docker tag apps-client ghcr.io/${{ github.repository }}/apps-client:latest
+          docker push ghcr.io/${{ github.repository }}/apps-client:latest
+
+      - name: Deploy to Contabo
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ vars.CONTABO_SERVER }}
+          username: ${{ vars.CONTABO_USERNAME }}
+          password: ${{ vars.CONTABO_PASSWORD }}
+          script: |
+            # Backend
+            docker pull ghcr.io/${{ github.repository }}/apps-backend:latest
+            docker stop apps-backend || true
+            docker rm apps-backend || true
+            docker run -d --name apps-backend -p 3000:3000 ghcr.io/${{ github.repository }}/apps-backend:latest
+
+            # Admin
+            docker pull ghcr.io/${{ github.repository }}/apps-admin:latest
+            docker stop apps-admin || true
+            docker rm apps-admin || true
+            docker run -d --name apps-admin -p 51001:3000 ghcr.io/${{ github.repository }}/apps-admin:latest
+
+            # Client
+            docker pull ghcr.io/${{ github.repository }}/apps-client:latest
+            docker stop apps-client || true
+            docker rm apps-client || true
+            docker run -d --name apps-client -p 51000:3000 ghcr.io/${{ github.repository }}/apps-client:latest
+
