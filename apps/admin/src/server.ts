@@ -15,18 +15,6 @@ const app = express();
 const angularApp = new AngularNodeAppEngine();
 
 /**
- * Example Express Rest API endpoints can be defined here.
- * Uncomment and define endpoints as necessary.
- *
- * Example:
- * ```ts
- * app.get('/api/**', (req, res) => {
- *   // Handle API request
- * });
- * ```
- */
-
-/**
  * Serve static files from /browser
  */
 app.use(
@@ -37,16 +25,44 @@ app.use(
   }),
 );
 
+// Add request logging middleware BEFORE the SSR handler
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
 /**
  * Handle all other requests by rendering the Angular application.
  */
-app.use('/**', (req, res, next) => {
-  angularApp
-    .handle(req)
-    .then((response) =>
-      response ? writeResponseToNodeResponse(response, res) : next(),
-    )
-    .catch(next);
+app.use('/**', async (req, res, next) => {
+  console.log(`[SSR] Rendering: ${req.url}`);
+
+  try {
+    const response = await angularApp.handle(req);
+
+    if (response) {
+      console.log(`[SSR] Success for: ${req.url} - Status: ${response.status}`);
+      await writeResponseToNodeResponse(response, res);
+    } else {
+      console.log(`[SSR] No response for: ${req.url}, calling next()`);
+      next();
+    }
+  } catch (error) {
+    console.error(`[SSR] Error rendering ${req.url}:`, error);
+    console.error('Error stack:', error instanceof Error ? error.stack : error);
+
+    // Send a clear error response for debugging
+    res.status(500).send(`
+      <html>
+        <body>
+          <h1>SSR Error</h1>
+          <pre>${error instanceof Error ? error.message : String(error)}</pre>
+          <h2>Stack Trace:</h2>
+          <pre>${error instanceof Error ? error.stack : 'No stack trace'}</pre>
+        </body>
+      </html>
+    `);
+  }
 });
 
 /**
@@ -54,13 +70,10 @@ app.use('/**', (req, res, next) => {
  * The server listens on the port defined by the `PORT` environment variable, or defaults to 4000.
  */
 if (isMainModule(import.meta.url) || process.env['pm_id']) {
-  const port = process.env['PORT'] || 4000;
-  app.listen(port, () => {
-    console.log(`Node Express server listening on http://localhost:${port}`);
+  const port = Number(process.env['PORT']) || 4000;
+  app.listen(port, '0.0.0.0', () => {
+    console.log(`Node Express server listening on http://0.0.0.0:${port}`);
   });
 }
 
-/**
- * Request handler used by the Angular CLI (for dev-server and during build) or Firebase Cloud Functions.
- */
 export const reqHandler = createNodeRequestHandler(app);
