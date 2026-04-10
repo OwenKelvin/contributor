@@ -12,8 +12,10 @@ permissions:
   packages: write
 
 jobs:
-  main:
+  setup:
     runs-on: ubuntu-latest
+    outputs:
+      repo_lower: ${{ steps.repo_name.outputs.repo_lower }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,11 +36,32 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Set lowercase repository name
-        run: echo "REPO_LOWER=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+        id: repo_name
+        run: |
+          echo "repo_lower=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
-      # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
-      # - run: pnpm exec nx-cloud record -- echo Hello World
-      - run: pnpm exec nx run-many -t docker:build --no-cloud
+  build-backend:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          filter: tree:0
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.8.0
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm exec nx run-many -t docker:build --projects=backend --no-cloud
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -47,37 +70,128 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push to GitHub Container Registry
+      - name: Push backend image
         run: |
-          docker tag apps-backend ghcr.io/${{ env.REPO_LOWER }}/apps-backend:latest
-          docker push ghcr.io/${{ env.REPO_LOWER }}/apps-backend:latest
-          docker tag apps-admin ghcr.io/${{ env.REPO_LOWER }}/apps-admin:latest
-          docker push ghcr.io/${{ env.REPO_LOWER }}/apps-admin:latest
-          docker tag apps-client ghcr.io/${{ env.REPO_LOWER }}/apps-client:latest
-          docker push ghcr.io/${{ env.REPO_LOWER }}/apps-client:latest
+          docker tag apps-backend ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-backend:latest
+          docker push ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-backend:latest
 
-      - name: Deploy to Contabo
+  build-admin:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          filter: tree:0
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.8.0
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm exec nx run-many -t docker:build --projects=admin --no-cloud
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push admin image
+        run: |
+          docker tag apps-admin ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-admin:latest
+          docker push ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-admin:latest
+
+  build-client:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          filter: tree:0
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.8.0
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm exec nx run-many -t docker:build --projects=client --no-cloud
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push client image
+        run: |
+          docker tag apps-client ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-client:latest
+          docker push ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-client:latest
+
+  deploy-backend:
+    runs-on: ubuntu-latest
+    needs: [setup, build-backend]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Deploy backend to Contabo
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.CONTABO_SERVER }}
           username: ${{ secrets.CONTABO_USERNAME }}
           password: ${{ secrets.CONTABO_PASSWORD }}
           script: |
-            # Backend
-            docker pull ghcr.io/${{ env.REPO_LOWER }}/apps-backend:latest
+            docker pull ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-backend:latest
             docker stop apps-backend || true
             docker rm apps-backend || true
-            docker run -d --name apps-backend -p 3000:3000 ghcr.io/${{ env.REPO_LOWER }}/apps-backend:latest
+            docker run -d --name apps-backend -p 3000:3000 ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-backend:latest
 
-            # Admin
-            docker pull ghcr.io/${{ env.REPO_LOWER }}/apps-admin:latest
+  deploy-admin:
+    runs-on: ubuntu-latest
+    needs: [setup, build-admin]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Deploy admin to Contabo
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.CONTABO_SERVER }}
+          username: ${{ secrets.CONTABO_USERNAME }}
+          password: ${{ secrets.CONTABO_PASSWORD }}
+          script: |
+            docker pull ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-admin:latest
             docker stop apps-admin || true
             docker rm apps-admin || true
-            docker run -d --name apps-admin -p 51001:3000 ghcr.io/${{ env.REPO_LOWER }}/apps-admin:latest
+            docker run -d --name apps-admin -p 51001:3000 ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-admin:latest
 
-            # Client
-            docker pull ghcr.io/${{ env.REPO_LOWER }}/apps-client:latest
+  deploy-client:
+    runs-on: ubuntu-latest
+    needs: [setup, build-client]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Deploy client to Contabo
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.CONTABO_SERVER }}
+          username: ${{ secrets.CONTABO_USERNAME }}
+          password: ${{ secrets.CONTABO_PASSWORD }}
+          script: |
+            docker pull ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-client:latest
             docker stop apps-client || true
             docker rm apps-client || true
-            docker run -d --name apps-client -p 51000:3000 ghcr.io/${{ env.REPO_LOWER }}/apps-client:latest
-
+            docker run -d --name apps-client -p 51000:3000 ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-client:latest
