@@ -34,7 +34,7 @@ jobs:
 
       # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
       # - run: pnpm exec nx-cloud record -- echo Hello World
-      - run: pnpm exec nx run-many -t docker:build
+      - run: pnpm exec nx run-many -t docker:build --no-cloud
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
