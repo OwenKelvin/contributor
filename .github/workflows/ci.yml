@@ -5,6 +5,17 @@ on:
     branches:
       - main
   pull_request:
+  workflow_dispatch:
+    inputs:
+      deploy_app:
+        description: 'App to deploy'
+        required: true
+        type: choice
+        options:
+          - backend
+          - admin
+          - client
+          - all
 
 permissions:
   actions: read
@@ -19,10 +30,11 @@ jobs:
   # ─── Detect which apps changed ────────────────────────────────────────────────
   affected:
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch'
     outputs:
-      backend: ${{ steps.filter.outputs.backend }}
-      admin:   ${{ steps.filter.outputs.admin }}
-      client:  ${{ steps.filter.outputs.client }}
+      backend:    ${{ steps.filter.outputs.backend }}
+      admin:      ${{ steps.filter.outputs.admin }}
+      client:     ${{ steps.filter.outputs.client }}
       repo_lower: ${{ steps.repo_name.outputs.repo_lower }}
     steps:
       - uses: actions/checkout@v4
@@ -41,7 +53,6 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # Sets NX_BASE and NX_HEAD SHAs so `nx affected` compares the right commits
       - uses: nrwl/nx-set-shas@v4
         with:
           main-branch-name: main
@@ -51,16 +62,29 @@ jobs:
         run: |
           AFFECTED=$(pnpm exec nx show projects --affected --base=$NX_BASE --head=$NX_HEAD)
           echo "Affected projects: $AFFECTED"
-          echo "backend=$( echo "$AFFECTED" | grep -w 'backend' | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
-          echo "admin=$(   echo "$AFFECTED" | grep -w 'admin'   | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
-          echo "client=$(  echo "$AFFECTED" | grep -w 'client'  | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
+          echo "backend=$(echo "$AFFECTED" | grep -w 'backend' | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
+          echo "admin=$(  echo "$AFFECTED" | grep -w 'admin'   | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
+          echo "client=$( echo "$AFFECTED" | grep -w 'client'  | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
 
       - name: Set lowercase repository name
         id: repo_name
         run: |
           echo "repo_lower=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
-  # ─── Build jobs (only run if the app is affected) ─────────────────────────────
+  # ─── Resolve repo name for manual deploys ─────────────────────────────────────
+  # Needed because the `affected` job is skipped on workflow_dispatch
+  repo-meta:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    outputs:
+      repo_lower: ${{ steps.repo_name.outputs.repo_lower }}
+    steps:
+      - name: Set lowercase repository name
+        id: repo_name
+        run: |
+          echo "repo_lower=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
+  # ─── CI build jobs (affected only) ────────────────────────────────────────────
   build-backend:
     runs-on: ubuntu-latest
     needs: affected
@@ -82,7 +106,6 @@ jobs:
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
-
       - run: pnpm exec nx docker:build backend --no-cloud
 
       - uses: docker/login-action@v3
@@ -120,7 +143,6 @@ jobs:
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
-
       - run: pnpm exec nx docker:build admin --no-cloud
 
       - uses: docker/login-action@v3
@@ -158,7 +180,6 @@ jobs:
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
-
       - run: pnpm exec nx docker:build client --no-cloud
 
       - uses: docker/login-action@v3
@@ -174,3 +195,76 @@ jobs:
           docker tag apps-client $IMAGE:latest
           docker push $IMAGE:${{ github.sha }}
           docker push $IMAGE:latest
+
+  # ─── Manual deploy jobs (workflow_dispatch only) ───────────────────────────────
+  deploy-backend:
+    runs-on: ubuntu-latest
+    needs: repo-meta
+    if: |
+      github.event_name == 'workflow_dispatch' &&
+      (github.event.inputs.deploy_app == 'backend' || github.event.inputs.deploy_app == 'all')
+    timeout-minutes: 10
+    environment: production
+    steps:
+      - name: Deploy backend to Contabo
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host:     ${{ secrets.CONTABO_SERVER }}
+          username: ${{ secrets.CONTABO_USERNAME }}
+          password: ${{ secrets.CONTABO_PASSWORD }}
+          script: |
+            IMAGE=ghcr.io/${{ needs.repo-meta.outputs.repo_lower }}/apps-backend
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            docker pull $IMAGE:latest
+            docker stop apps-backend || true
+            docker rm   apps-backend || true
+            docker run -d --name apps-backend --restart unless-stopped -p 3000:3000 $IMAGE:latest
+            docker image prune -f
+
+  deploy-admin:
+    runs-on: ubuntu-latest
+    needs: repo-meta
+    if: |
+      github.event_name == 'workflow_dispatch' &&
+      (github.event.inputs.deploy_app == 'admin' || github.event.inputs.deploy_app == 'all')
+    timeout-minutes: 10
+    environment: production
+    steps:
+      - name: Deploy admin to Contabo
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host:     ${{ secrets.CONTABO_SERVER }}
+          username: ${{ secrets.CONTABO_USERNAME }}
+          password: ${{ secrets.CONTABO_PASSWORD }}
+          script: |
+            IMAGE=ghcr.io/${{ needs.repo-meta.outputs.repo_lower }}/apps-admin
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            docker pull $IMAGE:latest
+            docker stop apps-admin || true
+            docker rm   apps-admin || true
+            docker run -d --name apps-admin --restart unless-stopped -p 51001:3000 $IMAGE:latest
+            docker image prune -f
+
+  deploy-client:
+    runs-on: ubuntu-latest
+    needs: repo-meta
+    if: |
+      github.event_name == 'workflow_dispatch' &&
+      (github.event.inputs.deploy_app == 'client' || github.event.inputs.deploy_app == 'all')
+    timeout-minutes: 10
+    environment: production
+    steps:
+      - name: Deploy client to Contabo
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host:     ${{ secrets.CONTABO_SERVER }}
+          username: ${{ secrets.CONTABO_USERNAME }}
+          password: ${{ secrets.CONTABO_PASSWORD }}
+          script: |
+            IMAGE=ghcr.io/${{ needs.repo-meta.outputs.repo_lower }}/apps-client
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            docker pull $IMAGE:latest
+            docker stop apps-client || true
+            docker rm   apps-client || true
+            docker run -d --name apps-client --restart unless-stopped -p 51000:3000 $IMAGE:latest
+            docker image prune -f
