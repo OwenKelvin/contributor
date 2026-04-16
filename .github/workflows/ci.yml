@@ -11,187 +11,166 @@ permissions:
   contents: read
   packages: write
 
+env:
+  PNPM_VERSION: '9.8.0'
+  NODE_VERSION: '20'
+
 jobs:
-  setup:
+  # ─── Detect which apps changed ────────────────────────────────────────────────
+  affected:
     runs-on: ubuntu-latest
     outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      admin:   ${{ steps.filter.outputs.admin }}
+      client:  ${{ steps.filter.outputs.client }}
       repo_lower: ${{ steps.repo_name.outputs.repo_lower }}
     steps:
       - uses: actions/checkout@v4
         with:
-          filter: tree:0
           fetch-depth: 0
 
       - uses: pnpm/action-setup@v4
-        name: Install pnpm
         with:
-          version: 9.8.0
+          version: ${{ env.PNPM_VERSION }}
           run_install: false
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
+
+      # Sets NX_BASE and NX_HEAD SHAs so `nx affected` compares the right commits
+      - uses: nrwl/nx-set-shas@v4
+        with:
+          main-branch-name: main
+
+      - name: Detect affected projects
+        id: filter
+        run: |
+          AFFECTED=$(pnpm exec nx show projects --affected --base=$NX_BASE --head=$NX_HEAD)
+          echo "Affected projects: $AFFECTED"
+          echo "backend=$( echo "$AFFECTED" | grep -w 'backend' | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
+          echo "admin=$(   echo "$AFFECTED" | grep -w 'admin'   | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
+          echo "client=$(  echo "$AFFECTED" | grep -w 'client'  | wc -l | tr -d ' ')" >> $GITHUB_OUTPUT
 
       - name: Set lowercase repository name
         id: repo_name
         run: |
           echo "repo_lower=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
+  # ─── Build jobs (only run if the app is affected) ─────────────────────────────
   build-backend:
     runs-on: ubuntu-latest
-    needs: setup
+    needs: affected
+    if: needs.affected.outputs.backend == '1'
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
-          filter: tree:0
           fetch-depth: 0
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 9.8.0
+          version: ${{ env.PNPM_VERSION }}
           run_install: false
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm exec nx docker:build backend --no-cloud
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
+      - uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push backend image
+      - name: Tag and push
         run: |
-          docker tag apps-backend ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-backend:latest
-          docker push ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-backend:latest
+          IMAGE=ghcr.io/${{ needs.affected.outputs.repo_lower }}/apps-backend
+          docker tag apps-backend $IMAGE:${{ github.sha }}
+          docker tag apps-backend $IMAGE:latest
+          docker push $IMAGE:${{ github.sha }}
+          docker push $IMAGE:latest
 
   build-admin:
     runs-on: ubuntu-latest
-    needs: setup
+    needs: affected
+    if: needs.affected.outputs.admin == '1'
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
-          filter: tree:0
           fetch-depth: 0
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 9.8.0
+          version: ${{ env.PNPM_VERSION }}
           run_install: false
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm exec nx docker:build admin --no-cloud
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
+      - uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push admin image
+      - name: Tag and push
         run: |
-          docker tag apps-admin ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-admin:latest
-          docker push ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-admin:latest
+          IMAGE=ghcr.io/${{ needs.affected.outputs.repo_lower }}/apps-admin
+          docker tag apps-admin $IMAGE:${{ github.sha }}
+          docker tag apps-admin $IMAGE:latest
+          docker push $IMAGE:${{ github.sha }}
+          docker push $IMAGE:latest
 
   build-client:
     runs-on: ubuntu-latest
-    needs: setup
+    needs: affected
+    if: needs.affected.outputs.client == '1'
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
-          filter: tree:0
           fetch-depth: 0
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 9.8.0
+          version: ${{ env.PNPM_VERSION }}
           run_install: false
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm exec nx docker:build client --no-cloud
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
+      - uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push client image
+      - name: Tag and push
         run: |
-          docker tag apps-client ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-client:latest
-          docker push ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-client:latest
-
-  deploy-backend:
-    runs-on: ubuntu-latest
-    needs: [build-backend]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    steps:
-      - name: Deploy backend to Contabo
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.CONTABO_SERVER }}
-          username: ${{ secrets.CONTABO_USERNAME }}
-          password: ${{ secrets.CONTABO_PASSWORD }}
-          script: |
-            docker pull ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-backend:latest
-            docker stop apps-backend || true
-            docker rm apps-backend || true
-            docker run -d --name apps-backend -p 3000:3000 ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-backend:latest
-
-  deploy-admin:
-    runs-on: ubuntu-latest
-    needs: [build-admin]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    steps:
-      - name: Deploy admin to Contabo
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.CONTABO_SERVER }}
-          username: ${{ secrets.CONTABO_USERNAME }}
-          password: ${{ secrets.CONTABO_PASSWORD }}
-          script: |
-            docker pull ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-admin:latest
-            docker stop apps-admin || true
-            docker rm apps-admin || true
-            docker run -d --name apps-admin -p 51001:3000 ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-admin:latest
-
-  deploy-client:
-    runs-on: ubuntu-latest
-    needs: [build-client]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    steps:
-      - name: Deploy client to Contabo
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.CONTABO_SERVER }}
-          username: ${{ secrets.CONTABO_USERNAME }}
-          password: ${{ secrets.CONTABO_PASSWORD }}
-          script: |
-            docker pull ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-client:latest
-            docker stop apps-client || true
-            docker rm apps-client || true
-            docker run -d --name apps-client -p 51000:3000 ghcr.io/${{ needs.setup.outputs.repo_lower }}/apps-client:latest
+          IMAGE=ghcr.io/${{ needs.affected.outputs.repo_lower }}/apps-client
+          docker tag apps-client $IMAGE:${{ github.sha }}
+          docker tag apps-client $IMAGE:latest
+          docker push $IMAGE:${{ github.sha }}
+          docker push $IMAGE:latest
