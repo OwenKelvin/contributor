@@ -1,8 +1,9 @@
+import { isPlatformBrowser } from '@angular/common';
+import { PLATFORM_ID, inject } from '@angular/core';
 import { HttpLink } from 'apollo-angular/http';
-import { ApolloLink, InMemoryCache, split } from '@apollo/client/core';
+import { ApolloLink, InMemoryCache, split, from } from '@apollo/client/core';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { OperationDefinitionNode } from 'graphql/language';
-import { inject } from '@angular/core';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
 
@@ -14,38 +15,41 @@ import { errorLink } from './error-link.context';
 export const apolloConfig = () => {
   const httpLink = inject(HttpLink);
   const backendUrl = inject(BACKEND_URL);
+  const platformId = inject(PLATFORM_ID);
 
   const http = httpLink.create({
     uri: `${backendUrl ?? ''}/graphql`,
   });
 
-  const wsLink = new GraphQLWsLink(
-    createClient({
-      url: `${backendUrl
-        ?.replace('http', 'ws')}/graphql`,
-      retryAttempts: Infinity,
-    })
-  );
+  const isBrowser = isPlatformBrowser(platformId);
 
-  const splitLink = split(
-    ({ query }) => {
-      const { kind, operation } =
-        getMainDefinition(query) as OperationDefinitionNode;
+  const wsLink = isBrowser
+    ? new GraphQLWsLink(
+        createClient({
+          url: `${backendUrl?.replace('http', 'ws')}/graphql`,
+        }),
+      )
+    : null;
 
-      return (
-        kind === 'OperationDefinition' &&
-        operation === 'subscription'
-      );
-    },
-    wsLink,
-    http
-  );
+  const splitLink =
+    wsLink &&
+    split(
+      ({ query }) => {
+        const { kind, operation } = getMainDefinition(
+          query,
+        ) as OperationDefinitionNode;
 
-  const link = ApolloLink.from([
+        return kind === 'OperationDefinition' && operation === 'subscription';
+      },
+      wsLink,
+      http,
+    );
+
+  const link = from([
     errorLink(),
     contextSuccessAlert(),
     contextAuthToken(),
-    splitLink,
+    splitLink ?? http, // fallback for SSR
   ]);
 
   return {
