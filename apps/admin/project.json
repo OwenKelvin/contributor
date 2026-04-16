@@ -12,6 +12,7 @@
       "options": {
         "outputPath": "dist/apps/admin",
         "browser": "apps/admin/src/main.ts",
+        "index": "apps/admin/src/index.html",
         "tsConfig": "apps/admin/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
@@ -83,14 +84,8 @@
         "spa": true
       }
     },
-    "prerender": {
-      "executor": "@angular/build:prerender",
-      "options": {
-        "routes": ["/"]
-      }
-    },
     "docker:build": {
-      "dependsOn": ["build", "prerender"],
+      "dependsOn": ["build", "prune"],
       "executor": "nx:run-commands",
       "options": {
         "command": "docker build . --tag apps-admin -f apps/admin/Dockerfile"
