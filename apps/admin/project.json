@@ -83,8 +83,14 @@
         "spa": true
       }
     },
+    "prerender": {
+      "executor": "@angular/build:prerender",
+      "options": {
+        "routes": ["/"]
+      }
+    },
     "docker:build": {
-      "dependsOn": ["build", "prune"],
+      "dependsOn": ["build", "prerender"],
       "executor": "nx:run-commands",
       "options": {
         "command": "docker build . --tag apps-admin -f apps/admin/Dockerfile"
