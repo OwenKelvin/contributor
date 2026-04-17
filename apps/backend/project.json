@@ -10,7 +10,24 @@
       "options": {
         "command": "webpack-cli build",
         "args": ["--node-env=production"],
-        "cwd": "apps/backend"
+        "cwd": "apps/backend",
+        "assets": [
+          {
+            "glob": "**/*.json",
+            "input": "apps/backend/src/i18n/",
+            "output": "i18n"
+          },
+          {
+            "glob": "**/*.graphql",
+            "input": "libs/backend/graphql/src/lib/schemas/",
+            "output": "schemas"
+          },
+          {
+            "glob": "**/*.hbs",
+            "input": "libs/backend/services/email/src/lib/templates/",
+            "output": "templates"
+          }
+        ]
       },
       "configurations": {
         "development": {
