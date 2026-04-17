@@ -14,7 +14,7 @@
         "assets": [
           {
             "glob": "**/*.graphql",
-            "input": "apps/backend/src/app/modules/graphql/schemas/",
+            "input": "apps/backend/src/app/modules/",
             "output": "schemas"
           },
           {
