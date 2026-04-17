@@ -13,18 +13,13 @@
         "cwd": "apps/backend",
         "assets": [
           {
-            "glob": "**/*.json",
-            "input": "apps/backend/src/i18n/",
-            "output": "i18n"
-          },
-          {
             "glob": "**/*.graphql",
-            "input": "libs/backend/graphql/src/lib/schemas/",
+            "input": "apps/backend/src/app/modules/graphql/schemas/",
             "output": "schemas"
           },
           {
             "glob": "**/*.hbs",
-            "input": "libs/backend/services/email/src/lib/templates/",
+            "input": "apps/backend/src/app/modules/email/templates/",
             "output": "templates"
           }
         ]
