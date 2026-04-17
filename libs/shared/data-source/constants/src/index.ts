@@ -1,12 +1,9 @@
 import {
-  ApplicationConfig,
   inject,
   InjectionToken,
   makeStateKey,
-  provideAppInitializer,
   TransferState,
 } from '@angular/core';
-
 
 export const BACKEND_URL = new InjectionToken<string>('backend-url');
 export const APP_NAME = new InjectionToken<string>('app-name');
@@ -19,17 +16,21 @@ export const GOOGLE_CLIENT_ID_KEY = makeStateKey<string>('GOOGLE_CLIENT_ID');
 export const provideBackendUrl = () => {
   return {
     provide: BACKEND_URL,
-    useFactory: () =>
-      inject(TransferState).get(BACKEND_URL_KEY, 'http://localhost:3000'),
+    useFactory: () => {
+      console.log(
+        inject(TransferState).get(BACKEND_URL_KEY, 'http://localhost:3000'),
+      );
+      return inject(TransferState).get(
+        BACKEND_URL_KEY,
+        'http://localhost:3000',
+      );
+    },
   };
 };
 
 export const provideGoogleClientId = () => {
   return {
     provide: GOOGLE_CLIENT_ID,
-    useFactory: () =>
-      inject(TransferState).get(
-        GOOGLE_CLIENT_ID_KEY,''
-      ),
+    useFactory: () => inject(TransferState).get(GOOGLE_CLIENT_ID_KEY, ''),
   };
 };
