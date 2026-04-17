@@ -1,22 +1,35 @@
-import { InjectionToken } from '@angular/core';
+import {
+  ApplicationConfig,
+  inject,
+  InjectionToken,
+  makeStateKey,
+  provideAppInitializer,
+  TransferState,
+} from '@angular/core';
+
 
 export const BACKEND_URL = new InjectionToken<string>('backend-url');
 export const APP_NAME = new InjectionToken<string>('app-name');
 export const GOOGLE_CLIENT_ID = new InjectionToken<string>('google-client-id');
 export const SHOW_SUCCESS_MESSAGE = 'show-success-message';
 
-export const provideBackendUrl = (url: string) => {
+export const BACKEND_URL_KEY = makeStateKey<string>('BACKEND_URL');
+export const GOOGLE_CLIENT_ID_KEY = makeStateKey<string>('GOOGLE_CLIENT_ID');
+
+export const provideBackendUrl = () => {
   return {
     provide: BACKEND_URL,
-    useValue: url,
-  }
-}
+    useFactory: () =>
+      inject(TransferState).get(BACKEND_URL_KEY, 'http://localhost:3000'),
+  };
+};
 
-export const provideGoogleClientId = (googleClientId: string) => {
+export const provideGoogleClientId = () => {
   return {
     provide: GOOGLE_CLIENT_ID,
-    useValue: googleClientId,
-  }
-}
-
-
+    useFactory: () =>
+      inject(TransferState).get(
+        GOOGLE_CLIENT_ID_KEY,''
+      ),
+  };
+};
