@@ -12,7 +12,7 @@ RUN npm i -g pnpm
 
 RUN pnpm install
 
-COPY apps/backend/src/database/migrations ./apps/backend/src/database/migrations
+COPY apps/backend ./apps/backend/
 
 RUN pnpm install
 
@@ -22,5 +22,4 @@ RUN pnpm i -D nx@22.3.3
 
 COPY dist/apps/backend .
 
-#CMD ["sh", "-c", "pnpm db:migrate && node main.js"]
-CMD ["sh", "-c", "node main.js"]
+CMD ["sh", "-c", "pnpm db:migrate && node main.js"]
