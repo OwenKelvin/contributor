@@ -1,91 +1,120 @@
-<div class="min-h-screen flex items-center justify-center bg-slate-50 p-4">
-  <div hlmCard class="w-full max-w-md">
-    <div hlmCardHeader>
-      <h3 hlmCardTitle class="text-2xl">Welcome back</h3>
-      <p hlmCardDescription>Sign in to your account to continue</p>
+<div class="min-h-screen flex bg-zinc-50">
+  <!-- Brand Panel: Visible on large screens -->
+  <div class="hidden lg:flex lg:w-1/2 bg-zinc-900 relative overflow-hidden items-center justify-center">
+    <!-- Sophisticated background effect -->
+    <div class="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 opacity-100"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-600/10 via-transparent to-transparent"></div>
+
+    <!-- Logo -->
+    <div class="relative z-10 w-full max-w-lg px-12">
+      <img src="/logo.svg" alt="Company Logo" class="w-full h-auto" />
     </div>
+  </div>
 
-    <div hlmCardContent>
-      <form (submit)="onSubmit($event)" class="space-y-4">
-        <div class="space-y-2">
-          <label hlmLabel for="email">Email</label>
-          <div class="relative">
-            <ng-icon hlmIcon name="lucideMail" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size="sm" />
-            <input
-              hlmInput
-              autocomplete="username"
-              id="email"
-              type="email"
-              [field]="loginForm.email"
-              placeholder="you@example.com"
-              class="pl-10"
-              [class.border-red-500]="loginForm.email().invalid() && loginForm.email().touched()"
-            />
+  <!-- Auth Panel -->
+  <div class="flex-1 flex items-center justify-center p-4 sm:p-8 md:p-12">
+    <div class="w-full max-w-md">
+      <!-- Floating Container -->
+      <div class="bg-white rounded-2xl shadow-2xl p-8 sm:p-12 border border-zinc-100">
+        <div class="space-y-8">
+          <!-- Header -->
+          <div class="space-y-2">
+            <h3 class="text-3xl font-semibold tracking-tight text-zinc-900">Welcome back</h3>
+            <p class="text-zinc-500">Sign in to your account to continue</p>
           </div>
-          @if (loginForm.email().invalid() && loginForm.email().touched()) {
-            <p class="text-sm text-red-500">
-              @for (error of loginForm.email().errors(); track error.kind) {
-                {{ error.message }}
+
+          <!-- Login Form -->
+          <form (submit)="onSubmit($event)" class="space-y-6">
+            <div class="space-y-4">
+              <div class="space-y-2">
+                <label hlmLabel for="email" class="text-sm font-medium text-zinc-700">Email</label>
+                <div class="relative">
+                  <ng-icon hlmIcon name="lucideMail" class="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size="sm" />
+                  <input
+                    hlmInput
+                    autocomplete="username"
+                    id="email"
+                    type="email"
+                    [field]="loginForm.email"
+                    placeholder="you@example.com"
+                    class="pl-10 w-full"
+                    [class.border-red-500]="loginForm.email().invalid() && loginForm.email().touched()"
+                  />
+                </div>
+                @if (loginForm.email().invalid() && loginForm.email().touched()) {
+                  <div class="flex items-center gap-1.5 text-xs text-red-500 mt-1">
+                    <ng-icon hlmIcon name="lucideAlertCircle" size="xs" />
+                    @for (error of loginForm.email().errors(); track error.kind) {
+                      <span>{{ error.message }}</span>
+                    }
+                  </div>
+                }
+              </div>
+
+              <div class="space-y-2">
+                <label hlmLabel for="password" class="text-sm font-medium text-zinc-700">Password</label>
+                <div class="relative">
+                  <ng-icon hlmIcon name="lucideLock" class="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size="sm" />
+                  <input
+                    hlmInput
+                    id="password"
+                    type="password"
+                    [field]="loginForm.password"
+                    placeholder="••••••••"
+                    autocomplete="current-password"
+                    class="pl-10 w-full"
+                    [class.border-red-500]="loginForm.password().invalid() && loginForm.password().touched()"
+                  />
+                </div>
+                @if (loginForm.password().invalid() && loginForm.password().touched()) {
+                  <div class="flex items-center gap-1.5 text-xs text-red-500 mt-1">
+                    <ng-icon hlmIcon name="lucideAlertCircle" size="xs" />
+                    @for (error of loginForm.password().errors(); track error.kind) {
+                      <span>{{ error.message }}</span>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+
+            @if (errorMessage()) {
+              <div class="flex items-center gap-2 p-3 rounded-lg bg-red-50 border border-red-100 text-red-700 text-sm animate-in fade-in slide-in-from-top-1">
+                <ng-icon hlmIcon name="lucideAlertCircle" size="sm" class="shrink-0" />
+                <p>{{ errorMessage() }}</p>
+              </div>
+            }
+
+            <button
+              hlmBtn
+              type="submit"
+              class="w-full bg-[#2828FF] hover:bg-[#1e1eff] text-white transition-colors"
+              [disabled]="isLoading() || loginForm().invalid()"
+            >
+              @if (isLoading()) {
+                <div class="flex items-center justify-center gap-2">
+                  <ng-icon hlmIcon name="lucideLoader2" class="animate-spin" size="sm" />
+                  <span>Signing in...</span>
+                </div>
+              } @else {
+                <span>Sign in</span>
               }
-            </p>
-          }
-        </div>
+            </button>
+          </form>
 
-        <div class="space-y-2">
-          <label hlmLabel for="password">Password</label>
-          <div class="relative">
-            <ng-icon hlmIcon name="lucideLock" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size="sm" />
-            <input
-              hlmInput
-              id="password"
-              type="password"
-              [field]="loginForm.password"
-              placeholder="••••••••"
-              autocomplete="current-password"
-              class="pl-10"
-              [class.border-red-500]="loginForm.password().invalid() && loginForm.password().touched()"
-            />
+          <!-- Social Separator -->
+          <div class="relative py-4">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-zinc-200"></div>
+            </div>
+            <div class="relative flex justify-center text-xs uppercase tracking-wider font-medium text-zinc-400">
+              <span class="bg-white px-4">Or continue with</span>
+            </div>
           </div>
-          @if (loginForm.password().invalid() && loginForm.password().touched()) {
-            <p class="text-sm text-red-500">
-              @for (error of loginForm.password().errors(); track error.kind) {
-                {{ error.message }}
-              }
-            </p>
-          }
-        </div>
 
-        @if (errorMessage()) {
-          <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-            <p class="text-sm">{{ errorMessage() }}</p>
-          </div>
-        }
-
-        <button
-          hlmBtn
-          type="submit"
-          class="w-full"
-          [disabled]="isLoading() || loginForm().invalid()"
-        >
-          @if (isLoading()) {
-            <ng-icon hlmIcon name="lucideLoader2" class="mr-2 animate-spin" size="sm" />
-            Signing in...
-          } @else {
-            Sign in
-          }
-        </button>
-      </form>
-
-      <div class="relative my-6">
-        <div class="absolute inset-0 flex items-center">
-          <div class="w-full border-t border-slate-200"></div>
-        </div>
-        <div class="relative flex justify-center text-sm">
-          <span class="bg-white px-2 text-slate-500">Or continue with</span>
+          <!-- Google Button Container -->
+          <div id="google-btn-container" class="w-full"></div>
         </div>
       </div>
-
-      <div id="google-btn-container" class="w-full"></div>
     </div>
   </div>
 </div>
