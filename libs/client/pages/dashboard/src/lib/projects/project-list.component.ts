@@ -1,10 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, PLATFORM_ID } from '@angular/core';
 import { ProjectService } from '@nyots/data-source/projects';
 import { HlmCard, HlmCardContent, HlmCardHeader, HlmCardTitle, HlmCardDescription, HlmCardFooter } from '@nyots/ui/card';
 import { HlmSpinner } from '@nyots/ui/spinner';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmBadge } from '@nyots/ui/badge';
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, isPlatformBrowser } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
@@ -92,6 +92,7 @@ import { firstValueFrom } from 'rxjs';
 })
 export class ProjectListComponent implements OnInit {
   private projectService = inject(ProjectService);
+  private platformId = inject(PLATFORM_ID);
   private route = inject(ActivatedRoute);
   
   loading = signal(true);
@@ -107,12 +108,16 @@ export class ProjectListComponent implements OnInit {
   }>>([]);
 
   async ngOnInit() {
-    // Subscribe to query params to handle filter changes
-    this.route.queryParams.subscribe(params => {
-      const filter = params['filter'] || 'active';
-      this.filterType.set(filter === 'all' ? 'all' : 'active');
-      this.loadProjects();
-    });
+    if (isPlatformBrowser(this.platformId)) {
+      // Subscribe to query params to handle filter changes
+      this.route.queryParams.subscribe(params => {
+        const filter = params['filter'] || 'active';
+        this.filterType.set(filter === 'all' ? 'all' : 'active');
+        this.loadProjects();
+      });
+    } else {
+      this.loading.set(false);
+    }
   }
 
   async loadProjects() {

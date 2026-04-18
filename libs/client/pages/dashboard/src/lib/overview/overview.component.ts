@@ -1,8 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, PLATFORM_ID, signal } from '@angular/core';
 import { ContributionService } from '@nyots/data-source/contributions';
 import { HlmCard, HlmCardContent, HlmCardHeader, HlmCardTitle } from '@nyots/ui/card';
 import { HlmSpinner } from '@nyots/ui/spinner';
-import { DatePipe, CurrencyPipe } from '@angular/common';
+import { DatePipe, CurrencyPipe, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { HlmButton } from '@nyots/ui/button';
 
@@ -78,26 +78,31 @@ import { HlmButton } from '@nyots/ui/button';
 })
 export class OverviewComponent implements OnInit {
   private contributionService = inject(ContributionService);
-  
+  private platformId = inject(PLATFORM_ID);
+
   loading = signal(true);
-  recentContributions = signal<Array<{ 
-    id: string; 
-    amount: number; 
-    paymentStatus: string; 
-    createdAt: string; 
-    project?: { title: string } | null 
+  recentContributions = signal<Array<{
+    id: string;
+    amount: number;
+    paymentStatus: string;
+    createdAt: string;
+    project?: { title: string } | null
   }>>([]);
 
   async ngOnInit() {
-    try {
-      const result = await this.contributionService.getMyContributions({
-        pagination: { first: 3 }
-      });
-      const contributions = result?.edges?.map(edge => edge.node) || [];
-      this.recentContributions.set(contributions);
-    } catch (error) {
-      console.error('Error loading contributions:', error);
-    } finally {
+    if (isPlatformBrowser(this.platformId)) {
+      try {
+        const result = await this.contributionService.getMyContributions({
+          pagination: { first: 3 }
+        });
+        const contributions = result?.edges?.map(edge => edge.node) || [];
+        this.recentContributions.set(contributions);
+      } catch (error) {
+        console.error('Error loading contributions:', error);
+      } finally {
+        this.loading.set(false);
+      }
+    } else {
       this.loading.set(false);
     }
   }

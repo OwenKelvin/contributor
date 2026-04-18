@@ -1,5 +1,5 @@
-import { Component, signal, OnInit, computed, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, signal, OnInit, computed, inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { toast } from 'ngx-sonner';
 import {
   HlmCard,
@@ -74,6 +74,7 @@ interface ActivityNode {
 })
 export class MyActivityComponent implements OnInit {
   private readonly activityService = inject(ActivityService);
+  private readonly platformId = inject(PLATFORM_ID);
 
   activities = signal<ActivityNode[]>([]);
   isLoading = signal(false);
@@ -85,12 +86,15 @@ export class MyActivityComponent implements OnInit {
 
   // Get current user from localStorage
   currentUser = computed(() => {
+    if (!isPlatformBrowser(this.platformId)) return null;
     const userStr = localStorage.getItem('user');
     return userStr ? JSON.parse(userStr) : null;
   });
 
   ngOnInit() {
-    this.loadActivities();
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadActivities();
+    }
   }
 
   loadActivities() {
