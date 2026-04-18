@@ -41,6 +41,7 @@ export class UserDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private userService = inject(UserService);
+  private platformId = inject(PLATFORM_ID);
 
   userId = signal<string | null>(null);
   user = signal<IGetUserByIdQuery['getUserById'] | undefined>(undefined);
@@ -50,17 +51,21 @@ export class UserDetailComponent implements OnInit {
   errorDetails = signal<string | null>(null);
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe((params) => {
-      const id = params.get('id');
-      if (id) {
-        this.userId.set(id);
-        this.loadUserDetails(id);
-      } else {
-        this.hasError.set(true);
-        this.errorMessage.set('User ID not found in route parameters.');
-        this.isLoading.set(false);
-      }
-    });
+    if (isPlatformBrowser(this.platformId)) {
+      this.route.paramMap.subscribe((params) => {
+        const id = params.get('id');
+        if (id) {
+          this.userId.set(id);
+          this.loadUserDetails(id);
+        } else {
+          this.hasError.set(true);
+          this.errorMessage.set('User ID not found in route parameters.');
+          this.isLoading.set(false);
+        }
+      });
+    } else {
+      this.isLoading.set(false);
+    }
   }
 
   async loadUserDetails(id: string): Promise<void> {

@@ -1,5 +1,6 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, PLATFORM_ID } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   form,
   required,
@@ -47,6 +48,7 @@ export class EditProjectComponent implements OnInit {
   private readonly categoryService = inject(CategoryService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly platformId = inject(PLATFORM_ID);
 
   // Project ID from route
   private projectId = signal<string | null>(null);
@@ -121,16 +123,18 @@ export class EditProjectComponent implements OnInit {
   isCategoriesLoading = signal(false);
 
   async ngOnInit() {
-    const projectId = this.route.snapshot.paramMap.get('id');
-    if (projectId) {
-      this.projectId.set(projectId);
-      await Promise.all([
-        this.loadProject(projectId),
-        this.loadCategories()
-      ]);
-    } else {
-      toast.error('Invalid project ID');
-      await this.router.navigate(['/dashboard/projects']);
+    if (isPlatformBrowser(this.platformId)) {
+      const projectId = this.route.snapshot.paramMap.get('id');
+      if (projectId) {
+        this.projectId.set(projectId);
+        await Promise.all([
+          this.loadProject(projectId),
+          this.loadCategories()
+        ]);
+      } else {
+        toast.error('Invalid project ID');
+        await this.router.navigate(['/dashboard/projects']);
+      }
     }
   }
 

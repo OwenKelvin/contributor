@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IGetProjectByIdQuery, ProjectService } from '@nyots/data-source/projects';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -11,7 +11,7 @@ import { HlmLabel } from '@nyots/ui/label';
 import { HlmBadge } from '@nyots/ui/badge';
 import { HlmSpinner } from '@nyots/ui/spinner';
 import { ErrorBoundary} from '@nyots/ui/alert';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe, isPlatformBrowser } from '@angular/common';
 @Component({
   selector: 'nyots-project-detail',
   standalone: true,
@@ -40,6 +40,7 @@ export class ProjectDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private projectService = inject(ProjectService);
+  private platformId = inject(PLATFORM_ID);
 
   projectId = signal<string | null>(null);
   project = signal<IGetProjectByIdQuery['getProjectById'] | undefined>(
@@ -51,17 +52,21 @@ export class ProjectDetailComponent implements OnInit {
   errorDetails = signal<string | null>(null);
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe((params) => {
-      const id = params.get('id');
-      if (id) {
-        this.projectId.set(id);
-        this.loadProjectDetails(id);
-      } else {
-        this.hasError.set(true);
-        this.errorMessage.set('Project ID not found in route parameters.');
-        this.isLoading.set(false);
-      }
-    });
+    if (isPlatformBrowser(this.platformId)) {
+      this.route.paramMap.subscribe((params) => {
+        const id = params.get('id');
+        if (id) {
+          this.projectId.set(id);
+          this.loadProjectDetails(id);
+        } else {
+          this.hasError.set(true);
+          this.errorMessage.set('Project ID not found in route parameters.');
+          this.isLoading.set(false);
+        }
+      });
+    } else {
+      this.isLoading.set(false);
+    }
   }
 
   async loadProjectDetails(id: string): Promise<void> {

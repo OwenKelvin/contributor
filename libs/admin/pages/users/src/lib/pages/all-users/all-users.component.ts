@@ -1,6 +1,6 @@
-import { Component, inject, signal, computed, effect } from '@angular/core';
+import { Component, inject, signal, computed, effect, PLATFORM_ID } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { toast } from 'ngx-sonner';
 import { IUser, IPageInfo } from '@nyots/data-source';
@@ -81,6 +81,7 @@ export class AllUsersComponent {
   private readonly router = inject(Router);
   private readonly userService = inject(UserService);
   private readonly dialogService = inject(HlmDialogService);
+  private readonly platformId = inject(PLATFORM_ID);
 
   // State management using signals
   users = signal<IUser[]>([]);
