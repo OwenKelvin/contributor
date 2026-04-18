@@ -51,7 +51,6 @@
     "@types/uuid": "^11.0.0",
     "apollo-angular": "^13.0.0",
     "axios": "^1.6.0",
-    "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "bull": "^4.16.5",
     "cache-manager": "^7.2.8",
