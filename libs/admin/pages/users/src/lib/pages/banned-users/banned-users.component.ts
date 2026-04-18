@@ -1,6 +1,6 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { toast } from 'ngx-sonner';
 import { IGetBannedUsersQuery, UserService } from '@nyots/data-source/user';
@@ -58,6 +58,7 @@ type BannedUser = IGetBannedUsersQuery['getBannedUsers']['edges'][number]['node'
 export class BannedUsersComponent {
   private readonly router = inject(Router);
   private readonly userService = inject(UserService);
+  private readonly platformId = inject(PLATFORM_ID);
 
   // State management
   bannedUsers = signal<BannedUser[]>([]);
@@ -85,7 +86,9 @@ export class BannedUsersComponent {
   totalPages = computed(() => Math.ceil(this.totalUsers() / this.pageSize()));
 
   constructor() {
-    this.loadBannedUsers();
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadBannedUsers();
+    }
   }
 
   async loadBannedUsers() {

@@ -1,5 +1,5 @@
-import { Component, input, output, EventEmitter, OnInit, OnChanges, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, input, output, EventEmitter, OnInit, OnChanges, inject, signal, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { DashboardService } from '@nyots/data-source/dashboard';
 import {
@@ -57,16 +57,23 @@ export class TopProjectsChartComponent implements OnInit, OnChanges {
   dateRange = input<{ startDate?: Date; endDate?: Date }>({});
 
   private dashboardService = inject(DashboardService);
+  private platformId = inject(PLATFORM_ID);
 
   loading = signal(true);
   chartData = signal<any[]>([]);
 
   ngOnInit() {
-    this.loadData();
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadData();
+    } else {
+      this.loading.set(false);
+    }
   }
 
   ngOnChanges() {
-    this.loadData();
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadData();
+    }
   }
 
   loadData() {

@@ -1,4 +1,10 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  computed,
+  PLATFORM_ID,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { toast } from 'ngx-sonner';
 import {
@@ -37,7 +43,7 @@ import {
   HlmCardHeader,
   HlmCardTitle,
 } from '@nyots/ui/card';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe, isPlatformBrowser } from '@angular/common';
 import { HlmDialogService } from '@nyots/ui/dialog';
 import { PaymentProcessingDialog } from '@nyots/admin/ui/dialogs';
 
@@ -326,6 +332,7 @@ type ContributionNode = NonNullable<
 })
 export class PendingContributionsComponent {
   private readonly contributionService = inject(ContributionService);
+  private readonly platformId = inject(PLATFORM_ID);
   private readonly router = inject(Router);
   private readonly dialogService = inject(HlmDialogService);
 
@@ -360,8 +367,10 @@ export class PendingContributionsComponent {
   });
 
   constructor() {
-    // Load initial data
-    this.loadPendingContributions();
+    // Load initial data only in browser
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadPendingContributions();
+    }
   }
 
   /**

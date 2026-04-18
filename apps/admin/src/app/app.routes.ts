@@ -1,19 +1,10 @@
 import { Route } from '@angular/router';
 
 export const appRoutes: Route[] = [
-  // {
-  //   path: '',
-  //   redirectTo: '/dashboard',
-  //   pathMatch: 'full',
-  // },
-
   {
     path: '',
+    redirectTo: '/dashboard',
     pathMatch: 'full',
-    data: {
-      breadcrumb: 'Dashboard',
-    },
-    loadChildren: () => import('@nyots/admin-pages/dashboard'),
   },
 
   {

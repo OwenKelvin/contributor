@@ -5,22 +5,22 @@ export const serverRoutes: ServerRoute[] = [
     path: 'dashboard/projects/:id/view',
     renderMode: RenderMode.Server,
   },
-  {
-    path: 'projects/:id/view',
-    renderMode: RenderMode.Server,
-  },
-  {
-    path: 'projects/:id/edit',
-    renderMode: RenderMode.Server,
-  },
-  {
-    path: 'contributions/:id',
-    renderMode: RenderMode.Server,
-  },
-  {
-    path: 'users/:id/view',
-    renderMode: RenderMode.Server,
-  },
+  // {
+  //   path: 'projects/:id/view',
+  //   renderMode: RenderMode.Server,
+  // },
+  // {
+  //   path: 'projects/:id/edit',
+  //   renderMode: RenderMode.Server,
+  // },
+  // {
+  //   path: 'contributions/:id',
+  //   renderMode: RenderMode.Server,
+  // },
+  // {
+  //   path: 'users/:id/view',
+  //   renderMode: RenderMode.Server,
+  // },
   {
     path: 'dashboard/users/:id/view',
     renderMode: RenderMode.Server,
