@@ -1,10 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, PLATFORM_ID, signal } from '@angular/core';
 import { ContributionService } from '@nyots/data-source/contributions';
 import { HlmCard, HlmCardContent, HlmCardHeader, HlmCardTitle } from '@nyots/ui/card';
 import { HlmSpinner } from '@nyots/ui/spinner';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmBadge } from '@nyots/ui/badge';
-import { DatePipe, CurrencyPipe } from '@angular/common';
+import { DatePipe, CurrencyPipe, isPlatformBrowser } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -70,10 +70,10 @@ import { RouterLink, ActivatedRoute } from '@angular/router';
                               <span hlmBadge [variant]="getStatusVariant(contribution.paymentStatus)" size="sm">
                                 {{ contribution.paymentStatus }}
                               </span>
-                              <a 
+                              <a
                                 [routerLink]="['/dashboard/contributions', contribution.id]"
-                                hlmBtn 
-                                variant="ghost" 
+                                hlmBtn
+                                variant="ghost"
                                 size="sm"
                               >
                                 View
@@ -120,10 +120,10 @@ import { RouterLink, ActivatedRoute } from '@angular/router';
                             </span>
                           </td>
                           <td class="p-4 text-right">
-                            <a 
+                            <a
                               [routerLink]="['/dashboard/contributions', contribution.id]"
-                              hlmBtn 
-                              variant="ghost" 
+                              hlmBtn
+                              variant="ghost"
                               size="sm"
                             >
                               View Details
@@ -142,18 +142,18 @@ import { RouterLink, ActivatedRoute } from '@angular/router';
                     Showing {{ contributions().length }} contributions
                   </div>
                   <div class="flex gap-2">
-                    <button 
-                      hlmBtn 
-                      variant="outline" 
+                    <button
+                      hlmBtn
+                      variant="outline"
                       size="sm"
                       [disabled]="!pageInfo()?.hasPreviousPage"
                       (click)="previousPage()"
                     >
                       Previous
                     </button>
-                    <button 
-                      hlmBtn 
-                      variant="outline" 
+                    <button
+                      hlmBtn
+                      variant="outline"
                       size="sm"
                       [disabled]="!pageInfo()?.hasNextPage"
                       (click)="nextPage()"
@@ -172,8 +172,9 @@ import { RouterLink, ActivatedRoute } from '@angular/router';
 })
 export class MyContributionsComponent implements OnInit {
   private contributionService = inject(ContributionService);
+  private platformId = inject(PLATFORM_ID);
   private route = inject(ActivatedRoute);
-  
+
   loading = signal(true);
   viewType = signal<'all' | 'by-project'>('all');
   contributions = signal<Array<{
@@ -204,19 +205,23 @@ export class MyContributionsComponent implements OnInit {
   pageSize = 10;
 
   async ngOnInit() {
-    // Subscribe to query params to handle view type changes
-    this.route.queryParams.subscribe(params => {
-      const view = params['view'] || 'all';
-      this.viewType.set(view === 'by-project' ? 'by-project' : 'all');
-      this.loadContributions();
-    });
+    if (isPlatformBrowser(this.platformId)) {
+      // Subscribe to query params to handle view type changes
+      this.route.queryParams.subscribe(params => {
+        const view = params['view'] || 'all';
+        this.viewType.set(view === 'by-project' ? 'by-project' : 'all');
+        this.loadContributions();
+      });
+    } else {
+      this.loading.set(false);
+    }
   }
 
   async loadContributions() {
     this.loading.set(true);
     try {
       const result = await this.contributionService.getMyContributions({
-        pagination: { 
+        pagination: {
           first: this.pageSize,
           after: this.currentCursor()
         }
@@ -228,7 +233,7 @@ export class MyContributionsComponent implements OnInit {
           title: edge.node.project.title
         } : null
       })) || [];
-      
+
       this.contributions.set(contributions);
       this.pageInfo.set(result?.pageInfo || null);
 
@@ -247,7 +252,7 @@ export class MyContributionsComponent implements OnInit {
     const grouped = contributions.reduce((acc, contribution) => {
       const projectId = contribution.project?.id || 'unknown';
       const projectName = contribution.project?.title || 'Unknown Project';
-      
+
       if (!acc[projectId]) {
         acc[projectId] = {
           projectId,
@@ -256,10 +261,10 @@ export class MyContributionsComponent implements OnInit {
           total: 0
         };
       }
-      
+
       acc[projectId].contributions.push(contribution);
       acc[projectId].total += contribution.amount;
-      
+
       return acc;
     }, {} as Record<string, any>);
 
@@ -267,8 +272,8 @@ export class MyContributionsComponent implements OnInit {
   }
 
   getTitle(): string {
-    return this.viewType() === 'by-project' 
-      ? 'My Contributions by Project' 
+    return this.viewType() === 'by-project'
+      ? 'My Contributions by Project'
       : 'All My Contributions';
   }
 

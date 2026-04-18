@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, input } from '@angular/core';
+import { Component, inject, OnInit, signal, input, PLATFORM_ID } from '@angular/core';
 import { ContributionService } from '@nyots/data-source/contributions';
 import { HlmCard, HlmCardContent, HlmCardHeader, HlmCardTitle } from '@nyots/ui/card';
 import { HlmSpinner } from '@nyots/ui/spinner';
@@ -6,7 +6,7 @@ import { HlmButton } from '@nyots/ui/button';
 import { HlmBadge } from '@nyots/ui/badge';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Field, FieldTree, form, submit } from '@angular/forms/signals';
 import { IPaymentDetailsInput } from '@nyots/data-source';
@@ -262,6 +262,7 @@ interface PaymentData {
 })
 export class ContributionDetailComponent implements OnInit {
   private contributionService = inject(ContributionService);
+  private platformId = inject(PLATFORM_ID);
   
   id = input.required<string>();
   
@@ -303,7 +304,11 @@ export class ContributionDetailComponent implements OnInit {
   paymentForm = form(this.paymentModel);
 
   async ngOnInit() {
-    await this.loadContribution();
+    if (isPlatformBrowser(this.platformId)) {
+      await this.loadContribution();
+    } else {
+      this.loading.set(false);
+    }
   }
 
   async loadContribution() {

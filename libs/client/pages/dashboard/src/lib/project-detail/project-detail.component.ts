@@ -1,10 +1,10 @@
-import { Component, inject, OnInit, signal, input } from '@angular/core';
+import { Component, inject, OnInit, signal, input, PLATFORM_ID } from '@angular/core';
 import { ProjectService } from '@nyots/data-source/projects';
 import { HlmCard, HlmCardContent, HlmCardHeader, HlmCardTitle } from '@nyots/ui/card';
 import { HlmSpinner } from '@nyots/ui/spinner';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmBadge } from '@nyots/ui/badge';
-import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
+import { CurrencyPipe, DatePipe, DecimalPipe, isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { HlmDialogService } from '@nyots/ui/dialog';
 import { ContributionDialogComponent } from '@nyots/client-pages/contributions';
@@ -138,6 +138,7 @@ import { firstValueFrom } from 'rxjs';
 })
 export class ProjectDetailComponent implements OnInit {
   private projectService = inject(ProjectService);
+  private platformId = inject(PLATFORM_ID);
   private dialogService = inject(HlmDialogService);
   private router = inject(Router);
 
@@ -158,7 +159,11 @@ export class ProjectDetailComponent implements OnInit {
   } | null>(null);
 
   async ngOnInit() {
-    await this.loadProject();
+    if (isPlatformBrowser(this.platformId)) {
+      await this.loadProject();
+    } else {
+      this.loading.set(false);
+    }
   }
 
   async loadProject() {
