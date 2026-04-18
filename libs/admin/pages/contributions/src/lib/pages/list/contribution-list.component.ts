@@ -1,6 +1,6 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { toast } from 'ngx-sonner';
 import {
   IContributionFilter,
@@ -459,6 +459,7 @@ import { BulkStatusDialog, StatusUpdateDialog } from '@nyots/admin/ui/dialogs';
 })
 export class ContributionListComponent {
   private readonly contributionService = inject(ContributionService);
+  private readonly platformId = inject(PLATFORM_ID);
   private readonly router = inject(Router);
   private readonly dialogService = inject(HlmDialogService);
 
@@ -498,8 +499,10 @@ export class ContributionListComponent {
   });
 
   constructor() {
-    // Load initial data
-    this.loadContributions();
+    // Load initial data only in browser
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadContributions();
+    }
   }
 
   /**

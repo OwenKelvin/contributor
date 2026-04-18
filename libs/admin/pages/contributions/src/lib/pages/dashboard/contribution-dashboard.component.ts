@@ -1,5 +1,5 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, signal, inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import {
   HlmCard,
   HlmCardContent,
@@ -212,6 +212,7 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
 })
 export class ContributionDashboardComponent implements OnInit {
   private contributionService = inject(ContributionService);
+  private platformId = inject(PLATFORM_ID);
 
   // State signals
   report = signal<IContributionReport | null>(null);
@@ -219,7 +220,11 @@ export class ContributionDashboardComponent implements OnInit {
   error = signal<string | null>(null);
 
   ngOnInit() {
-    this.loadReport();
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadReport();
+    } else {
+      this.loading.set(false);
+    }
   }
 
   /**

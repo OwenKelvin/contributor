@@ -1,5 +1,5 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, signal, inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { toast } from 'ngx-sonner';
@@ -126,6 +126,7 @@ export class OverviewComponent implements OnInit {
   private dashboardService = inject(DashboardService);
   private userService = inject(UserService);
   private projectService = inject(ProjectService);
+  private platformId = inject(PLATFORM_ID);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private fb = inject(FormBuilder);
@@ -157,45 +158,49 @@ export class OverviewComponent implements OnInit {
   dateRange = signal<{ startDate?: Date; endDate?: Date }>({});
 
   ngOnInit() {
-    this.loadFilterOptions();
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadFilterOptions();
 
-    // Subscribe to query params changes to update the form and trigger data loading
-    this.route.queryParams
-      .pipe(
-        debounceTime(100), // Debounce to avoid multiple loads on rapid param changes
-        distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
-      )
-      .subscribe((params) => {
-        // Update form from query params
-        this.filterForm.patchValue(
-          {
-            startDate: params['startDate'] || null,
-            endDate: params['endDate'] || null,
-            userId: params['userId'] || null,
-            projectId: params['projectId'] || null,
-            compareWithPreviousPeriod: params['compareWithPreviousPeriod'] === 'true',
-          },
-          { emitEvent: false }, // Prevent valueChanges from triggering loadDashboardData immediately
-        );
+      // Subscribe to query params changes to update the form and trigger data loading
+      this.route.queryParams
+        .pipe(
+          debounceTime(100), // Debounce to avoid multiple loads on rapid param changes
+          distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
+        )
+        .subscribe((params) => {
+          // Update form from query params
+          this.filterForm.patchValue(
+            {
+              startDate: params['startDate'] || null,
+              endDate: params['endDate'] || null,
+              userId: params['userId'] || null,
+              projectId: params['projectId'] || null,
+              compareWithPreviousPeriod: params['compareWithPreviousPeriod'] === 'true',
+            },
+            { emitEvent: false }, // Prevent valueChanges from triggering loadDashboardData immediately
+          );
 
-        // Update dateRange signal from DateRangeFilterComponent if params exist
-        this.dateRange.set({
-          startDate: params['startDate'] ? new Date(params['startDate']) : undefined,
-          endDate: params['endDate'] ? new Date(params['endDate']) : undefined,
+          // Update dateRange signal from DateRangeFilterComponent if params exist
+          this.dateRange.set({
+            startDate: params['startDate'] ? new Date(params['startDate']) : undefined,
+            endDate: params['endDate'] ? new Date(params['endDate']) : undefined,
+          });
+
+          this.loadDashboardData();
         });
 
-        this.loadDashboardData();
-      });
-
-    // Subscribe to form changes to update URL query params
-    this.filterForm.valueChanges
-      .pipe(
-        debounceTime(300), // Debounce to prevent frequent URL updates
-        distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
-      )
-      .subscribe((values) => {
-        this.updateQueryParams(values);
-      });
+      // Subscribe to form changes to update URL query params
+      this.filterForm.valueChanges
+        .pipe(
+          debounceTime(300), // Debounce to prevent frequent URL updates
+          distinctUntilChanged((prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)),
+        )
+        .subscribe((values) => {
+          this.updateQueryParams(values);
+        });
+    } else {
+      this.loading.set(false);
+    }
   }
 
   async loadFilterOptions() {

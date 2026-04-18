@@ -1,6 +1,6 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { toast } from 'ngx-sonner';
 import { IPaymentStatus } from '@nyots/data-source';
 import {
@@ -427,6 +427,7 @@ export class ContributionDetailComponent implements OnInit {
   private readonly dialogService = inject(HlmDialogService);
   private readonly contributionService = inject(ContributionService);
   private readonly confirmationService = inject(ConfirmationDialogService);
+  private readonly platformId = inject(PLATFORM_ID);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
@@ -443,7 +444,11 @@ export class ContributionDetailComponent implements OnInit {
   contributionId = computed(() => this.route.snapshot.paramMap.get('id'));
 
   ngOnInit() {
-    this.loadContribution();
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadContribution();
+    } else {
+      this.isLoading.set(false);
+    }
   }
 
   /**
