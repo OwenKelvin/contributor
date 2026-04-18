@@ -144,6 +144,8 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec nx docker:build admin --no-cloud
+        env:
+          BACKEND_URL: ${{ secrets.BACKEND_URL }}
 
       - uses: docker/login-action@v3
         with:
@@ -181,6 +183,8 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec nx docker:build client --no-cloud
+        env:
+          BACKEND_URL: ${{ secrets.BACKEND_URL }}
 
       - uses: docker/login-action@v3
         with:
