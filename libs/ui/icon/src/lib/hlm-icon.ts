@@ -22,7 +22,7 @@ export class HlmIcon {
 			case 'sm':
 				return '16px';
 			case 'base':
-				return '32px';
+				return '24px';
 			case 'lg':
 				return '32px';
 			case 'xl':
