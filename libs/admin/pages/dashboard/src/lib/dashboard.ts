@@ -94,8 +94,8 @@ import {
             <img
               class="w-16"
               ngSrc="/logo.svg"
-              width="472"
-              height="472"
+              width="756"
+              height="557"
               alt="Admin Logo"
               priority=""
             />

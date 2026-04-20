@@ -32,7 +32,7 @@ async function bootstrap() {
 
   await app.listen(port, '0.0.0.0');
   Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`,
+    `🚀 Application Version 0.0.0 is running on: http://localhost:${port}/${globalPrefix}`,
   );
 }
 
