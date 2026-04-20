@@ -18,6 +18,7 @@ import { CategoryService } from '@nyots/data-source/projects';
 import { ProjectFormComponent, ProjectFormModel } from '../../components/project-form/project-form.component';
 import { HlmCard, HlmCardContent, HlmCardDescription, HlmCardHeader, HlmCardTitle } from '@nyots/ui/card';
 import { getUserFriendlyErrorMessage } from '../../utils/retry.util';
+import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'nyots-create-project',
@@ -29,6 +30,7 @@ import { getUserFriendlyErrorMessage } from '../../utils/retry.util';
     HlmCardDescription,
     HlmCardHeader,
     HlmCardTitle,
+    JsonPipe,
   ],
   templateUrl: './create-project.component.html',
   styleUrls: ['./create-project.component.scss'],
@@ -55,24 +57,36 @@ export class CreateProjectComponent {
   protected projectForm = form(this.projectModel, (form) => {
     // Title validation
     required(form.title, { message: 'Title is required' });
-    minLength(form.title, 3, { message: 'Title must be at least 3 characters' });
-    maxLength(form.title, 200, { message: 'Title must not exceed 200 characters' });
+    minLength(form.title, 3, {
+      message: 'Title must be at least 3 characters',
+    });
+    maxLength(form.title, 200, {
+      message: 'Title must not exceed 200 characters',
+    });
 
     // Description validation
     required(form.description, { message: 'Description is required' });
-    minLength(form.description, 10, { message: 'Description must be at least 10 characters' });
+    minLength(form.description, 10, {
+      message: 'Description must be at least 10 characters',
+    });
 
     // Goal amount validation
     required(form.goalAmount, { message: 'Goal amount is required' });
     validate(form.goalAmount, ({ value }) => {
       const amount = value();
       if (amount <= 0) {
-        return { kind: 'positive', message: 'Goal amount must be greater than zero' };
+        return {
+          kind: 'positive',
+          message: 'Goal amount must be greater than zero',
+        };
       }
       // Validate max 2 decimal places
       const decimalPlaces = (amount.toString().split('.')[1] || '').length;
       if (decimalPlaces > 2) {
-        return { kind: 'decimal', message: 'Goal amount must have at most 2 decimal places' };
+        return {
+          kind: 'decimal',
+          message: 'Goal amount must have at most 2 decimal places',
+        };
       }
       return null;
     });
@@ -86,7 +100,10 @@ export class CreateProjectComponent {
       const startDate = valueOf(form.startDate);
       const endDate = value();
       if (startDate && endDate && endDate <= startDate) {
-        return { kind: 'dateRange', message: 'End date must be after start date' };
+        return {
+          kind: 'dateRange',
+          message: 'End date must be after start date',
+        };
       }
       return null;
     });
@@ -98,7 +115,9 @@ export class CreateProjectComponent {
     required(form.status, { message: 'Status is required' });
 
     // Detailed description validation
-    required(form.detailedDescription, { message: 'Detailed description is required' });
+    required(form.detailedDescription, {
+      message: 'Detailed description is required',
+    });
   });
 
   // State management
@@ -117,7 +136,9 @@ export class CreateProjectComponent {
     this.isCategoriesLoading.set(true);
     try {
       const categories = await this.categoryService.getAllCategories();
-      this.categories.set((categories || []).filter((c): c is ICategory => c !== undefined));
+      this.categories.set(
+        (categories || []).filter((c): c is ICategory => c !== undefined),
+      );
     } catch (error) {
       console.error('Error loading categories:', error);
       const message = getUserFriendlyErrorMessage(error);
@@ -186,7 +207,7 @@ export class CreateProjectComponent {
   async onSubmit() {
     this.isLoading.set(true);
     await submit(this.projectForm, async (fieldTree) =>
-      this.createProject(fieldTree)
+      this.createProject(fieldTree),
     );
     this.isLoading.set(false);
   }
