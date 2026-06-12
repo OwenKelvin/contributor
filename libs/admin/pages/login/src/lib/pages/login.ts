@@ -9,15 +9,12 @@ import {
 import { HlmButton } from '@nyots/ui/button';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
-import { HlmCard, HlmCardContent, HlmCardDescription, HlmCardHeader, HlmCardTitle } from '@nyots/ui/card';
 import { HlmIcon, HlmIconImports } from '@nyots/ui/icon';
 import { provideIcons } from '@ng-icons/core';
 import { lucideLoader2, lucideMail, lucideLock } from '@ng-icons/lucide';
 import { Router } from '@angular/router';
 import { AuthService } from '@nyots/data-source/auth';
 import { GOOGLE_CLIENT_ID } from '@nyots/data-source/constants';
-import { HttpClient } from '@angular/common/http';
-import { DOCUMENT } from '@angular/common';
 
 // Declare google as a global variable
 declare const google: any;
@@ -28,11 +25,6 @@ declare const google: any;
     HlmButton,
     HlmInput,
     HlmLabel,
-    HlmCard,
-    HlmCardContent,
-    HlmCardDescription,
-    HlmCardHeader,
-    HlmCardTitle,
     HlmIcon,
     HlmIconImports,
   ],

@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as Minio from 'minio';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 import { Readable } from 'stream';
 
 export interface FileUploadResult {
@@ -77,7 +77,7 @@ export class FileService implements OnModuleInit {
 
       // Generate unique filename
       const fileExtension = this.getFileExtension(originalName);
-      const uniqueFilename = `${uuidv4()}${fileExtension}`;
+      const uniqueFilename = `${randomUUID()}${fileExtension}`;
 
       const metaData = {
         'Content-Type': contentType,
