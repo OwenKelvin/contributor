@@ -47,3 +47,7 @@ Thumbs.db
 .kiro
 
 vitest.config.*.timestamp*
+
+.claude/worktrees
+.nx/polygraph
+.nx/self-healing

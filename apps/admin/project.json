@@ -8,7 +8,9 @@
   "targets": {
     "build": {
       "executor": "@angular/build:application",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/admin",
         "browser": "apps/admin/src/main.ts",
@@ -21,7 +23,9 @@
             "input": "apps/admin/public"
           }
         ],
-        "styles": ["apps/admin/src/styles.scss"],
+        "styles": [
+          "apps/admin/src/styles.scss"
+        ],
         "server": "apps/admin/src/main.server.ts",
         "ssr": {
           "entry": "apps/admin/src/server.ts"
@@ -70,9 +74,11 @@
     },
     "test": {
       "executor": "@nx/vitest:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
       "options": {
-        "reportsDirectory": "../../coverage/apps/admin"
+        "reportsDirectory": "{projectRoot}/../../coverage/apps/admin"
       }
     },
     "serve-static": {
@@ -85,14 +91,19 @@
       }
     },
     "docker:build": {
-      "dependsOn": ["build", "prune"],
+      "dependsOn": [
+        "build",
+        "prune"
+      ],
       "executor": "nx:run-commands",
       "options": {
         "command": "docker build . --tag apps-admin -f apps/admin/Dockerfile"
       }
     },
     "docker:run": {
-      "dependsOn": ["docker:build"],
+      "dependsOn": [
+        "docker:build"
+      ],
       "executor": "nx:run-commands",
       "options": {
         "command": "docker rm -f apps-admin || true && docker run -d -p 51001:3000 -e NODE_ENV --name apps-admin  apps-admin"

@@ -8,7 +8,9 @@
   "targets": {
     "build": {
       "executor": "@angular/build:application",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/apps/client",
         "browser": "apps/client/src/main.ts",
@@ -20,7 +22,9 @@
             "input": "apps/client/public"
           }
         ],
-        "styles": ["apps/client/src/styles.scss"],
+        "styles": [
+          "apps/client/src/styles.scss"
+        ],
         "server": "apps/client/src/main.server.ts",
         "ssr": {
           "entry": "apps/client/src/server.ts"
@@ -69,9 +73,11 @@
     },
     "test": {
       "executor": "@nx/vitest:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
       "options": {
-        "reportsDirectory": "../../coverage/apps/client"
+        "reportsDirectory": "{projectRoot}/../../coverage/apps/client"
       }
     },
     "serve-static": {
@@ -84,14 +90,19 @@
       }
     },
     "docker:build": {
-      "dependsOn": ["build", "prune"],
+      "dependsOn": [
+        "build",
+        "prune"
+      ],
       "executor": "nx:run-commands",
       "options": {
         "command": "docker build . --tag apps-client -f apps/client/Dockerfile"
       }
     },
     "docker:run": {
-      "dependsOn": ["docker:build"],
+      "dependsOn": [
+        "docker:build"
+      ],
       "executor": "nx:run-commands",
       "options": {
         "command": "docker rm -f apps-client || true && docker run -d -p 51000:3000 -e NODE_ENV --name apps-client  apps-client"
