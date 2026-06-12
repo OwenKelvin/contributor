@@ -35,7 +35,7 @@
                     autocomplete="username"
                     id="email"
                     type="email"
-                    [field]="loginForm.email"
+                    [formField]="loginForm.email"
                     placeholder="you@example.com"
                     class="pl-10 w-full"
                     [class.border-red-500]="loginForm.email().invalid() && loginForm.email().touched()"
@@ -59,7 +59,7 @@
                     hlmInput
                     id="password"
                     type="password"
-                    [field]="loginForm.password"
+                    [formField]="loginForm.password"
                     placeholder="••••••••"
                     autocomplete="current-password"
                     class="pl-10 w-full"

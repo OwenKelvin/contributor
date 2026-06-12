@@ -1,7 +1,13 @@
 import { Component, inject, signal, OnInit, ElementRef } from '@angular/core';
-import { CommonModule, DOCUMENT } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { form, Field, required, email, submit } from '@angular/forms/signals';
+import {
+  form,
+  required,
+  email,
+  submit,
+  FormField,
+} from '@angular/forms/signals';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
@@ -18,7 +24,7 @@ declare const google: any;
 
 @Component({
   imports: [
-    Field,
+    FormField,
     HlmButton,
     HlmInput,
     HlmLabel,

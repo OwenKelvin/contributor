@@ -89,9 +89,6 @@ export class HlmCheckbox implements ControlValueAccessor {
 	/** The checked state of the checkbox. */
 	public readonly checked = model<boolean>(false);
 
-	/** Emits when checked state changes. */
-	public readonly checkedChange = output<boolean>();
-
 	/**
 	 * The indeterminate state of the checkbox.
 	 * For example, a "select all/deselect all" checkbox may be in the indeterminate state when some but not all of its sub-controls are checked.
@@ -115,7 +112,6 @@ export class HlmCheckbox implements ControlValueAccessor {
 	protected _handleChange(value: boolean): void {
 		if (this._disabled()) return;
 		this.checked.set(value);
-		this.checkedChange.emit(value);
 		this._onChange?.(value);
 	}
 

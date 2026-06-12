@@ -1,5 +1,5 @@
 import { Component, inject, signal, input } from '@angular/core';
-import { Field, FieldTree, form, submit } from '@angular/forms/signals';
+import { FormField, FieldTree, form, submit } from '@angular/forms/signals';
 import { CommonModule } from '@angular/common';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
@@ -22,7 +22,7 @@ interface ContributionData {
     CommonModule,
     HlmInput,
     HlmLabel,
-    Field,
+    FormField,
     HlmButton,
   ],
   template: `
@@ -45,7 +45,7 @@ interface ContributionData {
               id="amount"
               type="number"
               step="0.01"
-              [field]="contributionForm.amount"
+              [formField]="contributionForm.amount"
               placeholder="0.00"
               class="pl-8 w-full"
             />
@@ -63,7 +63,7 @@ interface ContributionData {
           <textarea
             hlmInput
             id="description"
-            [field]="contributionForm.description"
+            [formField]="contributionForm.description"
             placeholder="Add any notes about this contribution"
             rows="3"
             class="w-full resize-none"
@@ -107,10 +107,10 @@ export class ContributionDialogComponent {
   private readonly contributionService = inject(ContributionService);
   private readonly dialogRef = inject(BrnDialogRef);
   private readonly router = inject(Router);
-  
+
   projectId = input.required<string>();
   projectTitle = input.required<string>();
-  
+
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
 
@@ -125,10 +125,10 @@ export class ContributionDialogComponent {
 
   async createNewContribution(createContributionForm: FieldTree<ContributionData>) {
     this.errorMessage.set(null);
-    
+
     try {
       const amount = Number(createContributionForm.amount().value());
-      
+
       if (isNaN(amount) || amount <= 0) {
         this.errorMessage.set('Please enter a valid amount greater than 0');
         return null;
@@ -142,11 +142,11 @@ export class ContributionDialogComponent {
 
       // Close dialog and navigate to contribution detail
       this.dialogRef.close(true);
-      
+
       if (result?.data?.id) {
         await this.router.navigate(['/dashboard', 'contributions', result.data.id]);
       }
-      
+
       return null;
     } catch (e) {
       const graphqlError = (e as { errors: GraphQLError[] }).errors;
@@ -157,13 +157,13 @@ export class ContributionDialogComponent {
         }
         return errors;
       }
-      
+
       const errorMsg = (e as HttpErrorResponse)?.error?.message ??
         (e as Error).message ??
         'An unknown error occurred.';
-      
+
       this.errorMessage.set(errorMsg);
-      
+
       return null;
     }
   }

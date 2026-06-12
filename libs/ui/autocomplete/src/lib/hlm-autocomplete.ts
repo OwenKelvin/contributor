@@ -265,11 +265,8 @@ export class HlmAutocomplete<T, V = T> implements ControlValueAccessor {
 
 	protected readonly _disabled = linkedSignal(() => this.disabled());
 
-	/** Emitted when the selected value changes. */
-	public readonly valueChange = output<T | V | null>();
-
 	/** Emitted when the search query changes. */
-	public readonly searchChange = output<string>();
+	public readonly searchQueryChange = output<string>();
 
 	protected _onChange?: ChangeFn<T | V | null>;
 	protected _onTouched?: TouchFn;
@@ -278,7 +275,7 @@ export class HlmAutocomplete<T, V = T> implements ControlValueAccessor {
 		classes(() => 'block w-full');
 		effect(() => {
 			const search = this._search();
-			this.searchChange.emit(search);
+			this.searchQueryChange.emit(search);
 		});
 	}
 
@@ -305,7 +302,6 @@ export class HlmAutocomplete<T, V = T> implements ControlValueAccessor {
 	protected _selectionCleared() {
 		this.value.set(undefined);
 		this._onChange?.(null);
-		this.valueChange.emit(null);
 		this.search.set('');
 	}
 
@@ -316,7 +312,6 @@ export class HlmAutocomplete<T, V = T> implements ControlValueAccessor {
 
 		this.value.set(value);
 		this._onChange?.(value);
-		this.valueChange.emit(value);
 
 		const searchValue = this._displaySearchValue()(value as any);
 		this.search.set(searchValue ?? '');

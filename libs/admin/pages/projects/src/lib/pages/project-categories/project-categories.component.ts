@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   form,
-  Field,
+  FormField,
   required,
   minLength,
   submit,
@@ -42,7 +42,7 @@ interface CategoryFormModel {
   imports: [
     CommonModule,
     FormsModule,
-    Field,
+    FormField,
     HlmButton,
     HlmInput,
     HlmLabel,

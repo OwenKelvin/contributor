@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { Field, FieldTree, form, submit } from '@angular/forms/signals';
+import { FormField, FieldTree, form, submit } from '@angular/forms/signals';
 import { CommonModule } from '@angular/common';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
@@ -47,7 +47,7 @@ interface ContributionData {
     HlmSelectValue,
     HlmSelectContent,
     HlmSelectOption,
-    Field,
+    FormField,
     HlmSelectScrollUp,
     HlmSelectScrollDown,
     BrnSelectImports,

@@ -14,7 +14,7 @@
     <!-- Project Field -->
     <div class="space-y-2">
       <label hlmLabel for="project">Project *</label>
-      <hlm-select id="project" scrollable="true" placeholder="Select a project" [field]="contributionForm.project">
+      <hlm-select id="project" scrollable="true" placeholder="Select a project" [formField]="contributionForm.project">
         <hlm-select-trigger class="w-full">
           <hlm-select-value>
             <div class="flex items-center gap-x-2" *brnSelectValue="let value">
@@ -47,7 +47,7 @@
           hlmInput
           id="amount"
           type="text"
-          [field]="contributionForm.amount"
+          [formField]="contributionForm.amount"
           placeholder="0.00"
           class="pl-8 w-full"
         />
@@ -65,7 +65,7 @@
       <textarea
         hlmInput
         id="description"
-        [field]="contributionForm.description"
+        [formField]="contributionForm.description"
         placeholder="Add any notes or details about this contribution"
         rows="4"
         class="w-full resize-none"

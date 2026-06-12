@@ -6,7 +6,7 @@
       hlmInput
       id="title"
       type="text"
-      [field]="projectForm().title"
+      [formField]="projectForm().title"
       placeholder="Enter project title"
       [class.border-red-500]="projectForm().title().invalid() && projectForm().title().touched()"
       [class.pointer-events-none]="isFormDisabled"
@@ -28,7 +28,7 @@
       hlmInput
       id="description"
       rows="3"
-      [field]="projectForm().description"
+      [formField]="projectForm().description"
       placeholder="Enter a brief description of the project"
       [class.border-red-500]="projectForm().description().invalid() && projectForm().description().touched()"
       [class.pointer-events-none]="isFormDisabled"
@@ -54,7 +54,7 @@
         id="goalAmount"
         type="number"
         step="0.01"
-        [field]="projectForm().goalAmount"
+        [formField]="projectForm().goalAmount"
         placeholder="0.00"
         class="pl-8"
         [class.border-red-500]="projectForm().goalAmount().invalid() && projectForm().goalAmount().touched()"
@@ -137,7 +137,7 @@
         [class.pointer-events-none]="isFormDisabled"
         [class.opacity-50]="isFormDisabled"
         placeholder="Select a category"
-        [field]="projectForm().categoryId"
+        [formField]="projectForm().categoryId"
       >
         <hlm-select-trigger class="w-full">
           <hlm-select-value />
@@ -262,7 +262,7 @@
       [class.pointer-events-none]="isFormDisabled"
       [class.opacity-50]="isFormDisabled"
       placeholder="Select project status"
-      [field]="projectForm().status"
+      [formField]="projectForm().status"
     >
       <hlm-select-trigger class="w-full">
         <hlm-select-value />

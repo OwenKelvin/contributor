@@ -1,6 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { form, Field, required, email, submit } from '@angular/forms/signals';
+import {
+  form,
+  required,
+  email,
+  submit,
+  FormField,
+} from '@angular/forms/signals';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
@@ -14,7 +20,7 @@ import { AuthService } from '@nyots/data-source/auth';
 @Component({
   imports: [
     CommonModule,
-    Field,
+    FormField,
     HlmButton,
     HlmInput,
     HlmLabel,

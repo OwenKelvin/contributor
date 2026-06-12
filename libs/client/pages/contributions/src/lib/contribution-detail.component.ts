@@ -8,7 +8,7 @@ import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
 import { CurrencyPipe, DatePipe, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Field, FieldTree, form, submit } from '@angular/forms/signals';
+import { FormField, FieldTree, form, submit } from '@angular/forms/signals';
 import { IPaymentDetailsInput } from '@nyots/data-source';
 
 interface PaymentData {
@@ -31,7 +31,7 @@ interface PaymentData {
     CurrencyPipe,
     DatePipe,
     RouterLink,
-    Field,
+    FormField,
   ],
   template: `
     <div class="p-6 space-y-6 max-w-4xl mx-auto">
@@ -49,7 +49,10 @@ interface PaymentData {
                 Contribution ID: {{ contribution()?.id }}
               </p>
             </div>
-            <span hlmBadge [variant]="getStatusVariant(contribution()?.paymentStatus || '')">
+            <span
+              hlmBadge
+              [variant]="getStatusVariant(contribution()?.paymentStatus || '')"
+            >
               {{ contribution()?.paymentStatus }}
             </span>
           </div>
@@ -63,15 +66,21 @@ interface PaymentData {
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <p class="text-sm text-muted-foreground">Project</p>
-                  <p class="font-medium text-lg">{{ contribution()?.project?.title }}</p>
+                  <p class="font-medium text-lg">
+                    {{ contribution()?.project?.title }}
+                  </p>
                 </div>
                 <div>
                   <p class="text-sm text-muted-foreground">Amount</p>
-                  <p class="font-medium text-lg">{{ contribution()?.amount | currency }}</p>
+                  <p class="font-medium text-lg">
+                    {{ contribution()?.amount | currency }}
+                  </p>
                 </div>
                 <div>
                   <p class="text-sm text-muted-foreground">Created Date</p>
-                  <p class="font-medium">{{ contribution()?.createdAt | date: 'medium' }}</p>
+                  <p class="font-medium">
+                    {{ contribution()?.createdAt | date: 'medium' }}
+                  </p>
                 </div>
                 <div>
                   <p class="text-sm text-muted-foreground">Status</p>
@@ -80,20 +89,28 @@ interface PaymentData {
                 @if (contribution()?.paidAt) {
                   <div>
                     <p class="text-sm text-muted-foreground">Paid Date</p>
-                    <p class="font-medium">{{ contribution()?.paidAt | date: 'medium' }}</p>
+                    <p class="font-medium">
+                      {{ contribution()?.paidAt | date: 'medium' }}
+                    </p>
                   </div>
                 }
                 @if (contribution()?.paymentReference) {
                   <div>
-                    <p class="text-sm text-muted-foreground">Payment Reference</p>
-                    <p class="font-medium">{{ contribution()?.paymentReference }}</p>
+                    <p class="text-sm text-muted-foreground">
+                      Payment Reference
+                    </p>
+                    <p class="font-medium">
+                      {{ contribution()?.paymentReference }}
+                    </p>
                   </div>
                 }
               </div>
               @if (contribution()?.notes) {
                 <div class="mt-6 pt-6 border-t">
                   <p class="text-sm text-muted-foreground mb-2">Notes</p>
-                  <p class="text-muted-foreground">{{ contribution()?.notes }}</p>
+                  <p class="text-muted-foreground">
+                    {{ contribution()?.notes }}
+                  </p>
                 </div>
               }
             </div>
@@ -107,7 +124,8 @@ interface PaymentData {
               </div>
               <div hlmCardContent>
                 <p class="text-muted-foreground mb-6">
-                  Please provide your payment details to complete this contribution.
+                  Please provide your payment details to complete this
+                  contribution.
                 </p>
 
                 <form (submit)="onPaymentSubmit($event)" class="space-y-6">
@@ -118,7 +136,7 @@ interface PaymentData {
                       hlmInput
                       id="phoneNumber"
                       type="tel"
-                      [field]="paymentForm.phoneNumber"
+                      [formField]="paymentForm.phoneNumber"
                       placeholder="e.g., 254712345678"
                       class="w-full"
                     />
@@ -129,12 +147,14 @@ interface PaymentData {
 
                   <!-- Account Reference Field -->
                   <div class="space-y-2">
-                    <label hlmLabel for="accountReference">Account Reference *</label>
+                    <label hlmLabel for="accountReference"
+                      >Account Reference *</label
+                    >
                     <input
                       hlmInput
                       id="accountReference"
                       type="text"
-                      [field]="paymentForm.accountReference"
+                      [formField]="paymentForm.accountReference"
                       placeholder="e.g., Your Name or Account Number"
                       class="w-full"
                     />
@@ -144,7 +164,9 @@ interface PaymentData {
                   </div>
 
                   @if (paymentError()) {
-                    <div class="p-4 bg-destructive/10 text-destructive rounded-md">
+                    <div
+                      class="p-4 bg-destructive/10 text-destructive rounded-md"
+                    >
                       <p class="font-medium">Payment Failed</p>
                       <p class="text-sm mt-1">{{ paymentError() }}</p>
                     </div>
@@ -154,7 +176,8 @@ interface PaymentData {
                     <div class="p-4 bg-green-50 text-green-700 rounded-md">
                       <p class="font-medium">Payment Initiated Successfully!</p>
                       <p class="text-sm mt-1">
-                        Please check your phone for the M-Pesa prompt and enter your PIN to complete the payment.
+                        Please check your phone for the M-Pesa prompt and enter
+                        your PIN to complete the payment.
                       </p>
                     </div>
                   }
@@ -187,17 +210,20 @@ interface PaymentData {
           }
 
           <!-- Failure Reason (if payment failed) -->
-          @if (contribution()?.paymentStatus === 'FAILED' && contribution()?.failureReason) {
+          @if (
+            contribution()?.paymentStatus === 'FAILED' &&
+            contribution()?.failureReason
+          ) {
             <div hlmCard>
               <div hlmCardHeader>
                 <h3 hlmCardTitle class="text-destructive">Payment Failed</h3>
               </div>
               <div hlmCardContent>
-                <p class="text-muted-foreground">{{ contribution()?.failureReason }}</p>
+                <p class="text-muted-foreground">
+                  {{ contribution()?.failureReason }}
+                </p>
                 <div class="mt-4">
-                  <button hlmBtn (click)="retryPayment()">
-                    Retry Payment
-                  </button>
+                  <button hlmBtn (click)="retryPayment()">Retry Payment</button>
                 </div>
               </div>
             </div>
@@ -211,10 +237,17 @@ interface PaymentData {
               </div>
               <div hlmCardContent>
                 <div class="space-y-4">
-                  @for (transaction of contribution()?.transactions; track transaction.id) {
-                    <div class="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                  @for (
+                    transaction of contribution()?.transactions;
+                    track transaction.id
+                  ) {
+                    <div
+                      class="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0"
+                    >
                       <div class="flex-1">
-                        <p class="font-medium">{{ transaction.transactionType }}</p>
+                        <p class="font-medium">
+                          {{ transaction.transactionType }}
+                        </p>
                         <p class="text-sm text-muted-foreground">
                           {{ transaction.createdAt | date: 'medium' }}
                         </p>
@@ -225,8 +258,15 @@ interface PaymentData {
                         }
                       </div>
                       <div class="text-right">
-                        <p class="font-semibold">{{ transaction.amount | currency }}</p>
-                        <span hlmBadge [variant]="getTransactionStatusVariant(transaction.status)">
+                        <p class="font-semibold">
+                          {{ transaction.amount | currency }}
+                        </p>
+                        <span
+                          hlmBadge
+                          [variant]="
+                            getTransactionStatusVariant(transaction.status)
+                          "
+                        >
                           {{ transaction.status }}
                         </span>
                       </div>
@@ -239,10 +279,21 @@ interface PaymentData {
 
           <!-- Action Buttons -->
           <div class="flex gap-3">
-            <button hlmBtn variant="outline" routerLink="/dashboard/my-contributions">
+            <button
+              hlmBtn
+              variant="outline"
+              routerLink="/dashboard/my-contributions"
+            >
               Back to My Contributions
             </button>
-            <button hlmBtn variant="outline" [routerLink]="['/dashboard/projects', contribution()?.project?.id]">
+            <button
+              hlmBtn
+              variant="outline"
+              [routerLink]="[
+                '/dashboard/projects',
+                contribution()?.project?.id,
+              ]"
+            >
               View Project
             </button>
           </div>
@@ -263,14 +314,14 @@ interface PaymentData {
 export class ContributionDetailComponent implements OnInit {
   private contributionService = inject(ContributionService);
   private platformId = inject(PLATFORM_ID);
-  
+
   id = input.required<string>();
-  
+
   loading = signal(true);
   processingPayment = signal(false);
   paymentError = signal<string | null>(null);
   paymentSuccess = signal(false);
-  
+
   contribution = signal<{
     id: string;
     amount: number;
@@ -331,7 +382,10 @@ export class ContributionDetailComponent implements OnInit {
 
     try {
       const phoneNumber = paymentFormData.phoneNumber().value().trim();
-      const accountReference = paymentFormData.accountReference().value().trim();
+      const accountReference = paymentFormData
+        .accountReference()
+        .value()
+        .trim();
 
       if (!phoneNumber || !accountReference) {
         this.paymentError.set('Please fill in all required fields');
@@ -350,13 +404,10 @@ export class ContributionDetailComponent implements OnInit {
         transactionDesc: `Contribution to ${this.contribution()?.project?.title}`,
       };
 
-      await this.contributionService.processPayment(
-        this.id(),
-        paymentDetails
-      );
+      await this.contributionService.processPayment(this.id(), paymentDetails);
 
       this.paymentSuccess.set(true);
-      
+
       // Reload contribution to get updated status
       setTimeout(() => {
         this.loadContribution();
@@ -365,8 +416,9 @@ export class ContributionDetailComponent implements OnInit {
       return null;
     } catch (error: unknown) {
       const err = error as { message?: string; error?: { message?: string } };
-      const errorMsg = err?.message || 
-        err?.error?.message || 
+      const errorMsg =
+        err?.message ||
+        err?.error?.message ||
         'Failed to process payment. Please try again.';
       this.paymentError.set(errorMsg);
       return null;
@@ -392,22 +444,32 @@ export class ContributionDetailComponent implements OnInit {
     this.paymentSuccess.set(false);
   }
 
-  getStatusVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
-    const variantMap: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-      'PAID': 'default',
-      'PENDING': 'secondary',
-      'FAILED': 'destructive',
-      'REFUNDED': 'outline',
+  getStatusVariant(
+    status: string,
+  ): 'default' | 'secondary' | 'destructive' | 'outline' {
+    const variantMap: Record<
+      string,
+      'default' | 'secondary' | 'destructive' | 'outline'
+    > = {
+      PAID: 'default',
+      PENDING: 'secondary',
+      FAILED: 'destructive',
+      REFUNDED: 'outline',
     };
     return variantMap[status] || 'outline';
   }
 
-  getTransactionStatusVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
-    const variantMap: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-      'COMPLETED': 'default',
-      'PENDING': 'secondary',
-      'FAILED': 'destructive',
-      'REVERSED': 'outline',
+  getTransactionStatusVariant(
+    status: string,
+  ): 'default' | 'secondary' | 'destructive' | 'outline' {
+    const variantMap: Record<
+      string,
+      'default' | 'secondary' | 'destructive' | 'outline'
+    > = {
+      COMPLETED: 'default',
+      PENDING: 'secondary',
+      FAILED: 'destructive',
+      REVERSED: 'outline',
     };
     return variantMap[status] || 'outline';
   }

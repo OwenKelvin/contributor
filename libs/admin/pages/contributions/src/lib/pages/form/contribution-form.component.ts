@@ -7,7 +7,7 @@ import {
 import { CommonModule } from '@angular/common';
 import {
   form,
-  Field,
+  FormField,
   required,
   submit,
   validate,
@@ -41,7 +41,7 @@ import { HttpErrorResponse } from '@angular/common/http';
   standalone: true,
   imports: [
     CommonModule,
-    Field,
+    FormField,
     HlmButton,
     HlmInput,
     HlmLabel,
@@ -78,7 +78,7 @@ import { HttpErrorResponse } from '@angular/common/http';
                 User <span class="text-destructive">*</span>
               </label>
               <nyots-user-autocomplete
-                [field]="contributionForm.userId"
+                [formField]="contributionForm.userId"
                 placeholder="Search for user by name or email..."
               />
               @if (contributionForm.userId().errors().length > 0) {
@@ -94,7 +94,7 @@ import { HttpErrorResponse } from '@angular/common/http';
               <select
                 hlmInput
                 id="projectId"
-                [field]="contributionForm.projectId"
+                [formField]="contributionForm.projectId"
                 class="w-full"
                 [attr.aria-label]="'Select project'"
               >
@@ -117,7 +117,7 @@ import { HttpErrorResponse } from '@angular/common/http';
                 hlmInput
                 type="number"
                 id="amount"
-                [field]="contributionForm.amount"
+                [formField]="contributionForm.amount"
                 placeholder="0.00"
                 [attr.aria-label]="'Contribution amount'"
               />
@@ -137,7 +137,7 @@ import { HttpErrorResponse } from '@angular/common/http';
               <select
                 hlmInput
                 id="paymentStatus"
-                [field]="contributionForm.paymentStatus"
+                [formField]="contributionForm.paymentStatus"
                 class="w-full"
                 [attr.aria-label]="'Payment status'"
               >
@@ -159,7 +159,7 @@ import { HttpErrorResponse } from '@angular/common/http';
                 hlmInput
                 type="text"
                 id="paymentReference"
-                [field]="contributionForm.paymentReference"
+                [formField]="contributionForm.paymentReference"
                 placeholder="e.g., Check #1234, Bank Transfer Ref"
                 [attr.aria-label]="'Payment reference'"
               />
@@ -179,7 +179,7 @@ import { HttpErrorResponse } from '@angular/common/http';
               <textarea
                 hlmInput
                 id="notes"
-                [field]="contributionForm.notes"
+                [formField]="contributionForm.notes"
                 rows="3"
                 placeholder="Additional notes about this contribution..."
                 class="resize-none"

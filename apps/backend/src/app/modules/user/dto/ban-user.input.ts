@@ -5,7 +5,7 @@ import { IsUUID, IsOptional, IsString } from 'class-validator';
 export class BanUserInput {
   @Field()
   @IsUUID()
-  userId: string;
+  userId!: string;
 
   @Field({ nullable: true })
   @IsOptional()

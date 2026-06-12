@@ -17,7 +17,7 @@
                 hlmInput
                 id="firstName"
                 type="text"
-                [field]="signupForm.firstName"
+                [formField]="signupForm.firstName"
                 placeholder="John"
                 class="pl-10"
                 [class.border-red-500]="signupForm.firstName().invalid() && signupForm.firstName().touched()"
@@ -41,7 +41,7 @@
                 hlmInput
                 id="lastName"
                 type="text"
-                [field]="signupForm.lastName"
+                [formField]="signupForm.lastName"
                 placeholder="Doe"
                 class="pl-10"
                 [class.border-red-500]="signupForm.lastName().invalid() && signupForm.lastName().touched()"
@@ -66,7 +66,7 @@
               hlmInput
               id="email"
               type="email"
-              [field]="signupForm.email"
+              [formField]="signupForm.email"
               placeholder="you@example.com"
               class="pl-10"
               [class.border-red-500]="signupForm.email().invalid() && signupForm.email().touched()"
@@ -91,7 +91,7 @@
               autocomplete="username"
               id="phone"
               type="tel"
-              [field]="signupForm.phone"
+              [formField]="signupForm.phone"
               placeholder="+1234567890"
               class="pl-10"
               [class.border-red-500]="signupForm.phone().invalid() && signupForm.phone().touched()"
@@ -116,7 +116,7 @@
               autocomplete="current-password"
               id="password"
               type="password"
-              [field]="signupForm.password"
+              [formField]="signupForm.password"
               placeholder="••••••••"
               class="pl-10"
               [class.border-red-500]="signupForm.password().invalid() && signupForm.password().touched()"
@@ -140,7 +140,7 @@
               hlmInput
               id="confirmPassword"
               type="password"
-              [field]="signupForm.confirmPassword"
+              [formField]="signupForm.confirmPassword"
               placeholder="••••••••"
               class="pl-10"
               [class.border-red-500]="signupForm.confirmPassword().invalid() && signupForm.confirmPassword().touched()"

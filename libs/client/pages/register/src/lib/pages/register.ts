@@ -2,13 +2,12 @@ import { Component, inject, signal, OnInit, ElementRef } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import {
   form,
-  Field,
   required,
   email,
   submit,
   minLength,
   validate,
-  FieldTree,
+  FieldTree, FormField,
 } from '@angular/forms/signals';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmInput } from '@nyots/ui/input';
@@ -44,7 +43,6 @@ declare const google: any;
   standalone: true,
   imports: [
     CommonModule,
-    Field,
     HlmButton,
     HlmInput,
     HlmLabel,
@@ -57,6 +55,7 @@ declare const google: any;
     HlmIcon,
     NgIcon,
     RouterLink,
+    FormField,
   ],
   providers: [
     provideIcons({
@@ -70,7 +69,7 @@ declare const google: any;
   templateUrl: './register.html',
 })
 export class Register implements OnInit {
-  private readonly googleClientId = inject(GOOGLE_CLIENT_ID)
+  private readonly googleClientId = inject(GOOGLE_CLIENT_ID);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private elementRef = inject(ElementRef);
@@ -113,7 +112,7 @@ export class Register implements OnInit {
   errorMessage = signal<string | null>(null);
 
   ngOnInit(): void {
-    console.log(this.googleClientId)
+    console.log(this.googleClientId);
     if (typeof google !== 'undefined') {
       google.accounts.id.initialize({
         client_id: this.googleClientId,
@@ -123,8 +122,10 @@ export class Register implements OnInit {
       });
 
       google.accounts.id.renderButton(
-        this.elementRef.nativeElement.querySelector('#google-btn-container-register'),
-        { theme: 'outline', size: 'large', width: '100%' } // customization attributes
+        this.elementRef.nativeElement.querySelector(
+          '#google-btn-container-register',
+        ),
+        { theme: 'outline', size: 'large', width: '100%' }, // customization attributes
       );
     }
   }
@@ -171,7 +172,9 @@ export class Register implements OnInit {
     this.errorMessage.set(null);
     if (response.credential) {
       try {
-        const backendResponse = await this.authService.googleLogin(response.credential);
+        const backendResponse = await this.authService.googleLogin(
+          response.credential,
+        );
         if (backendResponse.data?.googleLogin.accessToken) {
           await this.router.navigate(['/dashboard']);
         }
@@ -184,7 +187,9 @@ export class Register implements OnInit {
         this.isLoading.set(false);
       }
     } else {
-      this.errorMessage.set('Google authentication failed: No credential received.');
+      this.errorMessage.set(
+        'Google authentication failed: No credential received.',
+      );
       this.isLoading.set(false);
     }
   }

@@ -1,7 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { form, Field, required, minLength, submit, validate } from '@angular/forms/signals';
+import { form, FormField, required, minLength, submit, validate } from '@angular/forms/signals';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
@@ -14,7 +14,7 @@ import { AuthService } from '@nyots/data-source/auth';
 @Component({
   imports: [
     CommonModule,
-    Field,
+    FormField,
     HlmButton,
     HlmInput,
     HlmLabel,

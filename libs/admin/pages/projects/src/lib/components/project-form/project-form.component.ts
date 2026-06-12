@@ -7,7 +7,7 @@ import {
   output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Field, FieldTree } from '@angular/forms/signals';
+import { FieldTree, FormField } from '@angular/forms/signals';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { HlmButton } from '@nyots/ui/button';
@@ -55,7 +55,7 @@ export interface ProjectFormModel {
   standalone: true,
   imports: [
     CommonModule,
-    Field,
+    FormField,
     HlmButton,
     HlmInput,
     HlmLabel,

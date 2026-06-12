@@ -1,5 +1,11 @@
 import { Component, ElementRef, inject, OnInit, signal } from '@angular/core';
-import { form, Field, required, email, submit } from '@angular/forms/signals';
+import {
+  form,
+  required,
+  email,
+  submit,
+  FormField,
+} from '@angular/forms/signals';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
@@ -18,7 +24,7 @@ declare const google: any;
 
 @Component({
   imports: [
-    Field,
+    FormField,
     HlmButton,
     HlmInput,
     HlmLabel,
