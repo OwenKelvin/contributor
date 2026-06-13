@@ -6,6 +6,14 @@ extend type Mutation {
   resetPassword(resetPasswordInput: ResetPasswordInput!): AuthResponse!
   requestMagicLink(email: String!): Boolean!
   magicLinkLogin(magicLinkLoginInput: MagicLinkLoginInput!): MagicLinkLoginResponse!
+  sendContactMessage(input: ContactMessageInput!): Boolean!
+}
+
+input ContactMessageInput {
+  name: String!
+  email: String!
+  subject: String!
+  message: String!
 }
 
 input ResetPasswordInput {

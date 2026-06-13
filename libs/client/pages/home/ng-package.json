@@ -1,0 +1,6 @@
+{
+  "name": "@nyots/client-pages/home",
+  "lib": {
+    "entryFile": "src/index.ts"
+  }
+}

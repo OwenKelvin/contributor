@@ -56,6 +56,13 @@ interface PasswordResetEmailData {
   resetLink: string;
 }
 
+interface ContactEmailData {
+  fromEmail: string;
+  name: string;
+  subject: string;
+  message: string;
+}
+
 interface MagicLinkEmailData {
   to: string;
   name: string;
@@ -430,6 +437,53 @@ export class MailProcessor {
       return { success: true };
     } catch (error) {
       this.logger.error(`Failed to send admin contribution confirmation email: ${error.message}`, error.stack);
+      throw error;
+    }
+  }
+
+  @Process('sendContactEmail')
+  async sendContactEmail(job: Job<ContactEmailData>) {
+    this.logger.debug(`Sending contact email from ${job.data.fromEmail}`);
+
+    try {
+      const template = this.loadTemplate('contact.html');
+      const html = this.renderTemplate(template, {
+        ...job.data,
+        year: new Date().getFullYear(),
+      });
+
+      const text = `Contact form submission from ${job.data.name} (${job.data.fromEmail})\nSubject: ${job.data.subject}\n\n${job.data.message}`;
+      let attempt = 0;
+      let sent = false;
+      let lastError;
+      while (!sent && attempt < 3) {
+        try {
+          await this.emailSender.sendMail({
+            to: 'info@nyotsco.com',
+            subject: `Contact Form: ${job.data.subject}`,
+            html,
+            text,
+            replyTo: job.data.fromEmail,
+          });
+          sent = true;
+        } catch (err) {
+          attempt++;
+          lastError = err;
+          this.logger.warn(`Retrying contact email (${attempt}/3): ${err.message}`);
+        }
+      }
+      if (!sent) throw lastError;
+      this.logger.debug(`Contact email sent successfully`);
+      await this.emailLogService.logEmailSend({
+        userId: job.data.fromEmail,
+        action: ActivityAction.CONTACT_FORM_SUBMITTED,
+        targetId: undefined,
+        targetType: TargetType.USER,
+        details: JSON.stringify({ email: job.data.fromEmail, type: 'contact' }),
+      });
+      return { success: true };
+    } catch (error) {
+      this.logger.error(`Failed to send contact email: ${error.message}`, error.stack);
       throw error;
     }
   }

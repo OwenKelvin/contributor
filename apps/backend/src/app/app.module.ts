@@ -1,3 +1,4 @@
+import { ContactModule } from './modules/contact/contact.module';
 import { Module } from '@nestjs/common';
 import { GraphqlModule } from './modules/graphql/graphql.module';
 import { DatabaseModule } from './modules/database/database.module';
@@ -39,6 +40,7 @@ import { HealthModule } from './modules/health/health.module';
     DashboardModule,
     ActivityModule,
     HealthModule,
+    ContactModule,
   ],
 })
 export class AppModule {}

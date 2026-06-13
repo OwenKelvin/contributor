@@ -2,6 +2,10 @@ import { Route } from '@angular/router';
 
 export const appRoutes: Route[] = [
   {
+    path: '',
+    loadComponent: () => import('@nyots/client-pages/home')
+  },
+  {
     path: 'login',
     loadComponent: () => import('@nyots/client-pages/login')
   },

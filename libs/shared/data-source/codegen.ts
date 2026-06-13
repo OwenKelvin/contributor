@@ -157,6 +157,20 @@ const config: CodegenConfig = {
           skipTypename: true,
         },
       },
+      [`libs/shared/data-source/contact/src/lib/graphql/contact.generated.ts`]: {
+        documents: `libs/shared/data-source/contact/src/lib/graphql/contact.graphql`,
+        plugins: ['typescript-operations', 'typescript-apollo-angular'],
+        preset: 'near-operation-file',
+        presetConfig: {
+          extension: '.generated.ts',
+          baseTypesPath: '~@nyots/data-source',
+        },
+        config: {
+          addExplicitOverride: true,
+          typesPrefix: 'I',
+          skipTypename: true,
+        },
+      },
     },
     overwrite: true,
   };

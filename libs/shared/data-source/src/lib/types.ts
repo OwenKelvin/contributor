@@ -139,6 +139,13 @@ export type ICategory = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type IContactMessageInput = {
+  email: Scalars['String']['input'];
+  message: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  subject: Scalars['String']['input'];
+};
+
 export type IContribution = {
   amount: Scalars['Float']['output'];
   createdAt: Scalars['DateTime']['output'];
@@ -333,6 +340,7 @@ export type IMutation = {
   requestMagicLink: Scalars['Boolean']['output'];
   requestPasswordReset: Scalars['Boolean']['output'];
   resetPassword: IAuthResponse;
+  sendContactMessage: Scalars['Boolean']['output'];
   unbanUser: IUser;
   updateCategory: ICategory;
   updateContributionStatus: IContribution;
@@ -466,6 +474,11 @@ export type IMutationRequestPasswordResetArgs = {
 
 export type IMutationResetPasswordArgs = {
   resetPasswordInput: IResetPasswordInput;
+};
+
+
+export type IMutationSendContactMessageArgs = {
+  input: IContactMessageInput;
 };
 
 

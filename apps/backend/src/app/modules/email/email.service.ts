@@ -105,4 +105,18 @@ export class EmailService {
       notes: contribution.notes,
     });
   }
+
+  async sendContactEmail(
+    fromEmail: string,
+    name: string,
+    subject: string,
+    message: string
+  ): Promise<void> {
+    await this.emailQueue.add('sendContactEmail', {
+      fromEmail,
+      name,
+      subject,
+      message,
+    });
+  }
 }

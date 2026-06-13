@@ -7,6 +7,7 @@ export interface EmailOptions {
   subject: string;
   html?: string;
   text?: string;
+  replyTo?: string;
   attachments?: { filename: string; content: Buffer | string }[];
 }
 

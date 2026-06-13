@@ -66,6 +66,9 @@ export enum ActivityAction {
   CATEGORY_CREATED = 'CATEGORY_CREATED',
   CATEGORY_UPDATED = 'CATEGORY_UPDATED',
   CATEGORY_DELETED = 'CATEGORY_DELETED',
+
+  // Contact actions
+  CONTACT_FORM_SUBMITTED = 'CONTACT_FORM_SUBMITTED',
 }
 
 export enum TargetType {

@@ -1,0 +1,3 @@
+mutation SendContactMessage($input: ContactMessageInput!) {
+  sendContactMessage(input: $input)
+}

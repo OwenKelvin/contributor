@@ -83,6 +83,7 @@
         "./libs/client/pages/dashboard/src/index.ts"
       ],
       "@nyots/client-pages/login": ["./libs/client/pages/login/src/index.ts"],
+      "@nyots/client-pages/home": ["./libs/client/pages/home/src/index.ts"],
       "@nyots/client-pages/contributions": [
         "./libs/client/pages/contributions/src/index.ts"
       ],
@@ -127,6 +128,9 @@
       ],
       "@nyots/data-source/health-check": [
         "./libs/shared/data-source/health-check/src/index.ts"
+      ],
+      "@nyots/data-source/contact": [
+        "./libs/shared/data-source/contact/src/index.ts"
       ],
       "@nyots/data-source/user": ["./libs/shared/data-source/user/src/index.ts"],
       "@nyots/data-source/projects": [
