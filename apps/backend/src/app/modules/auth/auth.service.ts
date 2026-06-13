@@ -3,6 +3,8 @@ import {
   Injectable,
   UnauthorizedException,
   BadRequestException,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { RegisterInput } from './dto/register.input';
@@ -19,7 +21,7 @@ import { ActivityAction } from '../activity/activity.model';
 import { OAuth2Client } from 'google-auth-library';
 import { ConfigService } from '@nestjs/config';
 import { AuthResponse } from './types/auth-response.type';
-
+import { RateLimitService } from './rate-limit.service';
 
 @Injectable()
 export class AuthService {
@@ -31,6 +33,7 @@ export class AuthService {
     private jwtService: JwtService,
     private activityService: ActivityService,
     private configService: ConfigService,
+    private rateLimitService: RateLimitService,
     @InjectQueue('email') private emailQueue: Queue,
   ) {
     this.googleClient = new OAuth2Client(
@@ -282,5 +285,136 @@ export class AuthService {
 
     const accessToken = this.generateJwtToken(user.id, user.email);
     return { user, accessToken };
+  }
+
+  async requestMagicLink(email: string): Promise<boolean> {
+    const rateLimitKey = `magic_link:${email.toLowerCase()}`;
+    const { allowed } = await this.rateLimitService.checkRateLimit(
+      rateLimitKey,
+      5,
+      3600, // 1 hour
+    );
+
+    if (!allowed) {
+      throw new HttpException(
+        'Too many magic link requests. Please try again later.',
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
+    }
+
+    const user = await this.userService.findByEmail(email);
+    if (!user) {
+      return true; // Prevent user enumeration
+    }
+
+    const token = randomBytes(32).toString('hex');
+    user.magicLinkToken = token;
+    user.magicLinkExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+    user.magicLinkTokenUsed = false;
+    await user.save();
+
+    const magicLink = `${this.configService.get<string>(
+      'FRONTEND_URL',
+    )}/login?magicToken=${token}`;
+
+    await this.emailQueue.add('sendMagicLinkEmail', {
+      to: user.email,
+      name: user.firstName || 'there',
+      magicLink,
+    });
+
+    await this.activityService.logActivity({
+      userId: user.id,
+      action: ActivityAction.MAGIC_LINK_REQUESTED,
+      details: JSON.stringify({
+        email: user.email,
+        requestedAt: new Date().toISOString(),
+      }),
+    });
+
+    return true;
+  }
+
+  async magicLinkLogin(
+    token: string,
+    acceptTerms?: boolean,
+  ): Promise<{
+    requiresTermsAcceptance: boolean;
+    user?: any;
+    accessToken?: string;
+  }> {
+    const user = await this.userService.findByMagicLinkToken(token);
+
+    if (
+      !user ||
+      !user.magicLinkExpires ||
+      user.magicLinkExpires < new Date() ||
+      user.magicLinkTokenUsed
+    ) {
+      throw new BadRequestException('Invalid or expired magic link token.');
+    }
+
+    if (user.isBanned) {
+      throw new UnauthorizedException('Your account has been banned.');
+    }
+
+    // Check if user is new (hasn't accepted terms yet)
+    const isNewUser = !user.acceptedTermsAt;
+    if (isNewUser && !acceptTerms) {
+      return { requiresTermsAcceptance: true };
+    }
+
+    // If new user and accepting terms, create account
+    if (isNewUser && acceptTerms) {
+      const clientRole = await this.roleService.findByName(RoleList.Client);
+      if (!clientRole) {
+        throw new BadRequestException(
+          'Client role not found. Please seed roles.',
+        );
+      }
+
+      await user.$set('roles', [clientRole]);
+      user.acceptedTermsAt = new Date();
+      await user.save();
+
+      await this.activityService.logActivity({
+        userId: user.id,
+        action: ActivityAction.TERMS_ACCEPTED,
+        details: JSON.stringify({
+          email: user.email,
+          acceptedAt: new Date().toISOString(),
+          method: 'Magic Link',
+        }),
+      });
+
+      await this.activityService.logActivity({
+        userId: user.id,
+        action: ActivityAction.USER_CREATED,
+        targetId: user.id,
+        targetType: 'User' as any,
+        details: JSON.stringify({
+          email: user.email,
+          registeredAt: new Date().toISOString(),
+          method: 'Magic Link',
+        }),
+      });
+    }
+
+    // Mark token as used
+    user.magicLinkTokenUsed = true;
+    await user.save();
+
+    await this.activityService.logActivity({
+      userId: user.id,
+      action: ActivityAction.MAGIC_LINK_LOGIN_SUCCESS,
+      details: JSON.stringify({
+        email: user.email,
+        loginAt: new Date().toISOString(),
+        isNewUser,
+      }),
+    });
+
+    const accessToken = this.generateJwtToken(user.id, user.email);
+    return { requiresTermsAcceptance: false, user, accessToken };
   }
 }

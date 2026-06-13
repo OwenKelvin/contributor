@@ -9,7 +9,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { EmailModule } from '../email/email.module';
 import { RoleModule } from '../role/role.module';
 import { ActivityModule } from '../activity/activity.module';
-
+import { RateLimitService } from './rate-limit.service';
 
 @Module({
   imports: [
@@ -17,7 +17,7 @@ import { ActivityModule } from '../activity/activity.module';
     RoleModule,
     PassportModule,
     EmailModule,
-    ConfigModule, // Ensure ConfigModule is imported
+    ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -32,7 +32,7 @@ import { ActivityModule } from '../activity/activity.module';
       },
     }),
   ],
-  providers: [AuthService, AuthResolver, JwtStrategy],
+  providers: [AuthService, AuthResolver, JwtStrategy, RateLimitService],
   exports: [AuthService],
 })
 export class AuthModule {}

@@ -1,10 +1,13 @@
   import type { CodegenConfig } from '@graphql-codegen/cli';
 
-  const config: CodegenConfig = {
-    schema: 'apps/backend/src/app/modules/**/*.graphql',
-    config: {
-      allowPartialOutputs: true,
+const config: CodegenConfig = {
+  schema: 'apps/backend/src/app/modules/**/*.graphql',
+  config: {
+    allowPartialOutputs: true,
+    scalars: {
+      DateTime: 'string',
     },
+  },
     generates: {
       [`libs/shared/data-source/src/lib/types.ts`]: {
         plugins: ['typescript'],
@@ -30,6 +33,20 @@
       },
       [`libs/shared/data-source/auth/src/lib/graphql/password-reset.generated.ts`]: {
         documents: `libs/shared/data-source/auth/src/lib/graphql/password-reset.graphql`,
+        plugins: ['typescript-operations', 'typescript-apollo-angular'],
+        preset: 'near-operation-file',
+        presetConfig: {
+          extension: '.generated.ts',
+          baseTypesPath: '~@nyots/data-source',
+        },
+        config: {
+          addExplicitOverride: true,
+          typesPrefix: 'I',
+          skipTypename: true,
+        },
+      },
+      [`libs/shared/data-source/auth/src/lib/graphql/magic-link.generated.ts`]: {
+        documents: `libs/shared/data-source/auth/src/lib/graphql/magic-link.graphql`,
         plugins: ['typescript-operations', 'typescript-apollo-angular'],
         preset: 'near-operation-file',
         presetConfig: {

@@ -4,9 +4,22 @@ extend type Mutation {
   googleLogin(idToken: String!): AuthResponse!
   requestPasswordReset(email: String!): Boolean!
   resetPassword(resetPasswordInput: ResetPasswordInput!): AuthResponse!
+  requestMagicLink(email: String!): Boolean!
+  magicLinkLogin(magicLinkLoginInput: MagicLinkLoginInput!): MagicLinkLoginResponse!
 }
 
 input ResetPasswordInput {
   token: String!
   newPassword: String!
+}
+
+input MagicLinkLoginInput {
+  token: String!
+  acceptTerms: Boolean
+}
+
+type MagicLinkLoginResponse {
+  requiresTermsAcceptance: Boolean
+  user: User
+  accessToken: String
 }

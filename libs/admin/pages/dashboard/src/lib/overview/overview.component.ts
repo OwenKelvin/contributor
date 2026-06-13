@@ -210,7 +210,7 @@ export class OverviewComponent implements OnInit {
         pagination: { first: 1000 }, // Fetch a reasonable number of users for dropdown
       }) // Convert observable to promise
       if (allUsersResult?.edges) {
-        this.allUsers.set(allUsersResult.edges.map(edge => edge.node).filter((u): u is IUser => !!u));
+        this.allUsers.set(allUsersResult.edges.map(edge => edge.node).filter(Boolean) as IUser[]);
       }
 
       // Fetch all projects

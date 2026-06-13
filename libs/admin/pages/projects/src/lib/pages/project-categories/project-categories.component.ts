@@ -108,7 +108,7 @@ export class ProjectCategoriesComponent {
     this.isLoading.set(true);
     try {
       const categories = await this.categoryService.getAllCategories();
-      this.categories.set((categories || []).filter((c): c is ICategory => c !== undefined));
+      this.categories.set((categories || []).filter(Boolean) as ICategory[]);
     } catch (error) {
       console.error('Error loading categories:', error);
       toast.error('Failed to load categories');

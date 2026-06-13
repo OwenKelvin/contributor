@@ -1,91 +1,154 @@
+/** Internal type. DO NOT USE DIRECTLY. */
+type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+/** Internal type. DO NOT USE DIRECTLY. */
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 import * as Types from '@nyots/data-source';
 
 import { gql } from 'apollo-angular';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
-export type IGetAllProjectsQueryVariables = Types.Exact<{
-  search?: Types.InputMaybe<Types.Scalars['String']['input']>;
-  filter?: Types.InputMaybe<Types.IProjectFilter>;
-  pagination?: Types.InputMaybe<Types.IProjectPaginationInput>;
+export type IArchivedProjectFilter = {
+  archivedAfter?: string | null | undefined;
+  archivedBefore?: string | null | undefined;
+};
+
+export type IBulkUpdateInput = {
+  categoryId?: string | number | null | undefined;
+  status?: IProjectStatus | null | undefined;
+};
+
+export type ICreateProjectInput = {
+  categoryId: string | number;
+  description: string;
+  detailedDescription: string;
+  endDate: string;
+  featuredImage?: string | null | undefined;
+  goalAmount: number;
+  startDate: string;
+  status: IProjectStatus;
+  title: string;
+};
+
+export type IDateRangeInput = {
+  end: string;
+  start: string;
+};
+
+export type IProjectFilter = {
+  categoryId?: string | number | null | undefined;
+  dateRange?: IDateRangeInput | null | undefined;
+  status?: IProjectStatus | null | undefined;
+};
+
+export type IProjectPaginationInput = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  first?: number | null | undefined;
+  last?: number | null | undefined;
+};
+
+export type IProjectStatus =
+  | 'ACTIVE'
+  | 'ARCHIVED'
+  | 'COMPLETED'
+  | 'DRAFT'
+  | 'PENDING';
+
+export type IUpdateProjectInput = {
+  categoryId?: string | number | null | undefined;
+  description?: string | null | undefined;
+  detailedDescription?: string | null | undefined;
+  endDate?: string | null | undefined;
+  featuredImage?: string | null | undefined;
+  goalAmount?: number | null | undefined;
+  startDate?: string | null | undefined;
+  status?: IProjectStatus | null | undefined;
+  title?: string | null | undefined;
+};
+
+export type IGetAllProjectsQueryVariables = Exact<{
+  search?: string | null | undefined;
+  filter?: Types.IProjectFilter | null | undefined;
+  pagination?: Types.IProjectPaginationInput | null | undefined;
 }>;
 
 
-export type IGetAllProjectsQuery = { getAllProjects: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type IGetAllProjectsQuery = { getAllProjects: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: string, endDate: string, status: Types.IProjectStatus, featuredImage: string | null, createdAt: string, updatedAt: string, category: { id: string, name: string, description: string | null } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null } } };
 
-export type IGetProjectByIdQueryVariables = Types.Exact<{
-  id: Types.Scalars['ID']['input'];
+export type IGetProjectByIdQueryVariables = Exact<{
+  id: string | number;
 }>;
 
 
-export type IGetProjectByIdQuery = { getProjectById: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } } };
+export type IGetProjectByIdQuery = { getProjectById: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: string, endDate: string, status: Types.IProjectStatus, featuredImage: string | null, createdAt: string, updatedAt: string, category: { id: string, name: string, description: string | null } } };
 
-export type IGetActiveProjectsQueryVariables = Types.Exact<{
-  pagination?: Types.InputMaybe<Types.IProjectPaginationInput>;
+export type IGetActiveProjectsQueryVariables = Exact<{
+  pagination?: Types.IProjectPaginationInput | null | undefined;
 }>;
 
 
-export type IGetActiveProjectsQuery = { getActiveProjects: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type IGetActiveProjectsQuery = { getActiveProjects: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: string, endDate: string, status: Types.IProjectStatus, featuredImage: string | null, createdAt: string, updatedAt: string, category: { id: string, name: string, description: string | null } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null } } };
 
-export type IGetPendingProjectsQueryVariables = Types.Exact<{
-  pagination?: Types.InputMaybe<Types.IProjectPaginationInput>;
+export type IGetPendingProjectsQueryVariables = Exact<{
+  pagination?: Types.IProjectPaginationInput | null | undefined;
 }>;
 
 
-export type IGetPendingProjectsQuery = { getPendingProjects: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type IGetPendingProjectsQuery = { getPendingProjects: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: string, endDate: string, status: Types.IProjectStatus, featuredImage: string | null, createdAt: string, updatedAt: string, category: { id: string, name: string, description: string | null } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null } } };
 
-export type IGetArchivedProjectsQueryVariables = Types.Exact<{
-  filter?: Types.InputMaybe<Types.IArchivedProjectFilter>;
-  pagination?: Types.InputMaybe<Types.IProjectPaginationInput>;
+export type IGetArchivedProjectsQueryVariables = Exact<{
+  filter?: Types.IArchivedProjectFilter | null | undefined;
+  pagination?: Types.IProjectPaginationInput | null | undefined;
 }>;
 
 
-export type IGetArchivedProjectsQuery = { getArchivedProjects: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type IGetArchivedProjectsQuery = { getArchivedProjects: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: string, endDate: string, status: Types.IProjectStatus, featuredImage: string | null, createdAt: string, updatedAt: string, category: { id: string, name: string, description: string | null } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null } } };
 
-export type ICreateProjectMutationVariables = Types.Exact<{
+export type ICreateProjectMutationVariables = Exact<{
   input: Types.ICreateProjectInput;
 }>;
 
 
-export type ICreateProjectMutation = { createProject: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } } };
+export type ICreateProjectMutation = { createProject: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: string, endDate: string, status: Types.IProjectStatus, featuredImage: string | null, createdAt: string, updatedAt: string, category: { id: string, name: string, description: string | null } } };
 
-export type IUpdateProjectMutationVariables = Types.Exact<{
-  id: Types.Scalars['ID']['input'];
+export type IUpdateProjectMutationVariables = Exact<{
+  id: string | number;
   input: Types.IUpdateProjectInput;
 }>;
 
 
-export type IUpdateProjectMutation = { updateProject: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } } };
+export type IUpdateProjectMutation = { updateProject: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: string, endDate: string, status: Types.IProjectStatus, featuredImage: string | null, createdAt: string, updatedAt: string, category: { id: string, name: string, description: string | null } } };
 
-export type IDeleteProjectMutationVariables = Types.Exact<{
-  id: Types.Scalars['ID']['input'];
+export type IDeleteProjectMutationVariables = Exact<{
+  id: string | number;
 }>;
 
 
 export type IDeleteProjectMutation = { deleteProject: boolean };
 
-export type IBulkUpdateProjectsMutationVariables = Types.Exact<{
-  ids: Array<Types.Scalars['ID']['input']> | Types.Scalars['ID']['input'];
+export type IBulkUpdateProjectsMutationVariables = Exact<{
+  ids: Array<string | number> | string | number;
   input: Types.IBulkUpdateInput;
 }>;
 
 
-export type IBulkUpdateProjectsMutation = { bulkUpdateProjects: { successCount: number, failureCount: number, errors?: Array<string> | null } };
+export type IBulkUpdateProjectsMutation = { bulkUpdateProjects: { successCount: number, failureCount: number, errors: Array<string> | null } };
 
-export type IApproveProjectMutationVariables = Types.Exact<{
-  id: Types.Scalars['ID']['input'];
-  notes?: Types.InputMaybe<Types.Scalars['String']['input']>;
+export type IApproveProjectMutationVariables = Exact<{
+  id: string | number;
+  notes?: string | null | undefined;
 }>;
 
 
-export type IApproveProjectMutation = { approveProject: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } } };
+export type IApproveProjectMutation = { approveProject: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: string, endDate: string, status: Types.IProjectStatus, featuredImage: string | null, createdAt: string, updatedAt: string, category: { id: string, name: string, description: string | null } } };
 
-export type IRejectProjectMutationVariables = Types.Exact<{
-  id: Types.Scalars['ID']['input'];
-  reason: Types.Scalars['String']['input'];
+export type IRejectProjectMutationVariables = Exact<{
+  id: string | number;
+  reason: string;
 }>;
 
 
-export type IRejectProjectMutation = { rejectProject: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: any, endDate: any, status: Types.IProjectStatus, featuredImage?: string | null, createdAt: any, updatedAt: any, category: { id: string, name: string, description?: string | null } } };
+export type IRejectProjectMutation = { rejectProject: { id: string, title: string, description: string, detailedDescription: string, goalAmount: number, currentAmount: number, startDate: string, endDate: string, status: Types.IProjectStatus, featuredImage: string | null, createdAt: string, updatedAt: string, category: { id: string, name: string, description: string | null } } };
 
 export const GetAllProjectsDocument = gql`
     query GetAllProjects($search: String, $filter: ProjectFilter, $pagination: ProjectPaginationInput) {

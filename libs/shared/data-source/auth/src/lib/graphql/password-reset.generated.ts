@@ -1,18 +1,22 @@
+/** Internal type. DO NOT USE DIRECTLY. */
+type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+/** Internal type. DO NOT USE DIRECTLY. */
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 import * as Types from '@nyots/data-source';
 
 import { gql } from 'apollo-angular';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
-export type IRequestPasswordResetMutationVariables = Types.Exact<{
-  email: Types.Scalars['String']['input'];
+export type IRequestPasswordResetMutationVariables = Exact<{
+  email: string;
 }>;
 
 
 export type IRequestPasswordResetMutation = { requestPasswordReset: boolean };
 
-export type IResetPasswordMutationVariables = Types.Exact<{
-  token: Types.Scalars['String']['input'];
-  newPassword: Types.Scalars['String']['input'];
+export type IResetPasswordMutationVariables = Exact<{
+  token: string;
+  newPassword: string;
 }>;
 
 

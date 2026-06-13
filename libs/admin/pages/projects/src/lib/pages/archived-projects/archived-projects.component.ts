@@ -105,11 +105,11 @@ export class ArchivedProjectsComponent {
       const filter: IArchivedProjectFilter = {};
 
       if (this.archivedAfter()) {
-        filter.archivedAfter = new Date(this.archivedAfter());
+        filter.archivedAfter = this.archivedAfter();
       }
 
       if (this.archivedBefore()) {
-        filter.archivedBefore = new Date(this.archivedBefore());
+        filter.archivedBefore = this.archivedBefore();
       }
 
       // Build pagination object
@@ -136,7 +136,7 @@ export class ArchivedProjectsComponent {
       );
 
       if (result && result.pageInfo) {
-        this.projects.set(result.edges.map((edge) => edge.node).filter((p): p is IProject => !!p));
+        this.projects.set(result.edges.map((edge) => edge.node).filter(Boolean) as IProject[]);
         const pageInfo: IPageInfo = {
           hasNextPage: result.pageInfo.hasNextPage ?? false,
           hasPreviousPage: result.pageInfo.hasPreviousPage ?? false,

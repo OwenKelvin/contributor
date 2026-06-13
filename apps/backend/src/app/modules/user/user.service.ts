@@ -387,6 +387,20 @@ export class UserService {
     });
   }
 
+  async findByMagicLinkToken(token: string): Promise<User | null> {
+    return this.userModel.findOne({
+      where: {
+        magicLinkToken: token,
+      },
+      include: [
+        {
+          model: Role,
+          through: { attributes: [] },
+        },
+      ],
+    });
+  }
+
   async getBannedUsers(
     search?: string,
     pagination?: PaginationInput,

@@ -1,62 +1,134 @@
+/** Internal type. DO NOT USE DIRECTLY. */
+type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+/** Internal type. DO NOT USE DIRECTLY. */
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 import * as Types from '@nyots/data-source';
 
 import { gql } from 'apollo-angular';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
-export type IGetContributionsQueryVariables = Types.Exact<{
-  filter?: Types.InputMaybe<Types.IContributionFilter>;
-  pagination?: Types.InputMaybe<Types.IContributionPaginationInput>;
+export type IContributionFilter = {
+  endDate?: string | null | undefined;
+  maxAmount?: number | null | undefined;
+  minAmount?: number | null | undefined;
+  paymentStatus?: IPaymentStatus | null | undefined;
+  projectId?: string | number | null | undefined;
+  search?: string | null | undefined;
+  startDate?: string | null | undefined;
+  userId?: string | number | null | undefined;
+};
+
+export type IContributionPaginationInput = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  first?: number | null | undefined;
+  last?: number | null | undefined;
+  sortBy?: string | null | undefined;
+  sortOrder?: ISortOrder | null | undefined;
+};
+
+export type IPaymentStatus =
+  | 'FAILED'
+  | 'PAID'
+  | 'PENDING'
+  | 'REFUNDED';
+
+export type IProjectStatus =
+  | 'ACTIVE'
+  | 'ARCHIVED'
+  | 'COMPLETED'
+  | 'DRAFT'
+  | 'PENDING';
+
+export type IReportFilter = {
+  endDate?: string | null | undefined;
+  projectId?: string | number | null | undefined;
+  startDate?: string | null | undefined;
+  userId?: string | number | null | undefined;
+};
+
+export type IReportType =
+  | 'BY_PROJECT'
+  | 'BY_USER'
+  | 'SUMMARY'
+  | 'TIME_SERIES';
+
+export type ISortOrder =
+  | 'ASC'
+  | 'DESC';
+
+export type ITransactionFilterInput = {
+  contributionId?: string | null | undefined;
+  endDate?: string | null | undefined;
+  search?: string | null | undefined;
+  startDate?: string | null | undefined;
+  status?: ITransactionStatus | null | undefined;
+  transactionType?: ITransactionType | null | undefined;
+};
+
+export type ITransactionStatus =
+  | 'FAILED'
+  | 'PENDING'
+  | 'SUCCESS';
+
+export type ITransactionType =
+  | 'PAYMENT'
+  | 'REFUND';
+
+export type IGetContributionsQueryVariables = Exact<{
+  filter?: Types.IContributionFilter | null | undefined;
+  pagination?: Types.IContributionPaginationInput | null | undefined;
 }>;
 
 
-export type IGetContributionsQuery = { getContributions: { totalCount: number, totalAmount: number, edges: Array<{ cursor: string, node: { id: string, amount: number, paymentStatus: Types.IPaymentStatus, notes?: string | null, paymentReference?: string | null, failureReason?: string | null, paidAt?: any | null, createdAt: any, updatedAt: any, user: { id: string, firstName?: string | null, lastName?: string | null, email: string }, project: { id: string, title: string, description: string, goalAmount: number, currentAmount: number, status: Types.IProjectStatus } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type IGetContributionsQuery = { getContributions: { totalCount: number, totalAmount: number, edges: Array<{ cursor: string, node: { id: string, amount: number, paymentStatus: Types.IPaymentStatus, notes: string | null, paymentReference: string | null, failureReason: string | null, paidAt: string | null, createdAt: string, updatedAt: string, user: { id: string, firstName: string | null, lastName: string | null, email: string }, project: { id: string, title: string, description: string, goalAmount: number, currentAmount: number, status: Types.IProjectStatus } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null } } };
 
-export type IGetContributionQueryVariables = Types.Exact<{
-  id: Types.Scalars['String']['input'];
+export type IGetContributionQueryVariables = Exact<{
+  id: string;
 }>;
 
 
-export type IGetContributionQuery = { getContribution: { id: string, amount: number, paymentStatus: Types.IPaymentStatus, notes?: string | null, paymentReference?: string | null, failureReason?: string | null, paidAt?: any | null, createdAt: any, updatedAt: any, user: { id: string, firstName?: string | null, lastName?: string | null, email: string }, project: { id: string, title: string, description: string, goalAmount: number, currentAmount: number, status: Types.IProjectStatus }, transactions: Array<{ id: string, transactionType: Types.ITransactionType, amount: number, status: Types.ITransactionStatus, gatewayTransactionId?: string | null, gatewayResponse?: string | null, errorCode?: string | null, errorMessage?: string | null, createdAt: any }> } };
+export type IGetContributionQuery = { getContribution: { id: string, amount: number, paymentStatus: Types.IPaymentStatus, notes: string | null, paymentReference: string | null, failureReason: string | null, paidAt: string | null, createdAt: string, updatedAt: string, user: { id: string, firstName: string | null, lastName: string | null, email: string }, project: { id: string, title: string, description: string, goalAmount: number, currentAmount: number, status: Types.IProjectStatus }, transactions: Array<{ id: string, transactionType: Types.ITransactionType, amount: number, status: Types.ITransactionStatus, gatewayTransactionId: string | null, gatewayResponse: string | null, errorCode: string | null, errorMessage: string | null, createdAt: string }> } };
 
-export type IGetMyContributionsQueryVariables = Types.Exact<{
-  filter?: Types.InputMaybe<Types.IContributionFilter>;
-  pagination?: Types.InputMaybe<Types.IContributionPaginationInput>;
+export type IGetMyContributionsQueryVariables = Exact<{
+  filter?: Types.IContributionFilter | null | undefined;
+  pagination?: Types.IContributionPaginationInput | null | undefined;
 }>;
 
 
-export type IGetMyContributionsQuery = { getMyContributions: { totalCount: number, totalAmount: number, edges: Array<{ cursor: string, node: { id: string, amount: number, paymentStatus: Types.IPaymentStatus, notes?: string | null, paymentReference?: string | null, failureReason?: string | null, paidAt?: any | null, createdAt: any, updatedAt: any, project: { id: string, title: string, description: string, goalAmount: number, currentAmount: number, status: Types.IProjectStatus, featuredImage?: string | null } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type IGetMyContributionsQuery = { getMyContributions: { totalCount: number, totalAmount: number, edges: Array<{ cursor: string, node: { id: string, amount: number, paymentStatus: Types.IPaymentStatus, notes: string | null, paymentReference: string | null, failureReason: string | null, paidAt: string | null, createdAt: string, updatedAt: string, project: { id: string, title: string, description: string, goalAmount: number, currentAmount: number, status: Types.IProjectStatus, featuredImage: string | null } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null } } };
 
-export type IGetProjectContributionsQueryVariables = Types.Exact<{
-  projectId: Types.Scalars['String']['input'];
-  filter?: Types.InputMaybe<Types.IContributionFilter>;
-  pagination?: Types.InputMaybe<Types.IContributionPaginationInput>;
+export type IGetProjectContributionsQueryVariables = Exact<{
+  projectId: string;
+  filter?: Types.IContributionFilter | null | undefined;
+  pagination?: Types.IContributionPaginationInput | null | undefined;
 }>;
 
 
-export type IGetProjectContributionsQuery = { getProjectContributions: { totalCount: number, totalAmount: number, edges: Array<{ cursor: string, node: { id: string, amount: number, paymentStatus: Types.IPaymentStatus, notes?: string | null, paymentReference?: string | null, paidAt?: any | null, createdAt: any, updatedAt: any, user: { id: string, firstName?: string | null, lastName?: string | null, email: string } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type IGetProjectContributionsQuery = { getProjectContributions: { totalCount: number, totalAmount: number, edges: Array<{ cursor: string, node: { id: string, amount: number, paymentStatus: Types.IPaymentStatus, notes: string | null, paymentReference: string | null, paidAt: string | null, createdAt: string, updatedAt: string, user: { id: string, firstName: string | null, lastName: string | null, email: string } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null } } };
 
-export type IGetContributionReportQueryVariables = Types.Exact<{
+export type IGetContributionReportQueryVariables = Exact<{
   reportType: Types.IReportType;
-  filter?: Types.InputMaybe<Types.IReportFilter>;
+  filter?: Types.IReportFilter | null | undefined;
 }>;
 
 
 export type IGetContributionReportQuery = { getContributionReport: { totalContributions: number, totalAmount: number, pendingCount: number, pendingAmount: number, paidCount: number, paidAmount: number, failedCount: number, failedAmount: number, refundedCount: number, refundedAmount: number, successRate: number, topProjects: Array<{ projectId: string, projectTitle: string, totalAmount: number, contributionCount: number }>, topContributors: Array<{ userId: string, userName: string, userEmail: string, totalAmount: number, contributionCount: number }>, timeSeriesData: Array<{ date: string, contributionCount: number, totalAmount: number }> } };
 
-export type IGetContributionTransactionsQueryVariables = Types.Exact<{
-  contributionId: Types.Scalars['String']['input'];
+export type IGetContributionTransactionsQueryVariables = Exact<{
+  contributionId: string;
 }>;
 
 
-export type IGetContributionTransactionsQuery = { getContributionTransactions: Array<{ id: string, transactionType: Types.ITransactionType, amount: number, status: Types.ITransactionStatus, gatewayTransactionId?: string | null, gatewayResponse?: string | null, errorCode?: string | null, errorMessage?: string | null, createdAt: any, contribution: { id: string, amount: number, paymentStatus: Types.IPaymentStatus } }> };
+export type IGetContributionTransactionsQuery = { getContributionTransactions: Array<{ id: string, transactionType: Types.ITransactionType, amount: number, status: Types.ITransactionStatus, gatewayTransactionId: string | null, gatewayResponse: string | null, errorCode: string | null, errorMessage: string | null, createdAt: string, contribution: { id: string, amount: number, paymentStatus: Types.IPaymentStatus } }> };
 
-export type IGetTransactionsQueryVariables = Types.Exact<{
-  filter?: Types.InputMaybe<Types.ITransactionFilterInput>;
-  pagination?: Types.InputMaybe<Types.IContributionPaginationInput>;
+export type IGetTransactionsQueryVariables = Exact<{
+  filter?: Types.ITransactionFilterInput | null | undefined;
+  pagination?: Types.IContributionPaginationInput | null | undefined;
 }>;
 
 
-export type IGetTransactionsQuery = { getTransactions: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, transactionType: Types.ITransactionType, amount: number, status: Types.ITransactionStatus, gatewayTransactionId?: string | null, gatewayResponse?: string | null, errorCode?: string | null, errorMessage?: string | null, createdAt: any, contribution: { id: string, amount: number, paymentStatus: Types.IPaymentStatus, user: { id: string, firstName?: string | null, lastName?: string | null, email: string }, project: { id: string, title: string } } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type IGetTransactionsQuery = { getTransactions: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, transactionType: Types.ITransactionType, amount: number, status: Types.ITransactionStatus, gatewayTransactionId: string | null, gatewayResponse: string | null, errorCode: string | null, errorMessage: string | null, createdAt: string, contribution: { id: string, amount: number, paymentStatus: Types.IPaymentStatus, user: { id: string, firstName: string | null, lastName: string | null, email: string }, project: { id: string, title: string } } } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null } } };
 
 export const GetContributionsDocument = gql`
     query GetContributions($filter: ContributionFilter, $pagination: ContributionPaginationInput) {

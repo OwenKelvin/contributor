@@ -137,7 +137,7 @@ export class CreateProjectComponent {
     try {
       const categories = await this.categoryService.getAllCategories();
       this.categories.set(
-        (categories || []).filter((c): c is ICategory => c !== undefined),
+        (categories || []).filter(Boolean) as ICategory[],
       );
     } catch (error) {
       console.error('Error loading categories:', error);
@@ -167,8 +167,8 @@ export class CreateProjectComponent {
         description: formValue.description,
         detailedDescription: formValue.detailedDescription,
         goalAmount: formValue.goalAmount,
-        startDate: formValue.startDate,
-        endDate: formValue.endDate,
+        startDate: formValue.startDate?.toISOString(),
+        endDate: formValue.endDate?.toISOString(),
         categoryId: formValue.categoryId,
         featuredImage: formValue.featuredImage || undefined,
         status: formValue.status,

@@ -178,7 +178,7 @@ export class AllProjectsComponent {
         },
       );
       this.categories.set(
-        (categories || []).filter((c): c is ICategory => c !== undefined),
+        (categories || []).filter(Boolean) as ICategory[],
       );
     } catch (error) {
       console.error('Error loading categories:', error);
@@ -211,8 +211,8 @@ export class AllProjectsComponent {
         const end = this.dateRangeEnd();
         if (start && end) {
           filter.dateRange = {
-            start,
-            end,
+            start: start.toISOString(),
+            end: end.toISOString(),
           };
         }
       }
@@ -246,7 +246,7 @@ export class AllProjectsComponent {
         this.projects.set(
           result.edges
             .map((edge) => edge.node)
-            .filter((p): p is IProject => !!p),
+            .filter(Boolean) as IProject[],
         );
         const pageInfo: IPageInfo = {
           hasNextPage: result.pageInfo.hasNextPage ?? false,
@@ -296,8 +296,8 @@ export class AllProjectsComponent {
       const end = this.dateRangeEnd();
       if (start && end) {
         filter.dateRange = {
-          start,
-          end,
+          start: start.toISOString(),
+          end: end.toISOString(),
         };
       }
     }

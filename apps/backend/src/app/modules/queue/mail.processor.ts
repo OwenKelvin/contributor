@@ -56,6 +56,12 @@ interface PasswordResetEmailData {
   resetLink: string;
 }
 
+interface MagicLinkEmailData {
+  to: string;
+  name: string;
+  magicLink: string;
+}
+
 @Processor('email')
 export class MailProcessor {
   private readonly logger = new Logger(MailProcessor.name);
@@ -159,6 +165,58 @@ export class MailProcessor {
     } catch (error) {
       this.logger.error(
         `Failed to send password reset email: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
+  }
+
+  @Process('sendMagicLinkEmail')
+  async sendMagicLinkEmail(job: Job<MagicLinkEmailData>) {
+    this.logger.debug(`Sending magic link email to ${job.data.to}`);
+
+    try {
+      const template = this.loadTemplate('magic-link.html');
+      const html = this.renderTemplate(template, {
+        ...job.data,
+        year: new Date().getFullYear(),
+      });
+
+      this.logger.log(`Magic link email rendered for ${job.data.to}`);
+      this.logger.debug(`Email content length: ${html.length} characters`);
+
+      const text = `Hi ${job.data.name},\nSign in to NyotsCo: ${job.data.magicLink}\nThis link expires in 15 minutes.`;
+      let attempt = 0;
+      let sent = false;
+      let lastError;
+      while (!sent && attempt < 3) {
+        try {
+          await this.emailSender.sendMail({
+            to: job.data.to,
+            subject: 'Sign in to NyotsCo',
+            html,
+            text,
+          });
+          sent = true;
+        } catch (err) {
+          attempt++;
+          lastError = err;
+          this.logger.warn(`Retrying magic link email (${attempt}/3): ${err.message}`);
+        }
+      }
+      if (!sent) throw lastError;
+      this.logger.debug(`Magic link email sent to ${job.data.to}`);
+      await this.emailLogService.logEmailSend({
+        userId: job.data.to,
+        action: ActivityAction.MAGIC_LINK_REQUESTED,
+        targetId: undefined,
+        targetType: TargetType.USER,
+        details: JSON.stringify({ email: job.data.to, type: 'magic-link' }),
+      });
+      return { success: true };
+    } catch (error) {
+      this.logger.error(
+        `Failed to send magic link email: ${error.message}`,
         error.stack,
       );
       throw error;

@@ -113,7 +113,7 @@ export class PendingProjectsComponent {
         this.projects.set(
           result.edges
             .map((edge) => edge.node)
-            .filter((p): p is IProject => !!p),
+            .filter(Boolean) as IProject[],
         );
         const pageInfo: IPageInfo = {
           hasNextPage: result.pageInfo.hasNextPage ?? false,

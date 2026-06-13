@@ -121,8 +121,9 @@ export class BannedUsersComponent {
     return user.email;
   }
 
-  formatDate(date: Date): string {
-    return date.toLocaleDateString('en-US', {
+  formatDate(date: string | null | undefined): string {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',

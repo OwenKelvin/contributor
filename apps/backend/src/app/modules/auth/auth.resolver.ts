@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
+import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { RegisterInput } from './dto/register.input';
 import { LoginInput } from './dto/login.input';
@@ -6,13 +6,8 @@ import {
   RequestPasswordResetInput,
   ResetPasswordInput,
 } from './dto/password-reset.input';
-import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from './guards/gql-auth.guard';
-import { CurrentUser } from './decorators/current-user.decorator';
-import { User } from '../user/user.model';
-import { Roles } from './decorators/roles.decorator';
-import { RolesGuard } from './guards/roles.guard';
-import { AuthResponse } from './types/auth-response.type'; // Assuming this file exists and defines AuthResponse
+import { MagicLinkLoginInput } from './dto/magic-link.input';
+import { AuthResponse } from './types/auth-response.type';
 
 @Resolver()
 export class AuthResolver {
@@ -57,11 +52,30 @@ export class AuthResolver {
     );
   }
 
-  // Example of a protected route
-  // @Mutation(() => String)
-  // @Roles(RoleList.Admin)
-  // @UseGuards(GqlAuthGuard, RolesGuard)
-  // async testProtectedRoute(@CurrentUser() user: User) {
-  //   return `Hello ${user.email}, you are authenticated and have the role: ${user.roles.map(role => role.name).join(', ')}!`;
-  // }
+  @Mutation(() => Boolean)
+  async requestMagicLink(
+    @Args('email') email: string,
+  ): Promise<boolean> {
+    return this.authService.requestMagicLink(email);
+  }
+
+  @Mutation(() => AuthResponse, { nullable: true })
+  async magicLinkLogin(
+    @Args('magicLinkLoginInput') magicLinkLoginInput: MagicLinkLoginInput,
+  ): Promise<any> {
+    const result = await this.authService.magicLinkLogin(
+      magicLinkLoginInput.token,
+      magicLinkLoginInput.acceptTerms,
+    );
+
+    if (result.requiresTermsAcceptance) {
+      return { requiresTermsAcceptance: true };
+    }
+
+    return {
+      user: result.user,
+      accessToken: result.accessToken,
+      requiresTermsAcceptance: false,
+    };
+  }
 }

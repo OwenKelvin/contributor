@@ -32,6 +32,6 @@ export class ActivityService {
   getActivity(id: string): Observable<IGetActivityQuery['activity']> {
     return this.getActivityGQL
       .fetch({ variables: { id } })
-      .pipe(map((result) => result.data?.activity));
+      .pipe(map((result) => result.data?.activity ?? null));
   }
 }

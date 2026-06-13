@@ -22,6 +22,14 @@ export class EmailService {
     });
   }
 
+  async sendMagicLinkEmail(to: string, name: string, magicLink: string) {
+    await this.emailQueue.add('sendMagicLinkEmail', {
+      to,
+      name,
+      magicLink,
+    });
+  }
+
   /**
    * Send payment success email to contributor
    * @param contribution - Contribution with user and project relationships loaded

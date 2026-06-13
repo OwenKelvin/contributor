@@ -14,12 +14,11 @@ import { HlmLabel } from '@nyots/ui/label';
 import { HlmCard, HlmCardContent, HlmCardDescription, HlmCardFooter, HlmCardHeader, HlmCardTitle } from '@nyots/ui/card';
 import { HlmIcon, HlmIconImports } from '@nyots/ui/icon';
 import { provideIcons } from '@ng-icons/core';
-import { lucideLoader2, lucideMail, lucideLock } from '@ng-icons/lucide';
-import { Router, RouterLink } from '@angular/router';
+import { lucideLoader2, lucideMail, lucideLock, lucideArrowLeft } from '@ng-icons/lucide';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '@nyots/data-source/auth';
 import { GOOGLE_CLIENT_ID } from '@nyots/data-source/constants';
 
-// Declare google as a global variable
 declare const google: any;
 
 @Component({
@@ -38,7 +37,7 @@ declare const google: any;
     HlmIconImports,
     RouterLink,
   ],
-  providers: [provideIcons({ lucideLoader2, lucideMail, lucideLock })],
+  providers: [provideIcons({ lucideLoader2, lucideMail, lucideLock, lucideArrowLeft })],
   templateUrl: 'login.html',
 })
 export class Login implements OnInit {
@@ -46,26 +45,56 @@ export class Login implements OnInit {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private document = inject(DOCUMENT);
   private elementRef = inject(ElementRef);
 
-  // Form model - single source of truth
+  // Login mode toggle: 'password' | 'magicLink'
+  loginMode = signal<'password' | 'magicLink'>('password');
+
+  // Password login form
   private loginModel = signal({
     email: '',
     password: '',
   });
 
-  // Create form with validation schema
   protected loginForm = form(this.loginModel, (form) => {
     required(form.email, { message: 'Email is required' });
     email(form.email, { message: 'Please enter a valid email' });
     required(form.password, { message: 'Password is required' });
   });
 
+  // Magic link form
+  private magicLinkModel = signal({
+    email: '',
+  });
+
+  protected magicLinkForm = form(this.magicLinkModel, (form) => {
+    required(form.email, { message: 'Email is required' });
+    email(form.email, { message: 'Please enter a valid email' });
+  });
+
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
+  successMessage = signal<string | null>(null);
+
+  // Magic link URL consumption
+  magicToken = signal<string | null>(null);
+  showTermsDialog = signal(false);
+  termsAccepted = signal(false);
+  tokenFromUrl = signal<string | null>(null);
 
   ngOnInit(): void {
+    // Check for magic token in URL
+    const queryParams = this.route.snapshot.queryParams;
+    const token = queryParams['magicToken'];
+    if (token) {
+      this.tokenFromUrl.set(token);
+      this.consumeMagicLink(token);
+      return;
+    }
+
+    // Initialize Google Identity Services
     if (typeof google !== 'undefined') {
       google.accounts.id.initialize({
         client_id: this.googleClientId,
@@ -76,9 +105,15 @@ export class Login implements OnInit {
 
       google.accounts.id.renderButton(
         this.elementRef.nativeElement.querySelector('#google-btn-container'),
-        { theme: 'outline', size: 'large', width: '100%' } // customization attributes
+        { theme: 'outline', size: 'large', width: '100%' }
       );
     }
+  }
+
+  setLoginMode(mode: 'password' | 'magicLink') {
+    this.loginMode.set(mode);
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
   }
 
   async onSubmit(e: Event) {
@@ -96,14 +131,11 @@ export class Login implements OnInit {
         const response = await this.authService.login(credentials);
 
         this.isLoading.set(false);
-        console.log(response);
 
         if (response.data?.login.accessToken) {
-          // Navigate to dashboard or home page
           await this.router.navigate(['/dashboard']);
         }
       } catch (error: any) {
-        console.log({ error });
         this.isLoading.set(false);
         this.errorMessage.set(
           error.errors?.[0]?.message || 'Login failed. Please try again.',
@@ -113,14 +145,92 @@ export class Login implements OnInit {
     });
   }
 
+  async onMagicLinkSubmit(e: Event) {
+    e.preventDefault();
+    await submit(this.magicLinkForm, async (state) => {
+      if (!this.magicLinkForm().valid()) {
+        return;
+      }
+      this.isLoading.set(true);
+      this.errorMessage.set(null);
+      this.successMessage.set(null);
+
+      const { email } = state().value();
+
+      try {
+        await this.authService.requestMagicLink(email);
+        this.isLoading.set(false);
+        this.successMessage.set('Check your email for a secure sign-in link!');
+      } catch (error: any) {
+        this.isLoading.set(false);
+        this.errorMessage.set(
+          error.errors?.[0]?.message || 'Failed to send magic link. Please try again.',
+        );
+        console.error('Magic link request error:', error);
+      }
+    });
+  }
+
+  async consumeMagicLink(token: string) {
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+
+    try {
+      const response = await this.authService.magicLinkLogin(token);
+      this.isLoading.set(false);
+
+      if (response.data?.magicLinkLogin?.requiresTermsAcceptance) {
+        // New user needs to accept terms
+        this.showTermsDialog.set(true);
+      } else if (response.data?.magicLinkLogin?.accessToken) {
+        // Success — already stored by authService
+        await this.router.navigate(['/dashboard']);
+      }
+    } catch (error: any) {
+      this.isLoading.set(false);
+      this.errorMessage.set(
+        error.errors?.[0]?.message || 'Invalid or expired magic link.',
+      );
+      console.error('Magic link login error:', error);
+    }
+  }
+
+  async acceptTermsAndLogin() {
+    if (!this.termsAccepted()) {
+      return;
+    }
+
+    const token = this.tokenFromUrl();
+    if (!token) return;
+
+    this.isLoading.set(true);
+    try {
+      const response = await this.authService.magicLinkLogin(token, true);
+      this.isLoading.set(false);
+
+      if (response.data?.magicLinkLogin?.accessToken) {
+        this.showTermsDialog.set(false);
+        await this.router.navigate(['/dashboard']);
+      }
+    } catch (error: any) {
+      this.isLoading.set(false);
+      this.errorMessage.set(
+        error.errors?.[0]?.message || 'Failed to create account. Please try again.',
+      );
+    }
+  }
+
+  cancelTermsDialog() {
+    this.showTermsDialog.set(false);
+    this.tokenFromUrl.set(null);
+    this.termsAccepted.set(false);
+    // Clear URL
+    this.router.navigate(['/login'], { replaceUrl: true });
+  }
+
   onGoogleLogin() {
     this.isLoading.set(true);
     this.errorMessage.set(null);
-    // Google Identity Services handles the UI, no explicit redirect needed here
-    // The renderButton method takes care of showing the button, and the callback handles the response.
-    // If you want to trigger a one-tap prompt, you'd use:
-    // google.accounts.id.prompt();
-    // For now, we'll rely on the rendered button.
   }
 
   private async handleGoogleAuthResponse(response: any) {

@@ -1,5 +1,5 @@
 
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import {
   HlmSidebar,
   HlmSidebarContent, HlmSidebarFooter,
@@ -16,6 +16,7 @@ import {
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { HlmIcon } from '@nyots/ui/icon';
 import {
+  lucideAlertTriangle,
   lucideBarChart3,
   lucideChevronRight,
   lucideFileText,
@@ -196,6 +197,28 @@ import {
             </ol>
           </nav>
         </header>
+
+        <!-- Incomplete Account Banner -->
+        @if (showIncompleteAccountBanner() && !hideBanner()) {
+          <div class="mx-4 mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+            <div class="flex items-start gap-3">
+              <ng-icon name="lucideAlertTriangle" class="text-amber-600 flex-shrink-0 mt-0.5" hlm size="sm" />
+              <div class="flex-1">
+                <h3 class="text-sm font-semibold text-amber-800">Account setup incomplete</h3>
+                <p class="text-sm text-amber-700 mt-1">
+                  Please complete your profile by adding your name and other details to get the most out of NyotsCo.
+                </p>
+              </div>
+              <button 
+                class="text-amber-600 hover:text-amber-800 text-sm"
+                (click)="hideBanner.set(true)"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        }
+        
         <router-outlet></router-outlet>
       </main>
     </div>
@@ -212,6 +235,7 @@ import {
       lucideChevronDown,
       lucideChevronUp,
       lucideHome,
+      lucideAlertTriangle,
     }),
   ],
 })
@@ -220,6 +244,23 @@ export class Dashboard {
   private readonly dialogService = inject(HlmDialogService);
   private readonly breadcrumbService = inject(BreadcrumbService);
   
+  // Check if user profile is incomplete (missing firstName)
+  user = computed(() => {
+    try {
+      const userStr = localStorage.getItem('user');
+      return userStr ? JSON.parse(userStr) : null;
+    } catch {
+      return null;
+    }
+  });
+  
+  showIncompleteAccountBanner = computed(() => {
+    const u = this.user();
+    return u && !u.firstName;
+  });
+  
+  hideBanner = signal(false);
+
   protected readonly breadcrumbs = this.breadcrumbService.breadcrumbs;
   protected readonly _items = [
     {

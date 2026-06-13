@@ -1,75 +1,121 @@
+/** Internal type. DO NOT USE DIRECTLY. */
+type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+/** Internal type. DO NOT USE DIRECTLY. */
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 import * as Types from '@nyots/data-source';
 
 import { gql } from 'apollo-angular';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
-export type IGetAllUsersQueryVariables = Types.Exact<{
-  search?: Types.InputMaybe<Types.Scalars['String']['input']>;
-  filter?: Types.InputMaybe<Types.IUserFilter>;
-  pagination?: Types.InputMaybe<Types.IUserPaginationInput>;
+export type IBulkUpdateUserInput = {
+  isActive?: boolean | null | undefined;
+  roleIds?: Array<string | number> | null | undefined;
+};
+
+export type ICreateUserInput = {
+  email: string;
+  firstName?: string | null | undefined;
+  lastName?: string | null | undefined;
+  password: string;
+  phoneNumber?: string | null | undefined;
+  roleIds?: Array<string | number> | null | undefined;
+};
+
+export type ISortOrder =
+  | 'ASC'
+  | 'DESC';
+
+export type IUpdateUserInput = {
+  email?: string | null | undefined;
+  firstName?: string | null | undefined;
+  lastName?: string | null | undefined;
+  password?: string | null | undefined;
+  phoneNumber?: string | null | undefined;
+  roleIds?: Array<string | number> | null | undefined;
+};
+
+export type IUserFilter = {
+  isActive?: boolean | null | undefined;
+  roleId?: string | number | null | undefined;
+  search?: string | null | undefined;
+};
+
+export type IUserPaginationInput = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  first?: number | null | undefined;
+  last?: number | null | undefined;
+  sortBy?: string | null | undefined;
+  sortOrder?: ISortOrder | null | undefined;
+};
+
+export type IGetAllUsersQueryVariables = Exact<{
+  search?: string | null | undefined;
+  filter?: Types.IUserFilter | null | undefined;
+  pagination?: Types.IUserPaginationInput | null | undefined;
 }>;
 
 
-export type IGetAllUsersQuery = { getAllUsers: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, createdAt: any, updatedAt: any, roles?: Array<{ id: string, name: string, description?: string | null }> | null } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type IGetAllUsersQuery = { getAllUsers: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, email: string, firstName: string | null, lastName: string | null, phoneNumber: string | null, isBanned: boolean, createdAt: string, updatedAt: string, roles: Array<{ id: string, name: string, description: string | null }> | null } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null } } };
 
-export type IGetUserByIdQueryVariables = Types.Exact<{
-  id: Types.Scalars['ID']['input'];
+export type IGetUserByIdQueryVariables = Exact<{
+  id: string | number;
 }>;
 
 
-export type IGetUserByIdQuery = { getUserById: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, isBanned: boolean, bannedAt?: any | null, banReason?: string | null, createdAt: any, updatedAt: any, bannedBy?: { firstName?: string | null, lastName?: string | null, email: string } | null, roles?: Array<{ id: string, name: string, description?: string | null }> | null } };
+export type IGetUserByIdQuery = { getUserById: { id: string, email: string, firstName: string | null, lastName: string | null, phoneNumber: string | null, isBanned: boolean, bannedAt: string | null, banReason: string | null, createdAt: string, updatedAt: string, bannedBy: { firstName: string | null, lastName: string | null, email: string } | null, roles: Array<{ id: string, name: string, description: string | null }> | null } };
 
-export type IGetBannedUsersQueryVariables = Types.Exact<{
-  pagination?: Types.InputMaybe<Types.IUserPaginationInput>;
+export type IGetBannedUsersQueryVariables = Exact<{
+  pagination?: Types.IUserPaginationInput | null | undefined;
 }>;
 
 
-export type IGetBannedUsersQuery = { getBannedUsers: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, bannedAt?: any | null, banReason?: string | null, createdAt: any, updatedAt: any, bannedBy?: { email: string, firstName?: string | null, lastName?: string | null } | null, roles?: Array<{ id: string, name: string, description?: string | null }> | null } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
+export type IGetBannedUsersQuery = { getBannedUsers: { totalCount: number, edges: Array<{ cursor: string, node: { id: string, email: string, firstName: string | null, lastName: string | null, phoneNumber: string | null, bannedAt: string | null, banReason: string | null, createdAt: string, updatedAt: string, bannedBy: { email: string, firstName: string | null, lastName: string | null } | null, roles: Array<{ id: string, name: string, description: string | null }> | null } }>, pageInfo: { hasNextPage: boolean, hasPreviousPage: boolean, startCursor: string | null, endCursor: string | null } } };
 
-export type ICreateUserMutationVariables = Types.Exact<{
+export type ICreateUserMutationVariables = Exact<{
   input: Types.ICreateUserInput;
 }>;
 
 
-export type ICreateUserMutation = { createUser: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, createdAt: any, updatedAt: any, roles?: Array<{ id: string, name: string, description?: string | null }> | null } };
+export type ICreateUserMutation = { createUser: { id: string, email: string, firstName: string | null, lastName: string | null, phoneNumber: string | null, createdAt: string, updatedAt: string, roles: Array<{ id: string, name: string, description: string | null }> | null } };
 
-export type IUpdateUserMutationVariables = Types.Exact<{
-  id: Types.Scalars['ID']['input'];
+export type IUpdateUserMutationVariables = Exact<{
+  id: string | number;
   input: Types.IUpdateUserInput;
 }>;
 
 
-export type IUpdateUserMutation = { updateUser: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, createdAt: any, updatedAt: any, roles?: Array<{ id: string, name: string, description?: string | null }> | null } };
+export type IUpdateUserMutation = { updateUser: { id: string, email: string, firstName: string | null, lastName: string | null, phoneNumber: string | null, createdAt: string, updatedAt: string, roles: Array<{ id: string, name: string, description: string | null }> | null } };
 
-export type IDeleteUserMutationVariables = Types.Exact<{
-  id: Types.Scalars['ID']['input'];
+export type IDeleteUserMutationVariables = Exact<{
+  id: string | number;
 }>;
 
 
 export type IDeleteUserMutation = { deleteUser: boolean };
 
-export type IBulkUpdateUsersMutationVariables = Types.Exact<{
-  ids: Array<Types.Scalars['ID']['input']> | Types.Scalars['ID']['input'];
+export type IBulkUpdateUsersMutationVariables = Exact<{
+  ids: Array<string | number> | string | number;
   input: Types.IBulkUpdateUserInput;
 }>;
 
 
-export type IBulkUpdateUsersMutation = { bulkUpdateUsers: { success: boolean, successCount: number, failureCount: number, errors?: Array<string> | null } };
+export type IBulkUpdateUsersMutation = { bulkUpdateUsers: { success: boolean, successCount: number, failureCount: number, errors: Array<string> | null } };
 
-export type IBanUserMutationVariables = Types.Exact<{
-  userId: Types.Scalars['ID']['input'];
-  reason?: Types.InputMaybe<Types.Scalars['String']['input']>;
+export type IBanUserMutationVariables = Exact<{
+  userId: string | number;
+  reason?: string | null | undefined;
 }>;
 
 
-export type IBanUserMutation = { banUser: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, createdAt: any, updatedAt: any, roles?: Array<{ id: string, name: string, description?: string | null }> | null } };
+export type IBanUserMutation = { banUser: { id: string, email: string, firstName: string | null, lastName: string | null, phoneNumber: string | null, createdAt: string, updatedAt: string, roles: Array<{ id: string, name: string, description: string | null }> | null } };
 
-export type IUnbanUserMutationVariables = Types.Exact<{
-  id: Types.Scalars['ID']['input'];
+export type IUnbanUserMutationVariables = Exact<{
+  id: string | number;
 }>;
 
 
-export type IUnbanUserMutation = { unbanUser: { id: string, email: string, firstName?: string | null, lastName?: string | null, phoneNumber?: string | null, createdAt: any, updatedAt: any, roles?: Array<{ id: string, name: string, description?: string | null }> | null } };
+export type IUnbanUserMutation = { unbanUser: { id: string, email: string, firstName: string | null, lastName: string | null, phoneNumber: string | null, createdAt: string, updatedAt: string, roles: Array<{ id: string, name: string, description: string | null }> | null } };
 
 export const GetAllUsersDocument = gql`
     query GetAllUsers($search: String, $filter: UserFilter, $pagination: UserPaginationInput) {
@@ -81,6 +127,7 @@ export const GetAllUsersDocument = gql`
         firstName
         lastName
         phoneNumber
+        isBanned
         roles {
           id
           name

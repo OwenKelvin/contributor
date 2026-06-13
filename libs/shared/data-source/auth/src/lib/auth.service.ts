@@ -4,6 +4,7 @@ import { ILoginInput, IRegisterInput } from '@nyots/data-source';
 import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
 import { IRequestPasswordResetGQL, IResetPasswordGQL } from './graphql/password-reset.generated';
+import { IRequestMagicLinkGQL, IMagicLinkLoginGQL } from './graphql/magic-link.generated';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,8 @@ export class AuthService {
   requestPasswordResetGQL = inject(IRequestPasswordResetGQL);
   resetPasswordGQL = inject(IResetPasswordGQL);
   googleLoginGQL = inject(IGoogleLoginGQL);
+  requestMagicLinkGQL = inject(IRequestMagicLinkGQL);
+  magicLinkLoginGQL = inject(IMagicLinkLoginGQL);
   router = inject(Router);
 
   async login(credentials: ILoginInput) {
@@ -23,11 +26,8 @@ export class AuthService {
       }),
     );
     if (response.data?.login.accessToken) {
-      // Store tokens
       localStorage.setItem('accessToken', response.data?.login.accessToken);
       localStorage.setItem('refreshToken', response.data?.login.accessToken);
-
-      // Store user info
       localStorage.setItem('user', JSON.stringify(response.data?.login.user));
     }
     return response;
@@ -40,11 +40,8 @@ export class AuthService {
       }),
     );
     if (response.data?.register.accessToken) {
-      // Store tokens
       localStorage.setItem('accessToken', response.data?.register.accessToken);
       localStorage.setItem('refreshToken', response.data?.register.accessToken);
-
-      // Store user info
       localStorage.setItem(
         'user',
         JSON.stringify(response.data?.register.user),
@@ -54,12 +51,9 @@ export class AuthService {
   }
 
   logout() {
-    // Clear tokens and user info
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
-
-    // Redirect to login page
     this.router.navigate(['/login']);
   }
 
@@ -70,7 +64,6 @@ export class AuthService {
       }),
     );
     if (response.data?.googleLogin.accessToken) {
-      // Store tokens
       localStorage.setItem(
         'accessToken',
         response.data?.googleLogin.accessToken,
@@ -79,8 +72,6 @@ export class AuthService {
         'refreshToken',
         response.data?.googleLogin.accessToken,
       );
-
-      // Store user info
       localStorage.setItem(
         'user',
         JSON.stringify(response.data?.googleLogin.user),
@@ -108,5 +99,31 @@ export class AuthService {
         },
       }),
     );
+  }
+
+  async requestMagicLink(email: string) {
+    return await firstValueFrom(
+      this.requestMagicLinkGQL.mutate({
+        variables: { email },
+      }),
+    );
+  }
+
+  async magicLinkLogin(token: string, acceptTerms?: boolean) {
+    const response = await firstValueFrom(
+      this.magicLinkLoginGQL.mutate({
+        variables: { token, acceptTerms },
+      }),
+    );
+    
+    if (response.data?.magicLinkLogin?.accessToken) {
+      localStorage.setItem('accessToken', response.data.magicLinkLogin.accessToken);
+      localStorage.setItem('refreshToken', response.data.magicLinkLogin.accessToken);
+      localStorage.setItem(
+        'user',
+        JSON.stringify(response.data.magicLinkLogin.user),
+      );
+    }
+    return response;
   }
 }

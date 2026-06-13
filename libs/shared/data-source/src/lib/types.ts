@@ -12,7 +12,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
-  DateTime: { input: any; output: any; }
+  DateTime: { input: string; output: string; }
 };
 
 export type IActivity = {
@@ -296,6 +296,17 @@ export type ILoginInput = {
   password: Scalars['String']['input'];
 };
 
+export type IMagicLinkLoginInput = {
+  acceptTerms?: InputMaybe<Scalars['Boolean']['input']>;
+  token: Scalars['String']['input'];
+};
+
+export type IMagicLinkLoginResponse = {
+  accessToken?: Maybe<Scalars['String']['output']>;
+  requiresTermsAcceptance?: Maybe<Scalars['Boolean']['output']>;
+  user?: Maybe<IUser>;
+};
+
 export type IMutation = {
   _empty?: Maybe<Scalars['String']['output']>;
   adminCreateContribution: IContribution;
@@ -314,10 +325,12 @@ export type IMutation = {
   googleLogin: IAuthResponse;
   logActivity: IActivity;
   login: IAuthResponse;
+  magicLinkLogin: IMagicLinkLoginResponse;
   processContributionPayment: IContribution;
   processContributionRefund: IContribution;
   register: IAuthResponse;
   rejectProject: IProject;
+  requestMagicLink: Scalars['Boolean']['output'];
   requestPasswordReset: Scalars['Boolean']['output'];
   resetPassword: IAuthResponse;
   unbanUser: IUser;
@@ -413,6 +426,11 @@ export type IMutationLoginArgs = {
 };
 
 
+export type IMutationMagicLinkLoginArgs = {
+  magicLinkLoginInput: IMagicLinkLoginInput;
+};
+
+
 export type IMutationProcessContributionPaymentArgs = {
   contributionId: Scalars['String']['input'];
   paymentDetails: IPaymentDetailsInput;
@@ -433,6 +451,11 @@ export type IMutationRegisterArgs = {
 export type IMutationRejectProjectArgs = {
   id: Scalars['ID']['input'];
   reason: Scalars['String']['input'];
+};
+
+
+export type IMutationRequestMagicLinkArgs = {
+  email: Scalars['String']['input'];
 };
 
 

@@ -34,6 +34,12 @@ export class UserModel {
   passwordResetExpires?: Date | null;
   passwordResetTokenUsed?: boolean;
 
+  magicLinkToken?: string | null;
+  magicLinkExpires?: Date | null;
+  magicLinkTokenUsed?: boolean;
+
+  acceptedTermsAt?: Date | null;
+
   roles?: Role[];
 }
 
@@ -145,6 +151,35 @@ export class User extends Model<UserModel> {
     field: 'password_reset_token_used',
   })
   passwordResetTokenUsed: boolean;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    field: 'magic_link_token',
+  })
+  magicLinkToken: string | null;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    field: 'magic_link_expires',
+  })
+  magicLinkExpires: Date | null;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+    field: 'magic_link_token_used',
+  })
+  magicLinkTokenUsed: boolean;
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+    field: 'accepted_terms_at',
+  })
+  acceptedTermsAt: Date | null;
 
   @BeforeCreate
   static async hashPassword(user: User) {

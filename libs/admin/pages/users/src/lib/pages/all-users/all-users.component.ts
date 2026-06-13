@@ -145,7 +145,7 @@ export class AllUsersComponent {
       });
 
       if (result) {
-        this.users.set(result.edges.map(edge => edge.node).filter((u): u is IUser => !!u));
+        this.users.set(result.edges.map(edge => edge.node).filter(Boolean) as IUser[]);
         this.pagination.set({
           hasNextPage: result.pageInfo.hasNextPage ?? false,
           hasPreviousPage: result.pageInfo.hasPreviousPage ?? false,

@@ -89,7 +89,7 @@ export class UserPermissionsComponent {
       });
       
       if (usersResult) {
-        this.users.set(usersResult.edges.map(e => e.node).filter((u): u is IUser => !!u));
+        this.users.set(usersResult.edges.map(e => e.node).filter(Boolean) as IUser[]);
         
         // Extract unique roles from all users
         const rolesMap = new Map<string, IRole>();

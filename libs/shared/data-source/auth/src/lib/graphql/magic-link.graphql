@@ -1,0 +1,21 @@
+mutation RequestMagicLink($email: String!) {
+  requestMagicLink(email: $email)
+}
+
+mutation MagicLinkLogin($token: String!, $acceptTerms: Boolean) {
+  magicLinkLogin(magicLinkLoginInput: { token: $token, acceptTerms: $acceptTerms }) {
+    requiresTermsAcceptance
+    accessToken
+    user {
+      id
+      email
+      firstName
+      lastName
+      phoneNumber
+      roles {
+        id
+        name
+      }
+    }
+  }
+}

@@ -1,30 +1,44 @@
+/** Internal type. DO NOT USE DIRECTLY. */
+type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+/** Internal type. DO NOT USE DIRECTLY. */
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 import * as Types from '@nyots/data-source';
 
 import { gql } from 'apollo-angular';
 import { Injectable } from '@angular/core';
 import * as Apollo from 'apollo-angular';
-export type IGetAllCategoriesQueryVariables = Types.Exact<{ [key: string]: never; }>;
+export type ICreateCategoryInput = {
+  description?: string | null | undefined;
+  name: string;
+};
+
+export type IUpdateCategoryInput = {
+  description?: string | null | undefined;
+  name?: string | null | undefined;
+};
+
+export type IGetAllCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type IGetAllCategoriesQuery = { getAllCategories: Array<{ id: string, name: string, description?: string | null, projectCount: number, createdAt: any, updatedAt: any }> };
+export type IGetAllCategoriesQuery = { getAllCategories: Array<{ id: string, name: string, description: string | null, projectCount: number, createdAt: string, updatedAt: string }> };
 
-export type ICreateCategoryMutationVariables = Types.Exact<{
+export type ICreateCategoryMutationVariables = Exact<{
   input: Types.ICreateCategoryInput;
 }>;
 
 
-export type ICreateCategoryMutation = { createCategory: { id: string, name: string, description?: string | null, projectCount: number, createdAt: any, updatedAt: any } };
+export type ICreateCategoryMutation = { createCategory: { id: string, name: string, description: string | null, projectCount: number, createdAt: string, updatedAt: string } };
 
-export type IUpdateCategoryMutationVariables = Types.Exact<{
-  id: Types.Scalars['ID']['input'];
+export type IUpdateCategoryMutationVariables = Exact<{
+  id: string | number;
   input: Types.IUpdateCategoryInput;
 }>;
 
 
-export type IUpdateCategoryMutation = { updateCategory: { id: string, name: string, description?: string | null, projectCount: number, createdAt: any, updatedAt: any } };
+export type IUpdateCategoryMutation = { updateCategory: { id: string, name: string, description: string | null, projectCount: number, createdAt: string, updatedAt: string } };
 
-export type IDeleteCategoryMutationVariables = Types.Exact<{
-  id: Types.Scalars['ID']['input'];
+export type IDeleteCategoryMutationVariables = Exact<{
+  id: string | number;
 }>;
 
 
