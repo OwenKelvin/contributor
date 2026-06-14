@@ -7,9 +7,40 @@ import {
 import express from 'express';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { readFileSync } from 'node:fs';
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
+const indexHtmlPath = resolve(browserDistFolder, 'index.csr.html');
+
+const runtimeBackendUrl = process.env['BACKEND_URL'];
+const runtimeConfigScript = runtimeBackendUrl
+  ? `<script>window.__RUNTIME_CONFIG__={BACKEND_URL:${JSON.stringify(runtimeBackendUrl)}};</script>`
+  : '';
+
+function injectRuntimeConfig(html: string): string {
+  if (!runtimeConfigScript) {
+    return html;
+  }
+  // Inject before the closing </head> tag, or before the first <script> if no </head>.
+  const headCloseIndex = html.indexOf('</head>');
+  if (headCloseIndex !== -1) {
+    return html.slice(0, headCloseIndex) + runtimeConfigScript + html.slice(headCloseIndex);
+  }
+  const firstScriptIndex = html.indexOf('<script');
+  if (firstScriptIndex !== -1) {
+    return html.slice(0, firstScriptIndex) + runtimeConfigScript + html.slice(firstScriptIndex);
+  }
+  return html;
+}
+
+function readIndexHtml(): string {
+  try {
+    return readFileSync(indexHtmlPath, 'utf8');
+  } catch {
+    return '';
+  }
+}
 
 const app = express();
 const angularApp = new AngularNodeAppEngine({
@@ -30,7 +61,7 @@ const angularApp = new AngularNodeAppEngine({
  */
 
 /**
- * Serve static files from /browser
+ * Serve static files from /browser (skip index.html so we can inject runtime config)
  */
 app.use(
   express.static(browserDistFolder, {
@@ -41,14 +72,39 @@ app.use(
 );
 
 /**
+ * Serve index.html with injected runtime config for direct navigation.
+ */
+app.get('/index.html', (req, res) => {
+  res.send(injectRuntimeConfig(readIndexHtml()));
+});
+
+/**
  * Handle all other requests by rendering the Angular application.
  */
 app.use('/**', (req, res, next) => {
   angularApp
-    .handle(req)
-    .then((response) =>
-      response ? writeResponseToNodeResponse(response, res) : next(),
-    )
+    .handle(req, { backendUrl: process.env['BACKEND_URL'] })
+    .then((response) => {
+      if (!response) {
+        return next();
+      }
+      // If the engine served a prerendered index.html, inject runtime config.
+      const contentType = response.headers.get('content-type') || '';
+      if (contentType.includes('text/html')) {
+        return response
+          .text()
+          .then((html) => {
+            const modified = injectRuntimeConfig(html);
+            return new Response(modified, {
+              status: response.status,
+              statusText: response.statusText,
+              headers: response.headers,
+            });
+          })
+          .then((modifiedResponse) => writeResponseToNodeResponse(modifiedResponse, res));
+      }
+      return writeResponseToNodeResponse(response, res);
+    })
     .catch(next);
 });
 

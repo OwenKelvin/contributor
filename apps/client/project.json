@@ -105,7 +105,7 @@
       ],
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker rm -f apps-client || true && docker run -d -p 51000:3000 -e NODE_ENV --name apps-client  apps-client"
+        "command": "docker rm -f apps-client || true && docker run -d -p 51000:3000 -e NODE_ENV -e BACKEND_URL --name apps-client apps-client"
       }
     }
   }

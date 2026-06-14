@@ -4,7 +4,7 @@ import {
   provideAppInitializer,
   inject,
   TransferState,
-  makeStateKey,
+  REQUEST_CONTEXT,
 } from '@angular/core';
 import { provideServerRendering, withRoutes } from '@angular/ssr';
 import { appConfig } from './app.config';
@@ -14,20 +14,19 @@ import {
   GOOGLE_CLIENT_ID_KEY,
 } from '@nyots/data-source/constants';
 
+interface RequestContext {
+  backendUrl?: string;
+}
 
 const serverConfig: ApplicationConfig = {
   providers: [
     provideServerRendering(withRoutes(serverRoutes)),
     provideAppInitializer(() => {
       const transferState = inject(TransferState);
-      transferState.set(
-        BACKEND_URL_KEY,
-        process.env['BACKEND_URL'],
-      );
-      transferState.set(
-        GOOGLE_CLIENT_ID_KEY,
-        process.env['GOOGLE_CLIENT_ID'],
-      );
+      const requestContext = inject(REQUEST_CONTEXT) as RequestContext | undefined;
+      const backendUrl = requestContext?.backendUrl || process.env['BACKEND_URL'];
+      transferState.set(BACKEND_URL_KEY, backendUrl);
+      transferState.set(GOOGLE_CLIENT_ID_KEY, process.env['GOOGLE_CLIENT_ID']);
     }),
   ],
 };
