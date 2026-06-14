@@ -17,7 +17,8 @@ import { EmailLogService } from './email-log.service';
         redis: {
           host: configService.get<string>('REDIS_HOST'),
           port: configService.get<number>('REDIS_PORT'),
-          password: configService.get<string>('REDIS_PASSWORD'),
+          password: configService.get<string>('REDIS_PASSWORD') || undefined,
+          username: configService.get<string>('REDIS_USER') || undefined,
         },
       }),
     }),
