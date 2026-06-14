@@ -95,10 +95,13 @@ app.use('/**', (req, res, next) => {
           .text()
           .then((html) => {
             const modified = injectRuntimeConfig(html);
+            // Rebuild headers; drop Content-Length so the modified body isn't truncated.
+            const modifiedHeaders = new Headers(response.headers);
+            modifiedHeaders.delete('content-length');
             return new Response(modified, {
               status: response.status,
               statusText: response.statusText,
-              headers: response.headers,
+              headers: modifiedHeaders,
             });
           })
           .then((modifiedResponse) => writeResponseToNodeResponse(modifiedResponse, res));
