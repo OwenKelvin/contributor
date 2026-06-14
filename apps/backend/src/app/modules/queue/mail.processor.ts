@@ -10,6 +10,7 @@ import { ActivityAction, TargetType } from '../activity/activity.model';
 
 interface PaymentSuccessEmailData {
   to: string;
+  userId: string;
   contributionId: string;
   amount: number;
   projectTitle: string;
@@ -20,6 +21,7 @@ interface PaymentSuccessEmailData {
 
 interface PaymentFailureEmailData {
   to: string;
+  userId: string;
   contributionId: string;
   amount: number;
   projectTitle: string;
@@ -29,6 +31,7 @@ interface PaymentFailureEmailData {
 
 interface RefundNotificationEmailData {
   to: string;
+  userId: string;
   contributionId: string;
   amount: number;
   projectTitle: string;
@@ -40,6 +43,7 @@ interface RefundNotificationEmailData {
 
 interface AdminContributionConfirmationEmailData {
   to: string;
+  userId: string;
   contributionId: string;
   amount: number;
   projectTitle: string;
@@ -50,10 +54,17 @@ interface AdminContributionConfirmationEmailData {
   notes?: string;
 }
 
+interface WelcomeEmailData {
+  to: string;
+  name: string;
+  userId: string;
+}
+
 interface PasswordResetEmailData {
   to: string;
   name: string;
   resetLink: string;
+  userId: string;
 }
 
 interface ContactEmailData {
@@ -67,12 +78,13 @@ interface MagicLinkEmailData {
   to: string;
   name: string;
   magicLink: string;
+  userId: string;
 }
 
 @Processor('email')
 export class MailProcessor {
   private readonly logger = new Logger(MailProcessor.name);
-  private readonly templatesPath = path.join(__dirname, '../email/templates');
+  private readonly templatesPath = path.join(__dirname, 'templates');
   private readonly organizationName = process.env.ORGANIZATION_NAME || 'Our Organization';
   private readonly dashboardUrl = process.env.FRONTEND_URL ? `${process.env.FRONTEND_URL}/dashboard/contributions` : 'http://localhost:4200/dashboard/contributions';
   private readonly supportUrl = process.env.FRONTEND_URL ? `${process.env.FRONTEND_URL}/support` : 'http://localhost:4200/support';
@@ -90,7 +102,7 @@ export class MailProcessor {
   }
 
   @Process('sendWelcomeEmail')
-  async sendWelcomeEmail(job: Job<{ to: string; name: string }>) {
+  async sendWelcomeEmail(job: Job<WelcomeEmailData>) {
     this.logger.debug(`Sending welcome email to ${job.data.to}`);
     const html = `<p>Welcome, ${job.data.name}!</p>`;
     const text = `Welcome, ${job.data.name}!`;
@@ -115,9 +127,9 @@ export class MailProcessor {
     if (!sent) throw lastError;
     this.logger.debug(`Welcome email sent to ${job.data.to}`);
     await this.emailLogService.logEmailSend({
-      userId: job.data.to,
+      userId: job.data.userId,
       action: ActivityAction.USER_CREATED,
-      targetId: undefined,
+      targetId: job.data.userId,
       targetType: TargetType.USER,
       details: JSON.stringify({ email: job.data.to, type: 'welcome' }),
     });
@@ -162,9 +174,9 @@ export class MailProcessor {
       if (!sent) throw lastError;
       this.logger.debug(`Password reset email sent to ${job.data.to}`);
       await this.emailLogService.logEmailSend({
-        userId: job.data.to,
+        userId: job.data.userId,
         action: ActivityAction.PASSWORD_RESET_REQUEST,
-        targetId: undefined,
+        targetId: job.data.userId,
         targetType: TargetType.USER,
         details: JSON.stringify({ email: job.data.to, type: 'password-reset' }),
       });
@@ -214,9 +226,9 @@ export class MailProcessor {
       if (!sent) throw lastError;
       this.logger.debug(`Magic link email sent to ${job.data.to}`);
       await this.emailLogService.logEmailSend({
-        userId: job.data.to,
+        userId: job.data.userId,
         action: ActivityAction.MAGIC_LINK_REQUESTED,
-        targetId: undefined,
+        targetId: job.data.userId,
         targetType: TargetType.USER,
         details: JSON.stringify({ email: job.data.to, type: 'magic-link' }),
       });
@@ -270,7 +282,7 @@ export class MailProcessor {
       if (!sent) throw lastError;
       this.logger.debug(`Payment success email sent to ${job.data.to}`);
       await this.emailLogService.logEmailSend({
-        userId: job.data.to,
+        userId: job.data.userId,
         action: ActivityAction.CONTRIBUTION_CREATED,
         targetId: job.data.contributionId,
         targetType: TargetType.CONTRIBUTION,
@@ -323,7 +335,7 @@ export class MailProcessor {
       if (!sent) throw lastError;
       this.logger.debug(`Payment failure email sent to ${job.data.to}`);
       await this.emailLogService.logEmailSend({
-        userId: job.data.to,
+        userId: job.data.userId,
         action: ActivityAction.CONTRIBUTION_UPDATED,
         targetId: job.data.contributionId,
         targetType: TargetType.CONTRIBUTION,
@@ -374,7 +386,7 @@ export class MailProcessor {
       if (!sent) throw lastError;
       this.logger.debug(`Refund notification email sent to ${job.data.to}`);
       await this.emailLogService.logEmailSend({
-        userId: job.data.to,
+        userId: job.data.userId,
         action: ActivityAction.CONTRIBUTION_UPDATED,
         targetId: job.data.contributionId,
         targetType: TargetType.CONTRIBUTION,
@@ -428,7 +440,7 @@ export class MailProcessor {
       if (!sent) throw lastError;
       this.logger.debug(`Admin contribution confirmation email sent to ${job.data.to}`);
       await this.emailLogService.logEmailSend({
-        userId: job.data.to,
+        userId: job.data.userId,
         action: ActivityAction.CONTRIBUTION_UPDATED,
         targetId: job.data.contributionId,
         targetType: TargetType.CONTRIBUTION,

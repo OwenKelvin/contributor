@@ -41,7 +41,7 @@ import { HlmFormField } from '@nyots/ui/form-field';
 export interface ProjectFormModel {
   title: string;
   description: string;
-  goalAmount: number;
+  goalAmount: null | number;
   startDate: Date | null;
   endDate: Date | null;
   categoryId: string;

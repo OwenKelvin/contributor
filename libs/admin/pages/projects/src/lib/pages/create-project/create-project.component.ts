@@ -30,7 +30,6 @@ import { JsonPipe } from '@angular/common';
     HlmCardDescription,
     HlmCardHeader,
     HlmCardTitle,
-    JsonPipe,
   ],
   templateUrl: './create-project.component.html',
   styleUrls: ['./create-project.component.scss'],
@@ -44,7 +43,7 @@ export class CreateProjectComponent {
   private projectModel = signal<ProjectFormModel>({
     title: '',
     description: '',
-    goalAmount: 0,
+    goalAmount: null,
     startDate: null,
     endDate: null,
     categoryId: '',
@@ -74,14 +73,14 @@ export class CreateProjectComponent {
     required(form.goalAmount, { message: 'Goal amount is required' });
     validate(form.goalAmount, ({ value }) => {
       const amount = value();
-      if (amount <= 0) {
+      if (Number(amount) <= 0) {
         return {
           kind: 'positive',
           message: 'Goal amount must be greater than zero',
         };
       }
       // Validate max 2 decimal places
-      const decimalPlaces = (amount.toString().split('.')[1] || '').length;
+      const decimalPlaces = (Number(amount).toString().split('.')[1] || '').length;
       if (decimalPlaces > 2) {
         return {
           kind: 'decimal',
@@ -166,7 +165,7 @@ export class CreateProjectComponent {
         title: formValue.title,
         description: formValue.description,
         detailedDescription: formValue.detailedDescription,
-        goalAmount: formValue.goalAmount,
+        goalAmount: Number(formValue.goalAmount),
         startDate: formValue.startDate?.toISOString(),
         endDate: formValue.endDate?.toISOString(),
         categoryId: formValue.categoryId,

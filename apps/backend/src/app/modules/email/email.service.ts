@@ -37,6 +37,7 @@ export class EmailService {
   async sendPaymentSuccessEmail(contribution: Contribution): Promise<void> {
     await this.emailQueue.add('sendPaymentSuccessEmail', {
       to: contribution.user.email,
+      userId: contribution.user.id,
       contributionId: contribution.id,
       amount: contribution.amount,
       projectTitle: contribution.project.title,
@@ -57,6 +58,7 @@ export class EmailService {
   ): Promise<void> {
     await this.emailQueue.add('sendPaymentFailureEmail', {
       to: contribution.user.email,
+      userId: contribution.user.id,
       contributionId: contribution.id,
       amount: contribution.amount,
       projectTitle: contribution.project.title,
@@ -76,6 +78,7 @@ export class EmailService {
   ): Promise<void> {
     await this.emailQueue.add('sendRefundNotificationEmail', {
       to: contribution.user.email,
+      userId: contribution.user.id,
       contributionId: contribution.id,
       amount: contribution.amount,
       projectTitle: contribution.project.title,
@@ -95,6 +98,7 @@ export class EmailService {
   ): Promise<void> {
     await this.emailQueue.add('sendAdminContributionConfirmationEmail', {
       to: contribution.user.email,
+      userId: contribution.user.id,
       contributionId: contribution.id,
       amount: contribution.amount,
       projectTitle: contribution.project.title,

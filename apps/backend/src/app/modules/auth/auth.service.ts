@@ -76,6 +76,7 @@ export class AuthService {
     await this.emailQueue.add('sendWelcomeEmail', {
       to: user.email,
       name: user.firstName,
+      userId: user.id,
     });
 
     // Log registration activity
@@ -239,6 +240,7 @@ export class AuthService {
       to: user.email,
       name: user.firstName,
       resetLink,
+      userId: user.id,
     });
 
     await this.activityService.logActivity({
@@ -321,6 +323,7 @@ export class AuthService {
       to: user.email,
       name: user.firstName || 'there',
       magicLink,
+      userId: user.id,
     });
 
     await this.activityService.logActivity({

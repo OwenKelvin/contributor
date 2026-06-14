@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit, PLATFORM_ID } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser } from '@angular/common';
 import {
   form,
   required,
@@ -81,11 +81,11 @@ export class EditProjectComponent implements OnInit {
     required(form.goalAmount, { message: 'Goal amount is required' });
     validate(form.goalAmount, ({ value }) => {
       const amount = value();
-      if (amount <= 0) {
+      if (Number(amount) <= 0) {
         return { kind: 'positive', message: 'Goal amount must be greater than zero' };
       }
       // Validate max 2 decimal places
-      const decimalPlaces = (amount.toString().split('.')[1] || '').length;
+      const decimalPlaces = (Number(amount).toString().split('.')[1] || '').length;
       if (decimalPlaces > 2) {
         return { kind: 'decimal', message: 'Goal amount must have at most 2 decimal places' };
       }
