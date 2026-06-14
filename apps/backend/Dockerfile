@@ -10,15 +10,18 @@ COPY dist/apps/backend/package.json ./package.json
 
 RUN npm i -g pnpm
 
+COPY .npmrc ./.npmrc
+COPY pnpm-workspace.yaml ./pnpm-workspace.yaml
+
 RUN pnpm install
 
 COPY apps/backend ./apps/backend/
 
 RUN pnpm install
 
-RUN pnpm i -D sequelize-cli@6.6.5
+RUN pnpm i -D sequelize-cli@6.6.5 -w
 
-RUN pnpm i -D nx@22.3.3
+RUN pnpm i -D nx@22.3.3 -w
 
 COPY dist/apps/backend .
 
