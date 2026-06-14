@@ -322,7 +322,7 @@ interface ContactForm {
                     />
                   } @else {
                     <div class="absolute inset-0 bg-gradient-to-br from-[#2828FF]/10 to-[#d4a574]/20 flex items-center justify-center">
-                      <ng-icon hlmIcon name="lucideGlobe" size="2xl" class="text-[#2828FF]/30" />
+                      <ng-icon hlmIcon name="lucideGlobe" size="xl" class="text-[#2828FF]/30" />
                     </div>
                   }
                   <div class="absolute top-3 left-3">
@@ -390,7 +390,7 @@ interface ContactForm {
             <div class="hidden lg:block absolute top-16 left-[60%] w-[80%] h-px bg-[#e8e8e8]"></div>
             <div class="flex flex-col items-center text-center">
               <div class="relative w-32 h-32 rounded-full bg-gradient-to-br from-[#2828FF]/5 to-[#14DCFF]/10 border-2 border-[#2828FF]/10 flex items-center justify-center mb-6 shadow-sm">
-                <ng-icon hlmIcon name="lucideSearch" size="2xl" class="text-[#2828FF]" />
+                <ng-icon hlmIcon name="lucideSearch" size="xl" class="text-[#2828FF]" />
               </div>
               <h3 class="text-xl font-semibold text-[#222426] mb-3">Browse</h3>
               <p class="text-sm text-[#7c8084] leading-relaxed">Discover projects that align with your values and investment goals across various categories.</p>
@@ -401,7 +401,7 @@ interface ContactForm {
             <div class="hidden lg:block absolute top-16 left-[60%] w-[80%] h-px bg-[#e8e8e8]"></div>
             <div class="flex flex-col items-center text-center">
               <div class="relative w-32 h-32 rounded-full bg-gradient-to-br from-[#2828FF]/5 to-[#14DCFF]/10 border-2 border-[#2828FF]/10 flex items-center justify-center mb-6 shadow-sm">
-                <ng-icon hlmIcon name="lucideHeart" size="2xl" class="text-[#2828FF]" />
+                <ng-icon hlmIcon name="lucideHeart" size="xl" class="text-[#2828FF]" />
               </div>
               <h3 class="text-xl font-semibold text-[#222426] mb-3">Choose</h3>
               <p class="text-sm text-[#7c8084] leading-relaxed">Select the causes and ventures you care about most. Review details, goals, and impact metrics.</p>
@@ -412,7 +412,7 @@ interface ContactForm {
             <div class="hidden lg:block absolute top-16 left-[60%] w-[80%] h-px bg-[#e8e8e8]"></div>
             <div class="flex flex-col items-center text-center">
               <div class="relative w-32 h-32 rounded-full bg-gradient-to-br from-[#2828FF]/5 to-[#14DCFF]/10 border-2 border-[#2828FF]/10 flex items-center justify-center mb-6 shadow-sm">
-                <ng-icon hlmIcon name="lucideHandHeart" size="2xl" class="text-[#2828FF]" />
+                <ng-icon hlmIcon name="lucideHandHeart" size="xl" class="text-[#2828FF]" />
               </div>
               <h3 class="text-xl font-semibold text-[#222426] mb-3">Contribute</h3>
               <p class="text-sm text-[#7c8084] leading-relaxed">Invest securely in minutes with our streamlined contribution process and multiple payment options.</p>
@@ -422,7 +422,7 @@ interface ContactForm {
           <div class="relative reveal-item">
             <div class="flex flex-col items-center text-center">
               <div class="relative w-32 h-32 rounded-full bg-gradient-to-br from-[#2828FF]/5 to-[#14DCFF]/10 border-2 border-[#2828FF]/10 flex items-center justify-center mb-6 shadow-sm">
-                <ng-icon hlmIcon name="lucideBarChart3" size="2xl" class="text-[#2828FF]" />
+                <ng-icon hlmIcon name="lucideBarChart3" size="xl" class="text-[#2828FF]" />
               </div>
               <h3 class="text-xl font-semibold text-[#222426] mb-3">Track</h3>
               <p class="text-sm text-[#7c8084] leading-relaxed">Watch your impact grow. Receive updates on project progress and see your capital create change.</p>
