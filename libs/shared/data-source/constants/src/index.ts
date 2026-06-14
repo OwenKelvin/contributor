@@ -19,7 +19,7 @@ export const provideBackendUrl = () => {
     useFactory: () => {
       return inject(TransferState).get(
         BACKEND_URL_KEY,
-        'http://localhost:3000',
+        'http://localhost:51002',
       );
     },
   };

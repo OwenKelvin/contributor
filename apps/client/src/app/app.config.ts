@@ -24,7 +24,7 @@ export const appConfig: ApplicationConfig = {
       const transferState = inject(TransferState);
       const backendUrl = transferState.get(
         BACKEND_URL_KEY,
-        'http://localhost:3000',
+        'http://localhost:51002',
       );
       const googleClientId = transferState.get(GOOGLE_CLIENT_ID_KEY, '');
     }),
