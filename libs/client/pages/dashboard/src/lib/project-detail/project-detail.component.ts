@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, input, PLATFORM_ID } from '@angular/core';
+import { Component, inject, OnInit, signal, input, PLATFORM_ID, inputBinding } from '@angular/core';
 import { ProjectService } from '@nyots/data-source/projects';
 import { HlmCard, HlmCardContent, HlmCardHeader, HlmCardTitle } from '@nyots/ui/card';
 import { HlmSpinner } from '@nyots/ui/spinner';
@@ -211,18 +211,22 @@ export class ProjectDetailComponent implements OnInit {
     const proj = this.project();
     if (!proj) return;
 
-    const dialogRef = this.dialogService.open(ContributionDialogComponent, {
-      context: {
-        projectId: proj.id,
-        projectTitle: proj.title,
-      },
+    const dialogRef = this.dialogService.openNew(ContributionDialogComponent, {
+      bindings: [
+        inputBinding('projectId', () => proj.id),
+        inputBinding('projectTitle', () => proj.title),
+      ],
+      // context: {
+      //   projectId: proj.id,
+      //   projectTitle: proj.title,
+      // },
     });
 
-    const result = await firstValueFrom(dialogRef.closed$);
+    // const result = await firstValueFrom(dialogRef.closed$);
 
     // If contribution was successful, refresh the project data
-    if (result === true) {
-      await this.loadProject();
-    }
+    // if (result === true) {
+    //   await this.loadProject();
+    // }
   }
 }
