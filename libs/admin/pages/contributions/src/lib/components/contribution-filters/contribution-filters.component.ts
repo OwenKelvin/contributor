@@ -32,13 +32,16 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     }),
   ],
   template: `
-    <form [formGroup]="filterForm" class="space-y-4 p-4 bg-card rounded-lg border">
+    <form
+      [formGroup]="filterForm"
+      class="space-y-4 p-4 bg-card rounded-lg border"
+    >
       <!-- Search Bar -->
       <div class="relative">
         <ng-icon
           hlmIcon
           name="lucideSearch"
-          class="absolute left-3 top-1 -translate-y-1 text-muted-foreground"
+          class="absolute left-3 top-1/2 -translate-y-2 text-muted-foreground"
           size="sm"
         />
         <input
@@ -53,7 +56,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
             hlmBtn
             variant="ghost"
             size="sm"
-            class="absolute right-1 top-1 -translate-y-1 h-7 w-7 p-0"
+            class="absolute right-1 top-1/2 -translate-y-2 h-7 w-7 p-0"
             (click)="clearSearch()"
             type="button"
           >
@@ -63,13 +66,11 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
       </div>
 
       <!-- Filter Grid -->
-      <div
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
-      >
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Status Filter -->
         <div>
           <label for="paymentStatus" class="text-sm font-medium mb-1.5 block"
-          >Status</label
+            >Status</label
           >
           <select
             id="paymentStatus"
@@ -88,7 +89,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
         <!-- Project Filter -->
         <div>
           <label for="projectId" class="text-sm font-medium mb-1.5 block"
-          >Project</label
+            >Project</label
           >
           <select
             id="projectId"
@@ -106,7 +107,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
         <!-- Min Amount -->
         <div>
           <label for="minAmount" class="text-sm font-medium mb-1.5 block"
-          >Min Amount</label
+            >Min Amount</label
           >
           <input
             id="minAmount"
@@ -121,7 +122,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
         <!-- Max Amount -->
         <div>
           <label for="maxAmount" class="text-sm font-medium mb-1.5 block"
-          >Max Amount</label
+            >Max Amount</label
           >
           <input
             id="maxAmount"
@@ -136,7 +137,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
         <!-- Start Date -->
         <div>
           <label for="startDate" class="text-sm font-medium mb-1.5 block"
-          >Start Date</label>
+            >Start Date</label
+          >
           <input
             id="startDate"
             hlmInput
@@ -149,7 +151,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
         <!-- End Date -->
         <div>
           <label for="endDate" class="text-sm font-medium mb-1.5 block"
-          >End Date</label
+            >End Date</label
           >
           <input
             id="endDate"

@@ -12,13 +12,7 @@ import { of } from 'rxjs';
 @Component({
   selector: 'nyots-user-autocomplete',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    HlmInput,
-    HlmIcon,
-    NgIcon,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, HlmInput, HlmIcon, NgIcon],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -38,7 +32,7 @@ import { of } from 'rxjs';
           hlmIcon
           name="lucideSearch"
           size="base"
-          class="absolute left-3 top-1 -translate-y-1 text-muted-foreground"
+          class="absolute left-3 top-1/2 -translate-y-2 text-muted-foreground"
         />
         <input
           hlmInput
@@ -57,12 +51,12 @@ import { of } from 'rxjs';
             hlmIcon
             name="lucideLoader2"
             size="base"
-            class="absolute right-3 top-1 -translate-y-1 text-muted-foreground animate-spin"
+            class="absolute right-3 top-1/2 -translate-y-2 text-muted-foreground animate-spin"
           />
         } @else if (selectedUser() && !disabled()) {
           <button
             type="button"
-            class="absolute right-3 top-1 -translate-y-1 text-muted-foreground hover:text-foreground"
+            class="absolute right-3 top-1/2 -translate-y-2 text-muted-foreground hover:text-foreground"
             (click)="clearSelection()"
             [attr.aria-label]="'Clear selection'"
           >
@@ -91,7 +85,12 @@ import { of } from 'rxjs';
         </div>
       }
 
-      @if (showDropdown() && searchControl.value && searchControl.value.length < 2 && !loading()) {
+      @if (
+        showDropdown() &&
+        searchControl.value &&
+        searchControl.value.length < 2 &&
+        !loading()
+      ) {
         <div
           class="absolute z-50 w-full mt-1 bg-popover border border-border rounded-md shadow-md px-3 py-2 text-sm text-muted-foreground"
         >
@@ -99,7 +98,13 @@ import { of } from 'rxjs';
         </div>
       }
 
-      @if (showDropdown() && filteredUsers().length === 0 && searchControl.value && searchControl.value.length >= 2 && !loading()) {
+      @if (
+        showDropdown() &&
+        filteredUsers().length === 0 &&
+        searchControl.value &&
+        searchControl.value.length >= 2 &&
+        !loading()
+      ) {
         <div
           class="absolute z-50 w-full mt-1 bg-popover border border-border rounded-md shadow-md px-3 py-2 text-sm text-muted-foreground"
         >
@@ -108,19 +113,25 @@ import { of } from 'rxjs';
       }
     </div>
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
-  `],
+  styles: [
+    `
+      :host {
+        display: block;
+      }
+    `,
+  ],
 })
 export class UserAutocompleteComponent implements ControlValueAccessor, OnInit {
   private userService = inject(UserService);
 
   // Signals
   searchControl = new FormControl('');
-  selectedUser = signal<IGetAllUsersQuery['getAllUsers']['edges'][number]['node'] | null >(null);
-  filteredUsers = signal<IGetAllUsersQuery['getAllUsers']['edges'][number]['node'][]>([]);
+  selectedUser = signal<
+    IGetAllUsersQuery['getAllUsers']['edges'][number]['node'] | null
+  >(null);
+  filteredUsers = signal<
+    IGetAllUsersQuery['getAllUsers']['edges'][number]['node'][]
+  >([]);
   showDropdown = signal(false);
   loading = signal(false);
   disabled = signal(false);
@@ -154,7 +165,7 @@ export class UserAutocompleteComponent implements ControlValueAccessor, OnInit {
           console.error('Error searching users:', error);
           this.loading.set(false);
           return of(null);
-        })
+        }),
       )
       .subscribe((result) => {
         if (result) {
@@ -167,7 +178,9 @@ export class UserAutocompleteComponent implements ControlValueAccessor, OnInit {
   /**
    * Search users via the UserService
    */
-  private async searchUsers(searchTerm: string): Promise<IGetAllUsersQuery['getAllUsers']['edges'][number]['node'][]> {
+  private async searchUsers(
+    searchTerm: string,
+  ): Promise<IGetAllUsersQuery['getAllUsers']['edges'][number]['node'][]> {
     try {
       const result = await this.userService.getAllUsers({
         search: searchTerm,
@@ -203,7 +216,9 @@ export class UserAutocompleteComponent implements ControlValueAccessor, OnInit {
       const user = await this.userService.getUserById(userId);
       if (user) {
         this.selectedUser.set(user);
-        this.searchControl.setValue(this.getUserName(user), { emitEvent: false });
+        this.searchControl.setValue(this.getUserName(user), {
+          emitEvent: false,
+        });
       }
     } catch (error) {
       console.error('Error loading user:', error);
@@ -241,7 +256,9 @@ export class UserAutocompleteComponent implements ControlValueAccessor, OnInit {
     }, 200);
   }
 
-  selectUser(user: IGetAllUsersQuery['getAllUsers']['edges'][number]['node']): void {
+  selectUser(
+    user: IGetAllUsersQuery['getAllUsers']['edges'][number]['node'],
+  ): void {
     this.selectedUser.set(user);
     this.searchControl.setValue(this.getUserName(user), { emitEvent: false });
     this.showDropdown.set(false);
@@ -255,7 +272,9 @@ export class UserAutocompleteComponent implements ControlValueAccessor, OnInit {
     this.filteredUsers.set([]);
   }
 
-  getUserName(user: IGetAllUsersQuery['getAllUsers']['edges'][number]['node']): string {
+  getUserName(
+    user: IGetAllUsersQuery['getAllUsers']['edges'][number]['node'],
+  ): string {
     if (user.firstName && user.lastName) {
       return `${user.firstName} ${user.lastName}`;
     }
