@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgClass } from '@angular/common';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideUsers,
@@ -20,7 +20,7 @@ import {
 
 @Component({
   selector: 'app-stats-card',
-  imports: [CommonModule, NgIcon, HlmIcon, HlmCard, HlmCardHeader, HlmCardTitle, HlmCardContent],
+  imports: [CommonModule, NgClass, NgIcon, HlmIcon, HlmCard, HlmCardHeader, HlmCardTitle, HlmCardContent],
   template: `
     <div hlmCard>
       <div hlmCardHeader class="flex flex-row items-center justify-between pb-2">
@@ -33,8 +33,7 @@ import {
         <div class="text-2xl font-bold">{{ value }}</div>
         @if (trend) {
           <p class="text-xs flex items-center gap-1 mt-1"
-             [class.text-emerald-600 dark:text-emerald-400 dark:text-emerald-400]="trendDirection === 'up'"
-             [class.text-destructive]="trendDirection === 'down'">
+             [ngClass]="{ 'text-emerald-600 dark:text-emerald-400': trendDirection === 'up', 'text-destructive': trendDirection === 'down' }">
             <ng-icon
               [name]="trendDirection === 'up' ? 'lucideArrowUp' : 'lucideArrowDown'"
               hlm
