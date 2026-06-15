@@ -91,9 +91,9 @@ export class MailProcessor {
 
   private readonly emailSender = new EmailSenderService();
 
-  constructor(private emailLogService: EmailLogService ) {
+  constructor(private emailLogService: EmailLogService) {
     // Register Handlebars helpers
-    Handlebars.registerHelper('if', function(conditional, options) {
+    Handlebars.registerHelper('if', function (conditional, options) {
       if (conditional) {
         return options.fn(this);
       }

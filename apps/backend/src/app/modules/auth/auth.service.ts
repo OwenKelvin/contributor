@@ -5,6 +5,7 @@ import {
   BadRequestException,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { RegisterInput } from './dto/register.input';
@@ -25,6 +26,7 @@ import { RateLimitService } from './rate-limit.service';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   private googleClient: OAuth2Client;
 
   constructor(
@@ -73,11 +75,13 @@ export class AuthService {
     });
 
     // Add job to email queue
+    this.logger.log(`Queueing welcome email for user ${user.id} at ${user.email}`);
     await this.emailQueue.add('sendWelcomeEmail', {
       to: user.email,
       name: user.firstName,
       userId: user.id,
     });
+    this.logger.log(`Welcome email job queued for ${user.email}`);
 
     // Log registration activity
     await this.activityService.logActivity({
@@ -236,12 +240,24 @@ export class AuthService {
       'FRONTEND_URL',
     )}/reset-password?token=${token}`;
 
-    await this.emailQueue.add('sendPasswordResetEmail', {
-      to: user.email,
-      name: user.firstName,
-      resetLink,
-      userId: user.id,
-    });
+    this.logger.log(
+      `Queueing password reset email for user ${user.id} at ${user.email}`,
+    );
+    try {
+      await this.emailQueue.add('sendPasswordResetEmail', {
+        to: user.email,
+        name: user.firstName,
+        resetLink,
+        userId: user.id,
+      });
+      this.logger.log(`Password reset email job queued for ${user.email}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to queue password reset email for ${user.email}: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
 
     await this.activityService.logActivity({
       userId: user.id,
@@ -319,12 +335,24 @@ export class AuthService {
       'FRONTEND_URL',
     )}/login?magicToken=${token}`;
 
-    await this.emailQueue.add('sendMagicLinkEmail', {
-      to: user.email,
-      name: user.firstName || 'there',
-      magicLink,
-      userId: user.id,
-    });
+    this.logger.log(
+      `Queueing magic link email for user ${user.id} at ${user.email}`,
+    );
+    try {
+      await this.emailQueue.add('sendMagicLinkEmail', {
+        to: user.email,
+        name: user.firstName || 'there',
+        magicLink,
+        userId: user.id,
+      });
+      this.logger.log(`Magic link email job queued for ${user.email}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to queue magic link email for ${user.email}: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
 
     await this.activityService.logActivity({
       userId: user.id,
