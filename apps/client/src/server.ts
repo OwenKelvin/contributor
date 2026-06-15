@@ -44,7 +44,7 @@ function readIndexHtml(): string {
 
 const app = express();
 const angularApp = new AngularNodeAppEngine({
-  allowedHosts: ['*.traefik.me', 'localhost'],
+  allowedHosts: ['*.sslip.io', 'localhost'],
   trustProxyHeaders: true,
 });
 
