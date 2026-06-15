@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { RegisterInput } from './dto/register.input';
@@ -11,6 +12,8 @@ import { AuthResponse } from './types/auth-response.type';
 
 @Resolver()
 export class AuthResolver {
+  private readonly logger = new Logger(AuthResolver.name);
+
   constructor(private authService: AuthService) {}
 
   @Mutation(() => AuthResponse)
@@ -56,7 +59,10 @@ export class AuthResolver {
   async requestMagicLink(
     @Args('email') email: string,
   ): Promise<boolean> {
-    return this.authService.requestMagicLink(email);
+    this.logger.log(`requestMagicLink mutation called for ${email}`);
+    const result = await this.authService.requestMagicLink(email);
+    this.logger.log(`requestMagicLink mutation completed for ${email}: ${result}`);
+    return result;
   }
 
   @Mutation(() => AuthResponse, { nullable: true })
