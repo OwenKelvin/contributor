@@ -320,9 +320,18 @@ export class AuthService {
       );
     }
 
-    const user = await this.userService.findByEmail(email);
+    let user = await this.userService.findByEmail(email);
     if (!user) {
-      return true; // Prevent user enumeration
+      this.logger.log(
+        `User with email ${email} not found. Creating placeholder account for magic link.`,
+      );
+      user = await this.userService.create({
+        email,
+        password: randomBytes(32).toString('hex'),
+      });
+      this.logger.log(
+        `Placeholder account created for ${email} with id ${user.id}`,
+      );
     }
 
     const token = randomBytes(32).toString('hex');
