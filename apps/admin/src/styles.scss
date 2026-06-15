@@ -18,6 +18,13 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-family-display);
+    font-family: var(--font-family-display) sans-serif;
+  }
+
+  #google-btn-container-register {
+    [role="button"] {
+      @apply bg-background! text-foreground! rounded-lg! h-12! border-border!
+      shadow-sm hover:shadow-md transition-shadow;
+    }
   }
 }
