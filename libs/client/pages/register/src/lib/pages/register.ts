@@ -78,12 +78,12 @@ export class Register implements OnInit {
 
   // Form model
   private signupModel = signal({
-    firstName: 'Owen',
-    lastName: 'Kelvin',
-    email: 'otienoowenkelvin@gmail.com',
-    phone: '+254712692310',
-    password: 'Password@1',
-    confirmPassword: 'Password@1',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
   });
 
   // Create form with validation schema
