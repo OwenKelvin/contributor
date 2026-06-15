@@ -60,9 +60,9 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
         <div hlmCard>
           <div hlmCardContent class="py-12">
             <div class="flex flex-col items-center justify-center text-center">
-              <div class="rounded-full bg-destructive/10 p-3 mb-4">
+              <div class="rounded-full bg-destructive p-3 mb-4">
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns="http://www.w3.org00/svg"
                   width="24"
                   height="24"
                   viewBox="0 0 24 24"
@@ -114,7 +114,7 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
               </h3>
             </div>
             <div hlmCardContent>
-              <div class="text-2xl font-bold text-yellow-600">
+              <div class="text-2xl font-bold text-amber-600 dark:text-amber-400">
                 {{ report()!.pendingAmount | currency }}
               </div>
               <p class="text-xs text-muted-foreground mt-1">
@@ -131,7 +131,7 @@ import { TopContributorsListComponent } from '../../components/top-contributors-
               </h3>
             </div>
             <div hlmCardContent>
-              <div class="text-2xl font-bold text-green-600">
+              <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 dark:text-emerald-400">
                 {{ report()!.paidAmount | currency }}
               </div>
               <p class="text-xs text-muted-foreground mt-1">

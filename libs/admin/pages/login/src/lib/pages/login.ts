@@ -11,7 +11,8 @@ import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
 import { HlmIcon, HlmIconImports } from '@nyots/ui/icon';
 import { provideIcons } from '@ng-icons/core';
-import { lucideLoader2, lucideMail, lucideLock } from '@ng-icons/lucide';
+import { lucideLoader2, lucideMail, lucideLock, lucideAlertCircle } from '@ng-icons/lucide';
+import { ThemeToggleComponent } from '@nyots/ui-theme-toggle';
 import { Router } from '@angular/router';
 import { AuthService } from '@nyots/data-source/auth';
 import { GOOGLE_CLIENT_ID } from '@nyots/data-source/constants';
@@ -27,8 +28,9 @@ declare const google: any;
     HlmLabel,
     HlmIcon,
     HlmIconImports,
+    ThemeToggleComponent,
   ],
-  providers: [provideIcons({ lucideLoader2, lucideMail, lucideLock })],
+  providers: [provideIcons({ lucideLoader2, lucideMail, lucideLock, lucideAlertCircle })],
   templateUrl: 'login.html',
 })
 export class Login implements OnInit {

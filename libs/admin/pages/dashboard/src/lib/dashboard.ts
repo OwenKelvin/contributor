@@ -40,6 +40,7 @@ import { NgOptimizedImage } from '@angular/common';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { HlmDropdownMenu, HlmDropdownMenuItem, HlmDropdownMenuTrigger } from '@nyots/ui/dropdown-menu';
 import { AuthService } from '@nyots/data-source/auth';
+import { ThemeToggleComponent } from '@nyots/ui-theme-toggle';
 import { HlmDialogService } from '@nyots/ui/dialog';
 import { ConfirmationDialogComponent } from '@nyots/ui/dialog';
 import { firstValueFrom } from 'rxjs';
@@ -85,6 +86,7 @@ import {
     HlmBreadcrumbLink,
     HlmBreadcrumbPage,
     HlmBreadcrumbList,
+    ThemeToggleComponent,
   ],
   template: `
     <div hlmSidebarWrapper>
@@ -175,13 +177,14 @@ import {
         </div>
       </hlm-sidebar>
       <main hlmSidebarInset>
-        <header class="px-4 py-3 border-b">
+        <header class="px-4 py-3 border-b border-border glass-nav sticky top-0 z-20">
           <div class="flex items-center justify-between mb-3">
             <button hlmSidebarTrigger>
               <span class="sr-only">Toggle Sidebar</span>
             </button>
-            <div class="flex items-center gap-2">
-              <span class="text-sm font-medium">Admin Panel</span>
+            <div class="flex items-center gap-3">
+              <span class="text-sm font-medium text-foreground">Admin Panel</span>
+              <nyots-theme-toggle />
             </div>
           </div>
 

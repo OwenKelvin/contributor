@@ -165,7 +165,7 @@ interface PaymentData {
 
                   @if (paymentError()) {
                     <div
-                      class="p-4 bg-destructive/10 text-destructive rounded-md"
+                      class="p-4 bg-destructive text-destructive rounded-md"
                     >
                       <p class="font-medium">Payment Failed</p>
                       <p class="text-sm mt-1">{{ paymentError() }}</p>

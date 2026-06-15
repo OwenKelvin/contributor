@@ -29,6 +29,7 @@ import {
   lucideUser,
   lucidePhone,
 } from '@ng-icons/lucide';
+import { ThemeToggleComponent } from '@nyots/ui-theme-toggle';
 import { AuthService } from '@nyots/data-source/auth';
 import { Router, RouterLink } from '@angular/router';
 import { GraphQLError } from 'graphql/error';
@@ -56,6 +57,7 @@ declare const google: any;
     NgIcon,
     RouterLink,
     FormField,
+    ThemeToggleComponent,
   ],
   providers: [
     provideIcons({

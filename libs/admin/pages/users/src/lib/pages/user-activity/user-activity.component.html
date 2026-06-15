@@ -158,10 +158,10 @@
         <!-- Activity Timeline -->
         <div class="space-y-0">
           @for (activity of activities(); track activity.id; let isLast = $last) {
-            <div class="flex gap-4 p-4 border-b last:border-b-0 hover:bg-muted/50 transition-colors">
+            <div class="flex gap-4 p-4 border-b last:border-b-0 hover:bg-muted transition-colors">
               <!-- Timeline Icon -->
               <div class="flex flex-col items-center">
-                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
                   <ng-icon 
                     hlmIcon 
                     [name]="getActionIcon(activity.action)" 

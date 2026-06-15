@@ -1,203 +1,227 @@
-<div class="min-h-screen flex items-center justify-center bg-slate-50 p-4">
-  <div hlmCard class="w-full max-w-md">
-    <div hlmCardHeader>
-      <h3 hlmCardTitle class="text-2xl">Welcome back</h3>
-      <p hlmCardDescription>Sign in to your account to continue</p>
+<div class="min-h-screen flex items-center justify-center bg-background p-4 relative overflow-hidden">
+  <!-- Ambient gradient background -->
+  <div class="absolute inset-0 bg-gradient-radial-hero"></div>
+  <div class="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-brand-violet blur-3xl animate-pulse-glow"></div>
+  <div class="absolute -bottom-32 -right-32 w-[500px] h-[500px] rounded-full bg-brand-cyan blur-3xl animate-float"></div>
+
+  <div class="relative z-10 w-full max-w-md">
+    <!-- Logo mark -->
+    <div class="flex justify-center mb-6">
+      <a routerLink="/" class="flex items-center gap-3 group">
+        <svg class="h-10 w-auto text-primary group-hover:text-brand-cyan transition-colors" viewBox="0 0 7872.23 5801.51" fill="none">
+          <path class="fill-current" d="M3176.38 1042.04l-471.89 0 -772.23 0c-223.58,0 -406.53,-182.93 -406.53,-406.53 0,-223.59 182.93,-406.54 406.53,-406.54l772.23 0 2423.3 0c223.6,0 406.53,182.95 406.53,406.54 0,223.6 -182.97,406.53 -406.53,406.53l-1061.38 0c0,838.3 -3.89,1675.91 -3.89,2513.83 0,239.05 -195.57,434.62 -434.61,434.62l-0.01 0c-2.17,0 -4.34,-0.05 -6.5,-0.08 -2.16,0.03 -4.34,0.08 -6.51,0.08l-0.01 0c-239.04,0 -434.61,-195.57 -434.61,-434.62 0,-837.92 -3.89,-1675.53 -3.89,-2513.83z"/>
+          <path class="fill-current" d="M1292.29 905.23c52.42,26.65 98.77,63.64 136.39,108.22 8.66,9.69 15.24,21.29 24.8,30.05l2491.59 2287.22c176.02,161.57 107.02,498.22 -106.69,605.07l-0.02 0.01c-213.68,106.84 -433.96,60.05 -605.06,-106.69l-1702.19 -1658.64 0 1385.58c0,238.94 -195.51,434.45 -434.45,434.45l-0.01 0c-238.96,0 -434.45,-195.49 -434.45,-434.45l0 -2263.22c0,-320.61 338.82,-547.75 630.09,-387.6z"/>
+          <path class="fill-current" d="M5661.66 852.56c671.66,0 1244.65,422.1 1468.43 1015.47 16.8,359.41 -536.26,425.84 -777.31,0 -162.28,-202.37 -411.54,-331.97 -691.11,-331.97 -489.03,0 -885.47,396.44 -885.47,885.47 0,489.03 396.44,885.47 885.47,885.47 316.97,0 594.99,-166.59 751.42,-416.95 179.15,-466.74 691.76,-425.84 746.37,0 -199.26,637.65 -794.47,1100.45 -1497.79,1100.45 -866.52,0 -1568.97,-702.45 -1568.97,-1568.97 0,-866.52 702.45,-1568.97 1568.97,-1568.97z"/>
+        </svg>
+      </a>
     </div>
 
-    <div hlmCardContent>
-      <!-- Login Mode Toggle -->
-      <div class="flex rounded-lg bg-slate-100 p-1 mb-6">
-        <button
-          class="flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all"
-          [class.bg-white]="loginMode() === 'password'"
-          [class.shadow-sm]="loginMode() === 'password'"
-          [class.text-slate-900]="loginMode() === 'password'"
-          [class.text-slate-500]="loginMode() !== 'password'"
-          (click)="setLoginMode('password')"
-        >
-          Password
-        </button>
-        <button
-          class="flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all"
-          [class.bg-white]="loginMode() === 'magicLink'"
-          [class.shadow-sm]="loginMode() === 'magicLink'"
-          [class.text-slate-900]="loginMode() === 'magicLink'"
-          [class.text-slate-500]="loginMode() !== 'magicLink'"
-          (click)="setLoginMode('magicLink')"
-        >
-          Magic Link
-        </button>
+    <div hlmCard class="glass-card shadow-2xl shadow-primary">
+      <div hlmCardHeader class="text-center">
+        <h3 hlmCardTitle class="text-2xl">Welcome back</h3>
+        <p hlmCardDescription>Sign in to your account to continue</p>
       </div>
 
-      <!-- Password Login Form -->
-      @if (loginMode() === 'password') {
-        <form (submit)="onSubmit($event)" class="space-y-4">
-          <div class="space-y-2">
-            <label hlmLabel for="email">Email</label>
-            <div class="relative">
-              <ng-icon hlmIcon name="lucideMail" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size="sm" />
-              <input
-                hlmInput
-                autocomplete="username"
-                id="email"
-                type="email"
-                [formField]="loginForm.email"
-                placeholder="you@example.com"
-                class="pl-10"
-                [class.border-red-500]="loginForm.email().invalid() && loginForm.email().touched()"
-              />
-            </div>
-            @if (loginForm.email().invalid() && loginForm.email().touched()) {
-              <p class="text-sm text-red-500">
-                @for (error of loginForm.email().errors(); track error.kind) {
-                  {{ error.message }}
-                }
-              </p>
-            }
-          </div>
-
-          <div class="space-y-2">
-            <label hlmLabel for="password">Password</label>
-            <div class="relative">
-              <ng-icon hlmIcon name="lucideLock" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size="sm" />
-              <input
-                hlmInput
-                autocomplete="current-password"
-                id="password"
-                type="password"
-                [formField]="loginForm.password"
-                placeholder="••••••••"
-                class="pl-10"
-                [class.border-red-500]="loginForm.password().invalid() && loginForm.password().touched()"
-              />
-            </div>
-            @if (loginForm.password().invalid() && loginForm.password().touched()) {
-              <p class="text-sm text-red-500">
-                @for (error of loginForm.password().errors(); track error.kind) {
-                  {{ error.message }}
-                }
-              </p>
-            }
-          </div>
-
+      <div hlmCardContent>
+        <!-- Login Mode Toggle -->
+        <div class="flex rounded-lg bg-muted p-1 mb-6 border border-border">
           <button
-            hlmBtn
-            type="submit"
-            class="w-full"
-            [disabled]="isLoading() || loginForm().invalid()"
+            class="flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all"
+            [class.bg-background]="loginMode() === 'password'"
+            [class.shadow-sm]="loginMode() === 'password'"
+            [class.text-foreground]="loginMode() === 'password'"
+            [class.text-muted-foreground]="loginMode() !== 'password'"
+            (click)="setLoginMode('password')"
           >
-            @if (isLoading()) {
-              <ng-icon hlmIcon name="lucideLoader2" class="mr-2 animate-spin" size="sm" />
-              Signing in...
-            } @else {
-              Sign in
-            }
+            Password
           </button>
-        </form>
-      }
-
-      <!-- Magic Link Form -->
-      @if (loginMode() === 'magicLink') {
-        <form (submit)="onMagicLinkSubmit($event)" class="space-y-4">
-          <div class="space-y-2">
-            <label hlmLabel for="magicEmail">Email</label>
-            <div class="relative">
-              <ng-icon hlmIcon name="lucideMail" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size="sm" />
-              <input
-                hlmInput
-                autocomplete="email"
-                id="magicEmail"
-                type="email"
-                [formField]="magicLinkForm.email"
-                placeholder="you@example.com"
-                class="pl-10"
-                [class.border-red-500]="magicLinkForm.email().invalid() && magicLinkForm.email().touched()"
-              />
-            </div>
-            @if (magicLinkForm.email().invalid() && magicLinkForm.email().touched()) {
-              <p class="text-sm text-red-500">
-                @for (error of magicLinkForm.email().errors(); track error.kind) {
-                  {{ error.message }}
-                }
-              </p>
-            }
-          </div>
-
-          <p class="text-sm text-slate-500">
-            We'll send you a secure sign-in link. No password needed.
-          </p>
-
           <button
-            hlmBtn
-            type="submit"
-            class="w-full"
-            [disabled]="isLoading() || magicLinkForm().invalid()"
+            class="flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all"
+            [class.bg-background]="loginMode() === 'magicLink'"
+            [class.shadow-sm]="loginMode() === 'magicLink'"
+            [class.text-foreground]="loginMode() === 'magicLink'"
+            [class.text-muted-foreground]="loginMode() !== 'magicLink'"
+            (click)="setLoginMode('magicLink')"
           >
-            @if (isLoading()) {
-              <ng-icon hlmIcon name="lucideLoader2" class="mr-2 animate-spin" size="sm" />
-              Sending...
-            } @else {
-              Send magic link
-            }
+            Magic Link
           </button>
-        </form>
-      }
-
-      <!-- Messages -->
-      @if (errorMessage()) {
-        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mt-4">
-          <p class="text-sm">{{ errorMessage() }}</p>
         </div>
-      }
 
-      @if (successMessage()) {
-        <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mt-4">
-          <p class="text-sm">{{ successMessage() }}</p>
-        </div>
-      }
+        <!-- Password Login Form -->
+        @if (loginMode() === 'password') {
+          <form (submit)="onSubmit($event)" class="space-y-4">
+            <div class="space-y-2">
+              <label hlmLabel for="email">Email</label>
+              <div class="relative">
+                <ng-icon hlmIcon name="lucideMail" class="absolute left-3 top-1 -translate-y-1 text-muted-foreground" size="sm" />
+                <input
+                  hlmInput
+                  autocomplete="username"
+                  id="email"
+                  type="email"
+                  [formField]="loginForm.email"
+                  placeholder="you@example.com"
+                  class="pl-10"
+                  [class.border-destructive]="loginForm.email().invalid() && loginForm.email().touched()"
+                />
+              </div>
+              @if (loginForm.email().invalid() && loginForm.email().touched()) {
+                <p class="text-sm text-destructive">
+                  @for (error of loginForm.email().errors(); track error.kind) {
+                    {{ error.message }}
+                  }
+                </p>
+              }
+            </div>
 
-      <!-- Divider and Google OAuth -->
-      @if (loginMode() === 'password') {
-        <div class="relative my-6">
-          <div class="absolute inset-0 flex items-center">
-            <div class="w-full border-t border-slate-200"></div>
+            <div class="space-y-2">
+              <label hlmLabel for="password">Password</label>
+              <div class="relative">
+                <ng-icon hlmIcon name="lucideLock" class="absolute left-3 top-1 -translate-y-1 text-muted-foreground" size="sm" />
+                <input
+                  hlmInput
+                  autocomplete="current-password"
+                  id="password"
+                  type="password"
+                  [formField]="loginForm.password"
+                  placeholder="••••••••"
+                  class="pl-10"
+                  [class.border-destructive]="loginForm.password().invalid() && loginForm.password().touched()"
+                />
+              </div>
+              @if (loginForm.password().invalid() && loginForm.password().touched()) {
+                <p class="text-sm text-destructive">
+                  @for (error of loginForm.password().errors(); track error.kind) {
+                    {{ error.message }}
+                  }
+                </p>
+              }
+            </div>
+
+            <button
+              hlmBtn
+              variant="gradient"
+              type="submit"
+              class="w-full"
+              [disabled]="isLoading() || loginForm().invalid()"
+            >
+              @if (isLoading()) {
+                <ng-icon hlmIcon name="lucideLoader2" class="mr-2 animate-spin" size="sm" />
+                Signing in...
+              } @else {
+                Sign in
+              }
+            </button>
+          </form>
+        }
+
+        <!-- Magic Link Form -->
+        @if (loginMode() === 'magicLink') {
+          <form (submit)="onMagicLinkSubmit($event)" class="space-y-4">
+            <div class="space-y-2">
+              <label hlmLabel for="magicEmail">Email</label>
+              <div class="relative">
+                <ng-icon hlmIcon name="lucideMail" class="absolute left-3 top-1 -translate-y-1 text-muted-foreground" size="sm" />
+                <input
+                  hlmInput
+                  autocomplete="email"
+                  id="magicEmail"
+                  type="email"
+                  [formField]="magicLinkForm.email"
+                  placeholder="you@example.com"
+                  class="pl-10"
+                  [class.border-destructive]="magicLinkForm.email().invalid() && magicLinkForm.email().touched()"
+                />
+              </div>
+              @if (magicLinkForm.email().invalid() && magicLinkForm.email().touched()) {
+                <p class="text-sm text-destructive">
+                  @for (error of magicLinkForm.email().errors(); track error.kind) {
+                    {{ error.message }}
+                  }
+                </p>
+              }
+            </div>
+
+            <p class="text-sm text-muted-foreground">
+              We'll send you a secure sign-in link. No password needed.
+            </p>
+
+            <button
+              hlmBtn
+              variant="gradient"
+              type="submit"
+              class="w-full"
+              [disabled]="isLoading() || magicLinkForm().invalid()"
+            >
+              @if (isLoading()) {
+                <ng-icon hlmIcon name="lucideLoader2" class="mr-2 animate-spin" size="sm" />
+                Sending...
+              } @else {
+                Send magic link
+              }
+            </button>
+          </form>
+        }
+
+        <!-- Messages -->
+        @if (errorMessage()) {
+          <div class="bg-destructive border border-destructive text-destructive px-4 py-3 rounded mt-4">
+            <p class="text-sm">{{ errorMessage() }}</p>
           </div>
-          <div class="relative flex justify-center text-sm">
-            <span class="bg-white px-2 text-slate-500">Or continue with</span>
-          </div>
-        </div>
+        }
 
-        <div id="google-btn-container" class="w-full"></div>
-      }
+        @if (successMessage()) {
+          <div class="bg-green-100 dark:bg-green-900 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 px-4 py-3 rounded mt-4">
+            <p class="text-sm">{{ successMessage() }}</p>
+          </div>
+        }
+
+        <!-- Divider and Google OAuth -->
+        @if (loginMode() === 'password') {
+          <div class="relative my-6">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-border"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="bg-card px-2 text-muted-foreground">Or continue with</span>
+            </div>
+          </div>
+
+          <div id="google-btn-container" class="w-full"></div>
+        }
+      </div>
+
+      <div hlmCardFooter class="flex flex-col space-y-2">
+        @if (loginMode() === 'password') {
+          <div class="text-sm text-center text-muted-foreground">
+            Don't have an account?
+            <a [routerLink]="['/register']" class="link-gradient hover:underline">Sign up</a>
+          </div>
+        }
+        <div class="text-sm text-center">
+          <a [routerLink]="['/forgot-password']" class="text-muted-foreground hover:text-primary transition-colors">
+            Forgot password?
+          </a>
+        </div>
+      </div>
     </div>
 
-    <div hlmCardFooter class="flex flex-col space-y-2">
-      @if (loginMode() === 'password') {
-        <div class="text-sm text-center text-slate-500">
-          Don't have an account?
-          <a [routerLink]="['/register']" class="text-blue-600 hover:underline">Sign up</a>
-        </div>
-      }
-      <div class="text-sm text-center">
-        <a [routerLink]="['/forgot-password']" class="text-slate-500 hover:text-blue-600">
-          Forgot password?
-        </a>
-      </div>
+    <div class="mt-6 flex justify-center">
+      <nyots-theme-toggle />
     </div>
   </div>
 
   <!-- Terms & Conditions Dialog -->
   @if (showTermsDialog()) {
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div class="w-full max-w-lg bg-white rounded-xl shadow-2xl overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-200">
-          <h2 class="text-lg font-semibold text-slate-900">Welcome to NyotsCo!</h2>
-          <p class="text-sm text-slate-500 mt-1">Please review and accept our Terms & Conditions to continue.</p>
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
+      <div class="w-full max-w-lg bg-background rounded-xl shadow-2xl overflow-hidden border border-border">
+        <div class="px-6 py-4 border-b border-border">
+          <h2 class="text-lg font-semibold text-foreground">Welcome to NyotsCo!</h2>
+          <p class="text-sm text-muted-foreground mt-1">Please review and accept our Terms & Conditions to continue.</p>
         </div>
 
         <div class="px-6 py-4 max-h-80 overflow-y-auto">
-          <div class="text-sm text-slate-700 space-y-4">
+          <div class="text-sm text-muted-foreground space-y-4">
             <p><strong>1. Acceptance of Terms</strong><br>By creating an account or using the NyotsCo platform, you agree to be bound by these Terms and Conditions.</p>
             <p><strong>2. Description of Service</strong><br>NyotsCo is a crowdfunding and contribution management platform that allows users to create projects, make financial contributions, and manage project activities.</p>
             <p><strong>3. User Accounts</strong><br>You must provide accurate and complete information when creating an account. You must be at least 18 years old or have parental consent to use this platform.</p>
@@ -209,16 +233,16 @@
           </div>
         </div>
 
-        <div class="px-6 py-4 border-t border-slate-200 space-y-4">
+        <div class="px-6 py-4 border-t border-border space-y-4">
           <div class="flex items-start space-x-3">
             <input
               type="checkbox"
               id="termsCheckbox"
-              class="mt-0.5 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+              class="mt-0.5 h-4 w-4 rounded border-border text-primary focus:ring-primary"
               [checked]="termsAccepted()"
               (change)="termsAccepted.set(!termsAccepted())"
             />
-            <label for="termsCheckbox" class="text-sm text-slate-700">
+            <label for="termsCheckbox" class="text-sm text-foreground">
               I have read and agree to the <strong>Terms and Conditions</strong> and <strong>Privacy Policy</strong>.
             </label>
           </div>
@@ -234,6 +258,7 @@
             </button>
             <button
               hlmBtn
+              variant="gradient"
               class="flex-1"
               [disabled]="!termsAccepted() || isLoading()"
               (click)="acceptTermsAndLogin()"

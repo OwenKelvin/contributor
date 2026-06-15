@@ -145,7 +145,9 @@
       "@nyots/data-source/helpers": [
         "./libs/shared/data-source/helpers/src/index.ts"
       ],
-      "@nyots/admin/ui/dialogs": ["./libs/admin/ui/src/index.ts"]
+      "@nyots/admin/ui/dialogs": ["./libs/admin/ui/src/index.ts"],
+      "@nyots/theme": ["./libs/shared/theme/src/index.ts"],
+      "@nyots/ui-theme-toggle": ["./libs/shared/ui/theme-toggle/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

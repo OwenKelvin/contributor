@@ -162,7 +162,7 @@ import { HlmSelectContent, HlmSelectOption, HlmSelectTrigger } from '@nyots/ui/s
               @for (date of week; track _dateAdapter.getTime(date)) {
                 <td
                   brnCalendarCell
-                  class="data-[selected]:data-[outside]:bg-accent/50 data-[selected]:bg-accent relative h-8 w-8 p-0 text-center text-sm focus-within:relative focus-within:z-20 first:data-[selected]:rounded-l-md last:data-[selected]:rounded-r-md [&:has([aria-selected].day-range-end)]:rounded-r-md"
+                  class="data-[selected]:data-[outside]:bg-accent data-[selected]:bg-accent relative h-8 w-8 p-0 text-center text-sm focus-within:relative focus-within:z-20 first:data-[selected]:rounded-l-md last:data-[selected]:rounded-r-md [&:has([aria-selected].day-range-end)]:rounded-r-md"
                 >
                   <button
                     brnCalendarCellButton

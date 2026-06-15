@@ -12,7 +12,7 @@
           <div class="relative">
             <ng-icon
               name="lucideSearch"
-              class="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+              class="absolute left-3 top-1 -translate-y-1 text-muted-foreground"
               size="sm"
             />
             <input
@@ -40,7 +40,7 @@
       @if (isLoading()) {
         <div class="flex items-center justify-center py-12">
           <div class="text-center">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
             <p class="mt-4 text-sm text-muted-foreground">Loading permissions...</p>
           </div>
         </div>
@@ -61,7 +61,7 @@
           <table class="w-full">
             <thead class="border-b">
               <tr class="text-left">
-                <th class="pb-3 px-4 text-sm font-medium text-muted-foreground sticky left-0 bg-white">User</th>
+                <th class="pb-3 px-4 text-sm font-medium text-muted-foreground sticky left-0 bg-card">User</th>
                 @for (role of roles(); track role.id) {
                   <th class="pb-3 px-4 text-sm font-medium text-muted-foreground text-center">
                     <div class="flex flex-col items-center gap-1">
@@ -74,11 +74,11 @@
             </thead>
             <tbody>
               @for (user of filteredUsers(); track user.id) {
-                <tr class="border-b hover:bg-slate-50 transition-colors">
-                  <td class="py-4 px-4 sticky left-0 bg-white">
+                <tr class="border-b hover:bg-background transition-colors">
+                  <td class="py-4 px-4 sticky left-0 bg-card">
                     <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                        <span class="text-sm font-medium text-blue-600">
+                      <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+                        <span class="text-sm font-medium text-primary">
                           {{ (user.firstName?.[0] || user.email[0]).toUpperCase() }}
                         </span>
                       </div>
@@ -126,7 +126,7 @@
         @for (role of roles(); track role.id) {
           <div class="p-4 border rounded-lg">
             <div class="flex items-center gap-2 mb-2">
-              <ng-icon name="lucideShield" class="text-blue-600" />
+              <ng-icon name="lucideShield" class="text-primary" />
               <h4 class="font-semibold">{{ role.name }}</h4>
             </div>
             @if (role.description) {

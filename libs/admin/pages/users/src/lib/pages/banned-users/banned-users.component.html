@@ -12,7 +12,7 @@
           <div class="relative">
             <ng-icon
               name="lucideSearch"
-              class="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+              class="absolute left-3 top-1 -translate-y-1 text-muted-foreground"
               size="sm"
             />
             <input
@@ -42,7 +42,7 @@
       @if (isLoading()) {
         <div class="flex items-center justify-center py-12">
           <div class="text-center">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
             <p class="mt-4 text-sm text-muted-foreground">Loading banned users...</p>
           </div>
         </div>
@@ -61,17 +61,17 @@
       } @else {
         <div class="space-y-4">
           @for (user of filteredUsers(); track user.id) {
-            <div class="p-4 border rounded-lg hover:bg-slate-50 transition-colors">
+            <div class="p-4 border rounded-lg hover:bg-background transition-colors">
               <div class="flex items-start justify-between gap-4">
                 <!-- User Info -->
                 <div class="flex items-start gap-4 flex-1">
-                  <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
-                    <ng-icon name="lucideShield" class="text-red-600" />
+                  <div class="w-12 h-12 rounded-full bg-destructive flex items-center justify-center flex-shrink-0">
+                    <ng-icon name="lucideShield" class="text-destructive" />
                   </div>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2 mb-1">
                       <h4 class="font-semibold">{{ getUserName(user) }}</h4>
-                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
+                      <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-destructive text-destructive">
                         Banned
                       </span>
                     </div>

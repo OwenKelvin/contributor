@@ -186,13 +186,13 @@ export class ProjectCardComponent {
 
   getStatusClass(status: string): string {
     const statusMap: Record<string, string> = {
-      DRAFT: 'bg-gray-100 text-gray-800',
-      ACTIVE: 'bg-green-100 text-green-800',
-      PENDING: 'bg-yellow-100 text-yellow-800',
-      COMPLETED: 'bg-blue-100 text-blue-800',
-      ARCHIVED: 'bg-red-100 text-red-800',
+      DRAFT: 'bg-muted text-foreground',
+      ACTIVE: 'bg-emerald-100 dark:bg-emerald-900 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-300',
+      PENDING: 'bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-300',
+      COMPLETED: 'bg-primary text-primary',
+      ARCHIVED: 'bg-destructive text-destructive',
     };
-    return statusMap[status] || 'bg-gray-100 text-gray-800';
+    return statusMap[status] || 'bg-muted text-foreground';
   }
 
   getStatusLabel(status: string): string {

@@ -32,6 +32,7 @@ import { HlmDropdownMenu, HlmDropdownMenuItem, HlmDropdownMenuTrigger } from '@n
 import { ConfirmationDialogComponent, HlmDialogService } from '@nyots/ui/dialog';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '@nyots/data-source/auth';
+import { ThemeToggleComponent } from '@nyots/ui-theme-toggle';
 import { RouterOutlet, RouterLink } from '@angular/router';
 import {
   BreadcrumbService,
@@ -77,6 +78,7 @@ import {
     HlmBreadcrumbList,
     HlmBreadcrumbPage,
     HlmBreadcrumbSeparator,
+    ThemeToggleComponent,
   ],
   template: `
     <div hlmSidebarWrapper>
@@ -173,11 +175,12 @@ import {
         </div>
       </hlm-sidebar>
       <main hlmSidebarInset>
-        <header class="px-4 py-3 border-b">
-          <div class="flex items-center mb-3">
+        <header class="px-4 py-3 border-b border-border glass-nav sticky top-0 z-20">
+          <div class="flex items-center justify-between mb-3">
             <button hlmSidebarTrigger>
               <span class="sr-only">Toggle Sidebar</span>
             </button>
+            <nyots-theme-toggle />
           </div>
           
           <nav hlmBreadcrumb>
@@ -200,17 +203,17 @@ import {
 
         <!-- Incomplete Account Banner -->
         @if (showIncompleteAccountBanner() && !hideBanner()) {
-          <div class="mx-4 mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+          <div class="mx-4 mt-4 p-4 bg-amber-50 dark:bg-amber-900 border border-amber-200 dark:border-amber-800 rounded-lg">
             <div class="flex items-start gap-3">
-              <ng-icon name="lucideAlertTriangle" class="text-amber-600 flex-shrink-0 mt-0.5" hlm size="sm" />
+              <ng-icon name="lucideAlertTriangle" class="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" hlm size="sm" />
               <div class="flex-1">
-                <h3 class="text-sm font-semibold text-amber-800">Account setup incomplete</h3>
-                <p class="text-sm text-amber-700 mt-1">
+                <h3 class="text-sm font-semibold text-amber-800 dark:text-amber-200">Account setup incomplete</h3>
+                <p class="text-sm text-amber-700 dark:text-amber-300 mt-1">
                   Please complete your profile by adding your name and other details to get the most out of NyotsCo.
                 </p>
               </div>
-              <button 
-                class="text-amber-600 hover:text-amber-800 text-sm"
+              <button
+                class="text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-200 text-sm"
                 (click)="hideBanner.set(true)"
               >
                 Dismiss

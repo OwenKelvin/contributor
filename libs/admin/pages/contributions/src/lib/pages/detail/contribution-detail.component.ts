@@ -189,7 +189,7 @@ import {
       <!-- Content -->
       @if (contribution() && !isLoading()) {
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- Main Content (Left Column - 2/3) -->
+          <!-- Main Content (Left Column - 2) -->
           <div class="lg:col-span-2 space-y-6">
             <!-- Contribution Overview -->
             <div hlmCard>
@@ -270,7 +270,7 @@ import {
                 @if (contribution()!.failureReason) {
                   <div hlmSeparator class="my-4"></div>
                   <div
-                    class="p-3 bg-destructive/10 border border-destructive/20 rounded-md"
+                    class="p-3 bg-destructive border border-destructive rounded-md"
                   >
                     <div class="flex items-start gap-2">
                       <ng-icon
@@ -282,7 +282,7 @@ import {
                         <p class="text-sm font-medium text-destructive">
                           Failure Reason
                         </p>
-                        <p class="text-sm text-destructive/90 mt-1">
+                        <p class="text-sm text-destructive mt-1">
                           {{ contribution()!.failureReason }}
                         </p>
                       </div>
@@ -319,7 +319,7 @@ import {
             }
           </div>
 
-          <!-- Sidebar (Right Column - 1/3) -->
+          <!-- Sidebar (Right Column - 1) -->
           <div class="space-y-6">
             <!-- Contributor Information -->
             <div hlmCard>

@@ -42,7 +42,7 @@
     <div class="space-y-2">
       <label hlmLabel for="amount">Amount *</label>
       <div class="relative">
-        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+        <span class="absolute left-3 top-1 transform -translate-y-1 text-muted-foreground">$</span>
         <input
           hlmInput
           id="amount"
@@ -58,7 +58,7 @@
     <div class="space-y-2">
       <div class="flex justify-between items-center">
         <label hlmLabel for="description">Description</label>
-        <span class="text-sm text-gray-500">
+        <span class="text-sm text-muted-foreground">
           {{ getDescriptionLength() }}/500
         </span>
       </div>

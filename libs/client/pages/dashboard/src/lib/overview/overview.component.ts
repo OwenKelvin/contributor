@@ -109,11 +109,11 @@ export class OverviewComponent implements OnInit {
 
   getStatusClass(status: string): string {
     const statusMap: Record<string, string> = {
-      'COMPLETED': 'text-green-600',
-      'PENDING': 'text-yellow-600',
-      'FAILED': 'text-red-600',
-      'REFUNDED': 'text-gray-600',
+      'COMPLETED': 'text-emerald-600 dark:text-emerald-400',
+      'PENDING': 'text-amber-600 dark:text-amber-400',
+      'FAILED': 'text-destructive',
+      'REFUNDED': 'text-muted-foreground',
     };
-    return statusMap[status] || 'text-gray-600';
+    return statusMap[status] || 'text-muted-foreground';
   }
 }

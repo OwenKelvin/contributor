@@ -1,0 +1,112 @@
+/*
+ * Nyots gradient utilities inspired by angular.dev.
+ * Include after tokens.scss.
+ */
+
+@layer utilities {
+  .bg-gradient-cta {
+    background-image: var(--gradient-cta);
+  }
+
+  .bg-gradient-cta-animated {
+    background-image: var(--gradient-cta-animated);
+    background-size: 200% 100%;
+    animation: gradient-shift 4s linear infinite;
+  }
+
+  .bg-gradient-subtle {
+    background-image: var(--gradient-subtle);
+  }
+
+  .bg-gradient-radial-hero {
+    background-image: var(--gradient-radial-hero);
+  }
+
+  .dark .bg-gradient-radial-hero {
+    background-image: var(--gradient-radial-hero-dark);
+  }
+
+  .text-gradient-brand {
+    background-image: var(--gradient-cta);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-cyan-violet {
+    background-image: linear-gradient(90deg, #14DCFF 0%, #2828FF 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .border-gradient {
+    position: relative;
+    background: transparent;
+    z-index: 0;
+  }
+
+  .border-gradient::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: var(--gradient-cta);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .gradient-glow {
+    position: relative;
+  }
+
+  .gradient-glow::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    background: var(--gradient-cta);
+    filter: blur(16px);
+    opacity: 0.35;
+    z-index: -1;
+  }
+
+  .gradient-blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(80px);
+    opacity: 0.35;
+    pointer-events: none;
+  }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.05); }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 8s ease-in-out infinite;
+  }
+}

@@ -1,9 +1,9 @@
-<div class="min-h-screen flex bg-zinc-50">
+<div class="min-h-screen flex bg-background">
   <!-- Brand Panel: Visible on large screens -->
-  <div class="hidden lg:flex lg:w-1/2 bg-zinc-900 relative overflow-hidden items-center justify-center">
+  <div class="hidden lg:flex lg:w-1 bg-background relative overflow-hidden items-center justify-center">
     <!-- Sophisticated background effect -->
-    <div class="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 opacity-100"></div>
-    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-600/10 via-transparent to-transparent"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-background via-card to-background opacity-100"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary via-transparent to-transparent"></div>
 
     <!-- Logo -->
     <div class="relative z-10 w-full max-w-lg px-12">
@@ -12,24 +12,26 @@
   </div>
 
   <!-- Auth Panel -->
-  <div class="flex-1 flex items-center justify-center p-4 sm:p-8 md:p-12">
-    <div class="w-full max-w-md">
+  <div class="flex-1 flex items-center justify-center p-4 sm:p-8 md:p-12 relative overflow-hidden">
+    <div class="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-brand-cyan blur-3xl"></div>
+
+    <div class="w-full max-w-md relative z-10">
       <!-- Floating Container -->
-      <div class="bg-white rounded-2xl shadow-2xl p-8 sm:p-12 border border-zinc-100">
+      <div class="glass-card shadow-2xl p-8 sm:p-12">
         <div class="space-y-8">
           <!-- Header -->
           <div class="space-y-2">
-            <h3 class="text-3xl font-semibold tracking-tight text-zinc-900">Welcome back</h3>
-            <p class="text-zinc-500">Sign in to your account to continue</p>
+            <h3 class="text-3xl font-semibold tracking-tight text-foreground">Welcome back</h3>
+            <p class="text-muted-foreground">Sign in to your account to continue</p>
           </div>
 
           <!-- Login Form -->
           <form (submit)="onSubmit($event)" class="space-y-6">
             <div class="space-y-4">
               <div class="space-y-2">
-                <label hlmLabel for="email" class="text-sm font-medium text-zinc-700">Email</label>
+                <label hlmLabel for="email" class="text-sm font-medium text-foreground">Email</label>
                 <div class="relative">
-                  <ng-icon hlmIcon name="lucideMail" class="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size="sm" />
+                  <ng-icon hlmIcon name="lucideMail" class="absolute left-3 top-1 -translate-y-1 text-muted-foreground" size="sm" />
                   <input
                     hlmInput
                     autocomplete="username"
@@ -38,11 +40,11 @@
                     [formField]="loginForm.email"
                     placeholder="you@example.com"
                     class="pl-10 w-full"
-                    [class.border-red-500]="loginForm.email().invalid() && loginForm.email().touched()"
+                    [class.border-destructive]="loginForm.email().invalid() && loginForm.email().touched()"
                   />
                 </div>
                 @if (loginForm.email().invalid() && loginForm.email().touched()) {
-                  <div class="flex items-center gap-1.5 text-xs text-red-500 mt-1">
+                  <div class="flex items-center gap-1.5 text-xs text-destructive mt-1">
                     <ng-icon hlmIcon name="lucideAlertCircle" size="xs" />
                     @for (error of loginForm.email().errors(); track error.kind) {
                       <span>{{ error.message }}</span>
@@ -52,9 +54,9 @@
               </div>
 
               <div class="space-y-2">
-                <label hlmLabel for="password" class="text-sm font-medium text-zinc-700">Password</label>
+                <label hlmLabel for="password" class="text-sm font-medium text-foreground">Password</label>
                 <div class="relative">
-                  <ng-icon hlmIcon name="lucideLock" class="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size="sm" />
+                  <ng-icon hlmIcon name="lucideLock" class="absolute left-3 top-1 -translate-y-1 text-muted-foreground" size="sm" />
                   <input
                     hlmInput
                     id="password"
@@ -63,11 +65,11 @@
                     placeholder="••••••••"
                     autocomplete="current-password"
                     class="pl-10 w-full"
-                    [class.border-red-500]="loginForm.password().invalid() && loginForm.password().touched()"
+                    [class.border-destructive]="loginForm.password().invalid() && loginForm.password().touched()"
                   />
                 </div>
                 @if (loginForm.password().invalid() && loginForm.password().touched()) {
-                  <div class="flex items-center gap-1.5 text-xs text-red-500 mt-1">
+                  <div class="flex items-center gap-1.5 text-xs text-destructive mt-1">
                     <ng-icon hlmIcon name="lucideAlertCircle" size="xs" />
                     @for (error of loginForm.password().errors(); track error.kind) {
                       <span>{{ error.message }}</span>
@@ -78,7 +80,7 @@
             </div>
 
             @if (errorMessage()) {
-              <div class="flex items-center gap-2 p-3 rounded-lg bg-red-50 border border-red-100 text-red-700 text-sm animate-in fade-in slide-in-from-top-1">
+              <div class="flex items-center gap-2 p-3 rounded-lg bg-destructive border border-destructive text-destructive text-sm animate-in fade-in slide-in-from-top-1">
                 <ng-icon hlmIcon name="lucideAlertCircle" size="sm" class="shrink-0" />
                 <p>{{ errorMessage() }}</p>
               </div>
@@ -86,8 +88,9 @@
 
             <button
               hlmBtn
+              variant="gradient"
               type="submit"
-              class="w-full bg-[#2828FF] hover:bg-[#1e1eff] text-white transition-colors"
+              class="w-full"
               [disabled]="isLoading() || loginForm().invalid()"
             >
               @if (isLoading()) {
@@ -104,16 +107,20 @@
           <!-- Social Separator -->
           <div class="relative py-4">
             <div class="absolute inset-0 flex items-center">
-              <div class="w-full border-t border-zinc-200"></div>
+              <div class="w-full border-t border-border"></div>
             </div>
-            <div class="relative flex justify-center text-xs uppercase tracking-wider font-medium text-zinc-400">
-              <span class="bg-white px-4">Or continue with</span>
+            <div class="relative flex justify-center text-xs uppercase tracking-wider font-medium text-muted-foreground">
+              <span class="bg-card px-4">Or continue with</span>
             </div>
           </div>
 
           <!-- Google Button Container -->
           <div id="google-btn-container" class="w-full"></div>
         </div>
+      </div>
+
+      <div class="mt-6 flex justify-center">
+        <nyots-theme-toggle />
       </div>
     </div>
   </div>

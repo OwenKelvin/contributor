@@ -16,6 +16,7 @@ import {
 
 interface RequestContext {
   backendUrl?: string;
+  theme?: 'light' | 'dark';
 }
 
 const serverConfig: ApplicationConfig = {
@@ -27,6 +28,10 @@ const serverConfig: ApplicationConfig = {
       const backendUrl = requestContext?.backendUrl || process.env['BACKEND_URL'];
       transferState.set(BACKEND_URL_KEY, backendUrl);
       transferState.set(GOOGLE_CLIENT_ID_KEY, process.env['GOOGLE_CLIENT_ID']);
+      const theme = requestContext?.theme ?? 'light';
+      if (theme === 'dark') {
+        transferState.set({} as any, 'dark');
+      }
     }),
   ],
 };

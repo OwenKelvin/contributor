@@ -1,8 +1,8 @@
 <div class="max-w-3xl mx-auto space-y-6">
   <!-- Header -->
   <div class="flex items-center gap-3 mb-6">
-    <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-      <ng-icon name="lucideUserPlus" class="text-blue-600" size="lg" />
+    <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
+      <ng-icon name="lucideUserPlus" class="text-primary" size="lg" />
     </div>
     <div>
       <h2 class="text-2xl font-bold">Invite New User</h2>
@@ -31,10 +31,10 @@
               type="email"
               formControlName="email"
               placeholder="user@example.com"
-              [class.border-red-500]="getFieldError('email')"
+              [class.border-destructive]="getFieldError('email')"
             />
             @if (getFieldError('email')) {
-              <p class="text-sm text-red-600 mt-1">{{ getFieldError('email') }}</p>
+              <p class="text-sm text-destructive mt-1">{{ getFieldError('email') }}</p>
             }
           </div>
 
@@ -95,10 +95,10 @@
               type="password"
               formControlName="password"
               placeholder="Enter a secure password"
-              [class.border-red-500]="getFieldError('password')"
+              [class.border-destructive]="getFieldError('password')"
             />
             @if (getFieldError('password')) {
-              <p class="text-sm text-red-600 mt-1">{{ getFieldError('password') }}</p>
+              <p class="text-sm text-destructive mt-1">{{ getFieldError('password') }}</p>
             }
             <p class="text-xs text-muted-foreground mt-1">
               Minimum 8 characters required
@@ -117,29 +117,29 @@
       <div hlmCardContent>
         @if (isLoading()) {
           <div class="flex items-center justify-center py-8">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         } @else {
           <div class="space-y-3">
             @for (role of roles(); track role.id) {
               <div
-                class="flex items-start gap-3 p-4 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors"
-                [class.border-blue-500]="isRoleSelected(role.id)"
-                [class.bg-blue-50]="isRoleSelected(role.id)"
+                class="flex items-start gap-3 p-4 border rounded-lg cursor-pointer hover:bg-background transition-colors"
+                [class.border-primary]="isRoleSelected(role.id)"
+                [class.bg-primary]="isRoleSelected(role.id)"
                 (click)="toggleRole(role.id)"
               >
                 <div class="flex items-center h-6">
                   <input
                     type="checkbox"
                     [checked]="isRoleSelected(role.id)"
-                    class="rounded border-gray-300"
+                    class="rounded border-border"
                     (click)="$event.stopPropagation()"
                     (change)="toggleRole(role.id)"
                   />
                 </div>
                 <div class="flex-1">
                   <div class="flex items-center gap-2 mb-1">
-                    <ng-icon name="lucideShield" size="sm" class="text-blue-600" />
+                    <ng-icon name="lucideShield" size="sm" class="text-primary" />
                     <span class="font-medium">{{ role.name }}</span>
                   </div>
                   @if (role.description) {
@@ -152,7 +152,7 @@
             }
           </div>
           @if (getFieldError('roleIds')) {
-            <p class="text-sm text-red-600 mt-2">{{ getFieldError('roleIds') }}</p>
+            <p class="text-sm text-destructive mt-2">{{ getFieldError('roleIds') }}</p>
           }
         }
       </div>
@@ -172,7 +172,7 @@
               type="checkbox"
               id="sendEmail"
               formControlName="sendEmail"
-              class="rounded border-gray-300"
+              class="rounded border-border"
             />
             <label for="sendEmail" class="text-sm font-medium cursor-pointer">
               Send invitation email immediately

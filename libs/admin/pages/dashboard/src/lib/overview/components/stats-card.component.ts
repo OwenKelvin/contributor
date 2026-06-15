@@ -33,8 +33,8 @@ import {
         <div class="text-2xl font-bold">{{ value }}</div>
         @if (trend) {
           <p class="text-xs flex items-center gap-1 mt-1"
-             [class.text-green-600]="trendDirection === 'up'"
-             [class.text-red-600]="trendDirection === 'down'">
+             [class.text-emerald-600 dark:text-emerald-400 dark:text-emerald-400]="trendDirection === 'up'"
+             [class.text-destructive]="trendDirection === 'down'">
             <ng-icon
               [name]="trendDirection === 'up' ? 'lucideArrowUp' : 'lucideArrowDown'"
               hlm

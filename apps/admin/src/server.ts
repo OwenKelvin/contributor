@@ -18,20 +18,54 @@ const runtimeConfigScript = runtimeBackendUrl
   ? `<script>window.__RUNTIME_CONFIG__={BACKEND_URL:${JSON.stringify(runtimeBackendUrl)}};</script>`
   : '';
 
-function injectRuntimeConfig(html: string): string {
+const requestTheme = (req: express.Request): 'light' | 'dark' | null => {
+  // 1. Explicit cookie
+  const cookieTheme = req.headers.cookie
+    ?.split(';')
+    .map((c) => c.trim())
+    .find((c) => c.startsWith('nyots-theme='))
+    ?.split('=')[1];
+  if (cookieTheme === 'light' || cookieTheme === 'dark') {
+    return cookieTheme;
+  }
+  // 2. OS preference via Sec-CH-Prefers-Color-Scheme (if enabled)
+  const clientHint = req.headers['sec-ch-prefers-color-scheme'];
+  if (clientHint === 'dark' || clientHint === 'light') {
+    return clientHint;
+  }
+  return null;
+};
+
+const themeInitScript = (theme: 'light' | 'dark') =>
+  `<script>(function(){document.documentElement.classList.toggle('dark',${theme === 'dark'})})();</script>`;
+
+function injectRuntimeConfig(html: string, req?: express.Request): string {
+  let result = html;
+  const theme = req ? requestTheme(req) : null;
+  if (theme) {
+    // Inject a tiny script right after <html> to ensure class is set before body renders.
+    const htmlOpenIndex = result.toLowerCase().indexOf('<html');
+    if (htmlOpenIndex !== -1) {
+      const tagEnd = result.indexOf('>', htmlOpenIndex);
+      if (tagEnd !== -1) {
+        result = result.slice(0, tagEnd + 1) + themeInitScript(theme) + result.slice(tagEnd + 1);
+      }
+    }
+  }
+
   if (!runtimeConfigScript) {
-    return html;
+    return result;
   }
   // Inject before the closing </head> tag, or before the first <script> if no </head>.
-  const headCloseIndex = html.indexOf('</head>');
+  const headCloseIndex = result.indexOf('</head>');
   if (headCloseIndex !== -1) {
-    return html.slice(0, headCloseIndex) + runtimeConfigScript + html.slice(headCloseIndex);
+    return result.slice(0, headCloseIndex) + runtimeConfigScript + result.slice(headCloseIndex);
   }
-  const firstScriptIndex = html.indexOf('<script');
+  const firstScriptIndex = result.indexOf('<script');
   if (firstScriptIndex !== -1) {
-    return html.slice(0, firstScriptIndex) + runtimeConfigScript + html.slice(firstScriptIndex);
+    return result.slice(0, firstScriptIndex) + runtimeConfigScript + result.slice(firstScriptIndex);
   }
-  return html;
+  return result;
 }
 
 function readIndexHtml(): string {
@@ -75,7 +109,7 @@ app.use(
  * Serve index.html with injected runtime config for direct navigation.
  */
 app.get('/index.html', (req, res) => {
-  res.send(injectRuntimeConfig(readIndexHtml()));
+  res.send(injectRuntimeConfig(readIndexHtml(), req));
 });
 
 /**
@@ -83,7 +117,7 @@ app.get('/index.html', (req, res) => {
  */
 app.use('/**', (req, res, next) => {
   angularApp
-    .handle(req, { backendUrl: process.env['BACKEND_URL'] })
+    .handle(req, { backendUrl: process.env['BACKEND_URL'], theme: requestTheme(req) ?? 'light' })
     .then((response) => {
       if (!response) {
         return next();
@@ -94,7 +128,7 @@ app.use('/**', (req, res, next) => {
         return response
           .text()
           .then((html) => {
-            const modified = injectRuntimeConfig(html);
+            const modified = injectRuntimeConfig(html, req);
             // Rebuild headers; drop Content-Length so the modified body isn't truncated.
             const modifiedHeaders = new Headers(response.headers);
             modifiedHeaders.delete('content-length');

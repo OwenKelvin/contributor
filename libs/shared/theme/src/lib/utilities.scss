@@ -1,0 +1,170 @@
+/*
+ * Nyots shared surface + component utilities.
+ * Use alongside tokens.scss and gradients.scss.
+ */
+
+@layer utilities {
+  /* Glass surfaces */
+  .glass-nav {
+    @apply bg-background/70 backdrop-blur-xl border-b border-border/60;
+  }
+
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-md border border-border/60 rounded-xl;
+  }
+
+  .dark .glass-card {
+    @apply bg-card/60;
+  }
+
+  .glass-panel {
+    @apply bg-background/60 backdrop-blur-lg border border-border/50 rounded-2xl;
+  }
+
+  /* Gradient CTA button (angular.dev style) */
+  .btn-gradient {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    color: #fcfcfc;
+    background: var(--gradient-cta-animated);
+    background-size: 200% 100%;
+    box-shadow: 0 4px 14px rgba(40, 40, 255, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    animation: gradient-shift 4s linear infinite;
+    cursor: pointer;
+  }
+
+  .btn-gradient:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(40, 40, 255, 0.35);
+  }
+
+  .btn-gradient:active {
+    transform: translateY(0);
+  }
+
+  .btn-gradient:disabled,
+  .btn-gradient[disabled] {
+    background: var(--color-muted);
+    color: var(--color-muted-foreground);
+    box-shadow: none;
+    animation: none;
+    cursor: not-allowed;
+  }
+
+  /* Secondary gradient outline button */
+  .btn-gradient-outline {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    color: var(--color-foreground);
+    background: var(--color-background);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+  }
+
+  .btn-gradient-outline::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: var(--gradient-cta);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .btn-gradient-outline:hover {
+    background: var(--gradient-cta);
+    color: #fcfcfc;
+  }
+
+  /* Section backgrounds */
+  .section-gradient {
+    background: linear-gradient(180deg, var(--color-background) 0%, rgba(40, 40, 255, 0.03) 100%);
+  }
+
+  .dark .section-gradient {
+    background: linear-gradient(180deg, var(--color-background) 0%, rgba(40, 40, 255, 0.08) 100%);
+  }
+
+  .section-muted-gradient {
+    background: linear-gradient(180deg, rgba(40, 40, 255, 0.04) 0%, rgba(20, 220, 255, 0.04) 100%);
+  }
+
+  .dark .section-muted-gradient {
+    background: linear-gradient(180deg, rgba(40, 40, 255, 0.08) 0%, rgba(20, 220, 255, 0.08) 100%);
+  }
+
+  /* Gradient progress bar */
+  .progress-gradient {
+    background: var(--gradient-cta);
+  }
+
+  /* Gradient icon ring */
+  .icon-ring-gradient {
+    background: linear-gradient(135deg, rgba(40, 40, 255, 0.08) 0%, rgba(20, 220, 255, 0.12) 100%);
+    border: 1px solid rgba(40, 40, 255, 0.12);
+  }
+
+  .dark .icon-ring-gradient {
+    background: linear-gradient(135deg, rgba(40, 40, 255, 0.18) 0%, rgba(20, 220, 255, 0.22) 100%);
+    border-color: rgba(40, 40, 255, 0.25);
+  }
+
+  /* Hero badge pill */
+  .hero-badge {
+    @apply inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium;
+    background: linear-gradient(135deg, rgba(40, 40, 255, 0.08) 0%, rgba(20, 220, 255, 0.12) 100%);
+    border: 1px solid rgba(40, 40, 255, 0.12);
+    color: var(--color-primary);
+  }
+
+  .dark .hero-badge {
+    background: linear-gradient(135deg, rgba(40, 40, 255, 0.18) 0%, rgba(20, 220, 255, 0.22) 100%);
+    border-color: rgba(40, 40, 255, 0.25);
+  }
+
+  /* Link underline gradient */
+  .link-gradient {
+    background-image: var(--gradient-cta);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    position: relative;
+  }
+
+  .link-gradient::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 2px;
+    background: var(--gradient-cta);
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+  }
+
+  .link-gradient:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}

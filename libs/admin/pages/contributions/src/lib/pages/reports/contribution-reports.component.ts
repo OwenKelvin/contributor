@@ -273,7 +273,7 @@ import { HlmFormField } from '@nyots/ui/form-field';
 
       <!-- Error State -->
       @if (error()) {
-        <div class="rounded-lg border border-destructive bg-destructive/10 p-4">
+        <div class="rounded-lg border border-destructive bg-destructive p-4">
           <p class="text-sm text-destructive">{{ error() }}</p>
         </div>
       }
@@ -316,7 +316,7 @@ import { HlmFormField } from '@nyots/ui/form-field';
                   </h3>
                 </div>
                 <div hlmCardContent>
-                  <div class="text-2xl font-bold text-yellow-600">
+                  <div class="text-2xl font-bold text-amber-600 dark:text-amber-400">
                     {{ report()!.pendingAmount | currency }}
                   </div>
                   <p class="text-xs text-muted-foreground mt-1">
@@ -336,7 +336,7 @@ import { HlmFormField } from '@nyots/ui/form-field';
                   </h3>
                 </div>
                 <div hlmCardContent>
-                  <div class="text-2xl font-bold text-green-600">
+                  <div class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 dark:text-emerald-400">
                     {{ report()!.paidAmount | currency }}
                   </div>
                   <p class="text-xs text-muted-foreground mt-1">

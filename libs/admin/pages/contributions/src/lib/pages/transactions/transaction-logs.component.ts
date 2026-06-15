@@ -309,7 +309,7 @@ type TransactionNode = NonNullable<
                                 hlmIcon
                                 name="lucideCheckCircle"
                                 size="base"
-                                class="text-green-600"
+                                class="text-emerald-600 dark:text-emerald-400 dark:text-emerald-400"
                               />
                               <span hlmBadge variant="default" class="bg-green-600">
                                 Success
@@ -320,7 +320,7 @@ type TransactionNode = NonNullable<
                                 hlmIcon
                                 name="lucideAlertCircle"
                                 size="base"
-                                class="text-red-600"
+                                class="text-destructive"
                               />
                               <span hlmBadge variant="destructive">
                                 Failed
@@ -331,9 +331,9 @@ type TransactionNode = NonNullable<
                                 hlmIcon
                                 name="lucideClock"
                                 size="base"
-                                class="text-yellow-600"
+                                class="text-amber-600 dark:text-amber-400"
                               />
-                              <span hlmBadge variant="outline" class="border-yellow-600 text-yellow-600">
+                              <span hlmBadge variant="outline" class="border-yellow-600 text-amber-600 dark:text-amber-400">
                                 Pending
                               </span>
                             }
@@ -375,7 +375,7 @@ type TransactionNode = NonNullable<
                     @if (transaction.status === TransactionStatus.Failed &&
                     (transaction.errorCode || transaction.errorMessage) &&
                     expandedTransactionId() === transaction.id) {
-                      <tr hlmTr class="bg-red-50 dark:bg-red-950/20">
+                      <tr hlmTr class="bg-destructive dark:bg-red-950">
                         <td hlmTd colspan="7">
                           <div class="p-4 space-y-2">
                             <div class="flex items-start gap-2">
@@ -383,7 +383,7 @@ type TransactionNode = NonNullable<
                                 hlmIcon
                                 name="lucideAlertCircle"
                                 size="base"
-                                class="text-red-600 mt-0.5"
+                                class="text-destructive mt-0.5"
                               />
                               <div class="flex-1">
                                 <p class="font-medium text-sm text-red-900 dark:text-red-100">
@@ -392,7 +392,7 @@ type TransactionNode = NonNullable<
                                 @if (transaction.errorCode) {
                                   <p class="text-sm text-red-800 dark:text-red-200 mt-1">
                                     <span class="font-medium">Error Code:</span>
-                                    <code class="bg-red-100 dark:bg-red-900 px-2 py-0.5 rounded">
+                                    <code class="bg-destructive dark:bg-red-900 px-2 py-0.5 rounded">
                                       {{ transaction.errorCode }}
                                     </code>
                                   </p>
@@ -409,7 +409,7 @@ type TransactionNode = NonNullable<
                                       Gateway Response
                                     </summary>
                                     <pre
-                                      class="text-xs bg-red-100 dark:bg-red-900 p-2 rounded mt-1 overflow-x-auto">{{ transaction.gatewayResponse }}</pre>
+                                      class="text-xs bg-destructive dark:bg-red-900 p-2 rounded mt-1 overflow-x-auto">{{ transaction.gatewayResponse }}</pre>
                                   </details>
                                 }
                               </div>

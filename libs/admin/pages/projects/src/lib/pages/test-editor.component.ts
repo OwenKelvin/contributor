@@ -20,7 +20,7 @@ import { RichTextEditorComponent } from '../components/rich-text-editor';
           />
           
           @if (validationError()) {
-            <div class="mt-4 p-4 bg-destructive/10 text-destructive rounded-md">
+            <div class="mt-4 p-4 bg-destructive text-destructive rounded-md">
               {{ validationError() }}
             </div>
           }

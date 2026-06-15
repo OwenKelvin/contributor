@@ -29,8 +29,8 @@ export class HlmCarouselNext {
 		hlm(
 			'absolute h-8 w-8 rounded-full',
 			this._carousel.orientation() === 'horizontal'
-				? 'top-1/2 -right-12 -translate-y-1/2'
-				: '-bottom-12 left-1/2 -translate-x-1/2 rotate-90',
+				? 'top-1 -right-12 -translate-y-1'
+				: '-bottom-12 left-1 -translate-x-1 rotate-90',
 		),
 	);
 	protected readonly isDisabled = () => !this._carousel.canScrollNext();

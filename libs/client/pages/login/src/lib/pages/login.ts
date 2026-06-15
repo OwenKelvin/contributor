@@ -15,6 +15,7 @@ import { HlmCard, HlmCardContent, HlmCardDescription, HlmCardFooter, HlmCardHead
 import { HlmIcon, HlmIconImports } from '@nyots/ui/icon';
 import { provideIcons } from '@ng-icons/core';
 import { lucideLoader2, lucideMail, lucideLock, lucideArrowLeft } from '@ng-icons/lucide';
+import { ThemeToggleComponent } from '@nyots/ui-theme-toggle';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '@nyots/data-source/auth';
 import { GOOGLE_CLIENT_ID } from '@nyots/data-source/constants';
@@ -36,6 +37,7 @@ declare const google: any;
     HlmIcon,
     HlmIconImports,
     RouterLink,
+    ThemeToggleComponent,
   ],
   providers: [provideIcons({ lucideLoader2, lucideMail, lucideLock, lucideArrowLeft })],
   templateUrl: 'login.html',

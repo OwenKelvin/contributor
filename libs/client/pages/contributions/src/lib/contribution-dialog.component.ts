@@ -39,7 +39,7 @@ interface ContributionData {
         <div class="space-y-2">
           <label hlmLabel for="amount">Amount *</label>
           <div class="relative">
-            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+            <span class="absolute left-3 top-1 transform -translate-y-1 text-gray-500">$</span>
             <input
               hlmInput
               id="amount"
@@ -71,7 +71,7 @@ interface ContributionData {
         </div>
 
         @if (errorMessage()) {
-          <div class="p-3 bg-destructive/10 text-destructive rounded-md text-sm">
+          <div class="p-3 bg-destructive text-destructive rounded-md text-sm">
             {{ errorMessage() }}
           </div>
         }

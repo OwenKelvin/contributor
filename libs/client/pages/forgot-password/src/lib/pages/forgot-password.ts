@@ -14,6 +14,7 @@ import { HlmCard, HlmCardContent, HlmCardDescription, HlmCardFooter, HlmCardHead
 import { HlmIcon, HlmIconImports } from '@nyots/ui/icon';
 import { provideIcons } from '@ng-icons/core';
 import { lucideLoader2, lucideMail } from '@ng-icons/lucide';
+import { ThemeToggleComponent } from '@nyots/ui-theme-toggle';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@nyots/data-source/auth';
 
@@ -33,6 +34,7 @@ import { AuthService } from '@nyots/data-source/auth';
     HlmIcon,
     HlmIconImports,
     RouterLink,
+    ThemeToggleComponent,
   ],
   providers: [provideIcons({ lucideLoader2, lucideMail })],
   templateUrl: 'forgot-password.html',

@@ -38,7 +38,7 @@ import { of } from 'rxjs';
           hlmIcon
           name="lucideSearch"
           size="base"
-          class="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+          class="absolute left-3 top-1 -translate-y-1 text-muted-foreground"
         />
         <input
           hlmInput
@@ -57,12 +57,12 @@ import { of } from 'rxjs';
             hlmIcon
             name="lucideLoader2"
             size="base"
-            class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground animate-spin"
+            class="absolute right-3 top-1 -translate-y-1 text-muted-foreground animate-spin"
           />
         } @else if (selectedUser() && !disabled()) {
           <button
             type="button"
-            class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            class="absolute right-3 top-1 -translate-y-1 text-muted-foreground hover:text-foreground"
             (click)="clearSelection()"
             [attr.aria-label]="'Clear selection'"
           >

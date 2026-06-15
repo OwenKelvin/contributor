@@ -19,12 +19,12 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { ClassValue } from 'clsx';
 
 export const textareaVariants = cva(
-	'border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 dark:bg-input/30 flex [field-sizing:content] min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+	'border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring dark:bg-input flex [field-sizing:content] min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
 	{
 		variants: {
 			error: {
-				auto: '[&.ng-invalid.ng-touched]:border-destructive [&.ng-invalid.ng-touched]:ring-destructive/20 dark:[&.ng-invalid.ng-touched]:ring-destructive/40',
-				true: 'border-destructive focus-visible:border-destructive focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40',
+				auto: '[&.ng-invalid.ng-touched]:border-destructive [&.ng-invalid.ng-touched]:ring-destructive dark:[&.ng-invalid.ng-touched]:ring-destructive',
+				true: 'border-destructive focus-visible:border-destructive focus-visible:ring-destructive dark:focus-visible:ring-destructive',
 			},
 		},
 		defaultVariants: {

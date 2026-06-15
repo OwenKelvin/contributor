@@ -10,7 +10,7 @@ import { classes } from '@nyots/ui/utils';
 		'data-slot': 'field-separator',
 	},
 	template: `
-		<hlm-separator class="absolute inset-0 top-1/2" />
+		<hlm-separator class="absolute inset-0 top-1" />
 		<span
 			data-slot="field-separator-content"
 			class="bg-background text-muted-foreground relative mx-auto block w-fit px-2"

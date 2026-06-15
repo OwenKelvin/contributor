@@ -188,31 +188,31 @@ import { BulkStatusDialog, StatusUpdateDialog } from '@nyots/admin/ui/dialogs';
                       />
                     </th>
                     <th hlmTh
-                      class="cursor-pointer hover:bg-muted/50"
+                      class="cursor-pointer hover:bg-muted"
                       (click)="sortBy('contributor')"
                     >
                       Contributor
                     </th>
                     <th hlmTh
-                      class="cursor-pointer hover:bg-muted/50"
+                      class="cursor-pointer hover:bg-muted"
                       (click)="sortBy('project')"
                     >
                       Project
                     </th>
                     <th hlmTh
-                      class="cursor-pointer hover:bg-muted/50"
+                      class="cursor-pointer hover:bg-muted"
                       (click)="sortBy('amount')"
                     >
                       Amount
                     </th>
                     <th hlmTh
-                      class="cursor-pointer hover:bg-muted/50"
+                      class="cursor-pointer hover:bg-muted"
                       (click)="sortBy('status')"
                     >
                       Status
                     </th>
                     <th hlmTh
-                      class="cursor-pointer hover:bg-muted/50"
+                      class="cursor-pointer hover:bg-muted"
                       (click)="sortBy('date')"
                     >
                       Date

@@ -31,7 +31,7 @@ import { lucideAlertTriangle, lucideRefreshCw } from '@ng-icons/lucide';
       <div hlmCard class="max-w-md w-full">
         <div hlmCardHeader>
           <div class="flex items-center gap-3">
-            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
+            <div class="flex h-12 w-12 items-center justify-center rounded-full bg-destructive">
               <ng-icon hlmIcon name="lucideAlertTriangle" size="lg" class="text-destructive" />
             </div>
             <div>

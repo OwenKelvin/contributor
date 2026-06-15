@@ -322,27 +322,27 @@ interface ActivityNode {
 
   getActionBadgeClass(action: IActivityAction): string {
     const classes: Record<string, string> = {
-      USER_LOGIN: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-      USER_LOGOUT: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
-      USER_CREATED: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
-      USER_UPDATED: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
-      USER_DELETED: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
-      PROJECT_CREATED: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
-      PROJECT_UPDATED: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
-      PROJECT_DELETED: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
-      PROJECT_APPROVED: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-      PROJECT_REJECTED: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
-      PROJECT_ARCHIVED: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
-      CONTRIBUTION_CREATED: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300',
-      CONTRIBUTION_UPDATED: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
-      CONTRIBUTION_DELETED: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
-      ROLE_CREATED: 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
-      ROLE_UPDATED: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300',
-      ROLE_DELETED: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
-      ROLE_ASSIGNED: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
-      ROLE_REVOKED: 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300',
+      USER_LOGIN: 'bg-emerald-100 dark:bg-emerald-900 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 dark:bg-green-900 dark:text-green-300',
+      USER_LOGOUT: 'bg-muted text-foreground dark:bg-gray-800 dark:text-gray-300',
+      USER_CREATED: 'bg-primary text-primary dark:bg-blue-900 dark:text-blue-300',
+      USER_UPDATED: 'bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 dark:bg-yellow-900 dark:text-yellow-300',
+      USER_DELETED: 'bg-destructive text-destructive dark:bg-red-900 dark:text-red-300',
+      PROJECT_CREATED: 'bg-primary text-primary dark:bg-blue-900 dark:text-blue-300',
+      PROJECT_UPDATED: 'bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 dark:bg-yellow-900 dark:text-yellow-300',
+      PROJECT_DELETED: 'bg-destructive text-destructive dark:bg-red-900 dark:text-red-300',
+      PROJECT_APPROVED: 'bg-emerald-100 dark:bg-emerald-900 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 dark:bg-green-900 dark:text-green-300',
+      PROJECT_REJECTED: 'bg-destructive text-destructive dark:bg-red-900 dark:text-red-300',
+      PROJECT_ARCHIVED: 'bg-muted text-foreground dark:bg-gray-800 dark:text-gray-300',
+      CONTRIBUTION_CREATED: 'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300',
+      CONTRIBUTION_UPDATED: 'bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 dark:bg-yellow-900 dark:text-yellow-300',
+      CONTRIBUTION_DELETED: 'bg-destructive text-destructive dark:bg-red-900 dark:text-red-300',
+      ROLE_CREATED: 'bg-purple-100 dark:bg-purple-900 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
+      ROLE_UPDATED: 'bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300 dark:bg-yellow-900 dark:text-yellow-300',
+      ROLE_DELETED: 'bg-destructive text-destructive dark:bg-red-900 dark:text-red-300',
+      ROLE_ASSIGNED: 'bg-emerald-100 dark:bg-emerald-900 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300 dark:bg-green-900 dark:text-green-300',
+      ROLE_REVOKED: 'bg-destructive text-destructive dark:bg-red-900 dark:text-red-300',
     };
-    return classes[action] || 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300';
+    return classes[action] || 'bg-muted text-foreground dark:bg-gray-800 dark:text-gray-300';
   }
 
   getActionLabel(action: IActivityAction): string {

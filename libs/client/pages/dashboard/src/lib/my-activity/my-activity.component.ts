@@ -172,13 +172,13 @@ export class MyActivityComponent implements OnInit {
 
   getActionColor(action: IActivityAction): string {
     const colorMap: Record<string, string> = {
-      USER_LOGIN: 'text-green-600 bg-green-100',
-      USER_UPDATED: 'text-blue-600 bg-blue-100',
-      PROJECT_CREATED: 'text-purple-600 bg-purple-100',
-      CONTRIBUTION_CREATED: 'text-indigo-600 bg-indigo-100',
-      CONTRIBUTION_UPDATED: 'text-emerald-600 bg-emerald-100',
+      USER_LOGIN: 'text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900',
+      USER_UPDATED: 'text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900',
+      PROJECT_CREATED: 'text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900',
+      CONTRIBUTION_CREATED: 'text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900',
+      CONTRIBUTION_UPDATED: 'text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900',
     };
-    return colorMap[action] || 'text-gray-600 bg-gray-100';
+    return colorMap[action] || 'text-muted-foreground bg-muted';
   }
 
   getActivityDescription(activity: ActivityNode): string {

@@ -1,0 +1,107 @@
+/*
+ * Nyots Shared Theme Tokens
+ * Core design system variables for light & dark mode.
+ * Primary brand colors: --brand-violet (#2828FF) and --brand-cyan (#14DCFF).
+ */
+
+@theme {
+  --font-family-sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-family-display: "Playfair Display", Georgia, "Times New Roman", serif;
+
+  --radius: 0.5rem;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+
+  /* Brand palette */
+  --color-brand-violet: #2828FF;
+  --color-brand-cyan: #14DCFF;
+  --color-brand-pink: #E91E8C;
+  --color-brand-orange: #FF6B35;
+  --color-brand-warm: #d4a574;
+
+  /* Semantic colors — light mode defaults */
+  --color-background: #ffffff;
+  --color-foreground: #222426;
+  --color-card: #ffffff;
+  --color-card-foreground: #222426;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #222426;
+  --color-primary: #2828FF;
+  --color-primary-foreground: #fcfcfc;
+  --color-secondary: #f8f8f8;
+  --color-secondary-foreground: #323537;
+  --color-muted: #f8f8f8;
+  --color-muted-foreground: #7c8084;
+  --color-accent: #f8f8f8;
+  --color-accent-foreground: #323537;
+  --color-destructive: #e74c3c;
+  --color-destructive-foreground: #ffffff;
+  --color-border: #e8e8e8;
+  --color-input: #e8e8e8;
+  --color-ring: #a8acaf;
+
+  /* Sidebar */
+  --color-sidebar: #fcfcfc;
+  --color-sidebar-foreground: #222426;
+  --color-sidebar-primary: #323537;
+  --color-sidebar-primary-foreground: #fcfcfc;
+  --color-sidebar-accent: #f8f8f8;
+  --color-sidebar-accent-foreground: #323537;
+  --color-sidebar-border: #e8e8e8;
+  --color-sidebar-ring: #a8acaf;
+
+  /* Gradient utility tokens */
+  --gradient-cta: linear-gradient(90deg, #E91E8C 0%, #FF6B35 50%, #2828FF 100%);
+  --gradient-cta-animated: linear-gradient(90deg, #2828FF 0%, #E91E8C 25%, #FF6B35 50%, #E91E8C 75%, #2828FF 100%);
+  --gradient-subtle: linear-gradient(140deg, rgba(40, 40, 255, 0.05) 0%, rgba(20, 220, 255, 0.05) 100%);
+  --gradient-radial-hero: radial-gradient(circle at 50% 120%, rgba(40, 40, 255, 0.12) 0%, rgba(20, 220, 255, 0.08) 35%, transparent 70%);
+  --gradient-radial-hero-dark: radial-gradient(circle at 50% 120%, rgba(40, 40, 255, 0.25) 0%, rgba(20, 220, 255, 0.15) 35%, transparent 70%);
+}
+
+/* Dark mode overrides */
+.dark {
+  color-scheme: dark;
+
+  --color-background: oklch(0.147 0.004 49.25);
+  --color-foreground: oklch(0.985 0.001 106.423);
+  --color-card: oklch(0.216 0.006 56.043);
+  --color-card-foreground: oklch(0.985 0.001 106.423);
+  --color-popover: oklch(0.216 0.006 56.043);
+  --color-popover-foreground: oklch(0.985 0.001 106.423);
+  --color-primary: oklch(0.66 0.22 285);
+  --color-primary-foreground: oklch(0.985 0.001 106.423);
+  --color-secondary: oklch(0.268 0.007 34.298);
+  --color-secondary-foreground: oklch(0.985 0.001 106.423);
+  --color-muted: oklch(0.268 0.007 34.298);
+  --color-muted-foreground: oklch(0.709 0.01 56.259);
+  --color-accent: oklch(0.268 0.007 34.298);
+  --color-accent-foreground: oklch(0.985 0.001 106.423);
+  --color-destructive: oklch(0.704 0.191 22.216);
+  --color-border: oklch(1 0 0 / 10%);
+  --color-input: oklch(1 0 0 / 15%);
+  --color-ring: oklch(0.553 0.013 58.071);
+
+  --color-sidebar: oklch(0.216 0.006 56.043);
+  --color-sidebar-foreground: oklch(0.985 0.001 106.423);
+  --color-sidebar-primary: oklch(0.985 0.001 106.423);
+  --color-sidebar-primary-foreground: oklch(0.216 0.006 56.043);
+  --color-sidebar-accent: oklch(0.268 0.007 34.298);
+  --color-sidebar-accent-foreground: oklch(0.985 0.001 106.423);
+  --color-sidebar-border: oklch(1 0 0 / 10%);
+  --color-sidebar-ring: oklch(0.553 0.013 58.071);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family-display);
+  }
+}

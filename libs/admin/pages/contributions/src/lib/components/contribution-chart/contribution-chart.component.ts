@@ -23,7 +23,7 @@ import { ITimeSeriesPoint } from '@nyots/data-source';
           preserveAspectRatio="none"
         >
           <!-- Grid lines -->
-          <g class="grid-lines" stroke="#e5e7eb" stroke-width="1">
+          <g class="grid-lines" stroke="currentColor" stroke-opacity="0.15" stroke-width="1">
             @for (line of gridLines(); track $index) {
               <line
                 [attr.x1]="0"
@@ -42,7 +42,7 @@ import { ITimeSeriesPoint } from '@nyots/data-source';
           <path
             [attr.d]="linePath()"
             fill="none"
-            stroke="#10b981"
+            class="stroke-emerald-500"
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -54,8 +54,8 @@ import { ITimeSeriesPoint } from '@nyots/data-source';
               [attr.cx]="point.x"
               [attr.cy]="point.y"
               r="4"
-              fill="#10b981"
-              stroke="white"
+              class="fill-emerald-500"
+              stroke="currentColor"
               stroke-width="2"
               class="cursor-pointer hover:r-6 transition-all"
               (mouseenter)="showTooltip($index, $event)"
@@ -66,8 +66,8 @@ import { ITimeSeriesPoint } from '@nyots/data-source';
           <!-- Gradient definition -->
           <defs>
             <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
-              <stop offset="100%" style="stop-color:#10b981;stop-opacity:0" />
+              <stop offset="0%" class="[stop-color:#10b981]" />
+              <stop offset="100%" class="[stop-color:#10b981] [stop-opacity:0]" />
             </linearGradient>
           </defs>
         </svg>
@@ -75,7 +75,7 @@ import { ITimeSeriesPoint } from '@nyots/data-source';
         <!-- Tooltip -->
         @if (tooltipVisible()) {
           <div
-            class="absolute bg-gray-900 text-white text-xs rounded px-2 py-1 pointer-events-none z-10"
+            class="absolute bg-card text-card-foreground text-xs rounded px-2 py-1 pointer-events-none z-10 border border-border shadow-md"
             [style.left.px]="tooltipX()"
             [style.top.px]="tooltipY()"
           >

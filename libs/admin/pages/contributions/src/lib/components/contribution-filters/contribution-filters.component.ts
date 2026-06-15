@@ -32,13 +32,13 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     }),
   ],
   template: `
-    <form [formGroup]="filterForm" class="space-y-4 p-4 bg-white rounded-lg border">
+    <form [formGroup]="filterForm" class="space-y-4 p-4 bg-card rounded-lg border">
       <!-- Search Bar -->
       <div class="relative">
         <ng-icon
           hlmIcon
           name="lucideSearch"
-          class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+          class="absolute left-3 top-1 -translate-y-1 text-muted-foreground"
           size="sm"
         />
         <input
@@ -53,7 +53,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
             hlmBtn
             variant="ghost"
             size="sm"
-            class="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0"
+            class="absolute right-1 top-1 -translate-y-1 h-7 w-7 p-0"
             (click)="clearSearch()"
             type="button"
           >
@@ -176,13 +176,13 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
         </button>
 
         @if (hasActiveFilters()) {
-          <span class="text-sm text-gray-600">
+          <span class="text-sm text-muted-foreground">
             {{ getActiveFilterCount() }} filter(s) active
           </span>
         }
 
         @if (loading()) {
-          <span class="text-sm text-gray-500 italic"> Loading... </span>
+          <span class="text-sm text-muted-foreground italic"> Loading... </span>
         }
       </div>
     </form>

@@ -76,22 +76,22 @@ import { IGetContributionQuery } from '@nyots/data-source/contributions';
         } @else {
           <div class="space-y-4">
             @for (transaction of transactionsWithMetadata(); track transaction.id) {
-              <div class="flex gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+              <div class="flex gap-4 p-4 border rounded-lg hover:bg-muted transition-colors">
                 <!-- Transaction Icon -->
                 <div class="flex-shrink-0">
                   @switch (transaction.transactionType) {
                     @case ('PAYMENT') {
-                      <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center">
+                      <div class="w-10 h-10 rounded-full bg-primary dark:bg-blue-900 flex items-center justify-center">
                         <ng-icon
                           hlmIcon
                           name="lucideArrowDownCircle"
                           size="lg"
-                          class="text-blue-600 dark:text-blue-400"
+                          class="text-primary dark:text-blue-400"
                         />
                       </div>
                     }
                     @case ('REFUND') {
-                      <div class="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center">
+                      <div class="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900 flex items-center justify-center">
                         <ng-icon
                           hlmIcon
                           name="lucideArrowUpCircle"
@@ -142,7 +142,7 @@ import { IGetContributionQuery } from '@nyots/data-source/contributions';
 
                   <!-- Error Details (for failed transactions) -->
                   @if (transaction.status === ITransactionStatus.Failed && (transaction.errorCode || transaction.errorMessage)) {
-                    <div class="mt-3 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+                    <div class="mt-3 p-3 bg-destructive border border-destructive rounded-md">
                       <div class="flex items-start gap-2">
                         <ng-icon
                           hlmIcon
@@ -157,7 +157,7 @@ import { IGetContributionQuery } from '@nyots/data-source/contributions';
                             </p>
                           }
                           @if (transaction.errorMessage) {
-                            <p class="text-sm text-destructive/90 mt-1">
+                            <p class="text-sm text-destructive mt-1">
                               {{ transaction.errorMessage }}
                             </p>
                           }

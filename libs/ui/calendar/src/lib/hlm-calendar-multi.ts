@@ -168,7 +168,7 @@ import { HlmSelectContent, HlmSelectOption, HlmSelectTrigger } from '@nyots/ui/s
               @for (date of week; track _dateAdapter.getTime(date)) {
                 <td
                   brnCalendarCell
-                  class="data-[selected]:data-[outside]:bg-accent/50 data-[selected]:bg-accent relative h-8 w-8 p-0 text-center text-sm focus-within:relative focus-within:z-20 first:data-[selected]:rounded-l-md last:data-[selected]:rounded-r-md [&:has([aria-selected].day-range-end)]:rounded-r-md"
+                  class="data-[selected]:data-[outside]:bg-accent data-[selected]:bg-accent relative h-8 w-8 p-0 text-center text-sm focus-within:relative focus-within:z-20 first:data-[selected]:rounded-l-md last:data-[selected]:rounded-r-md [&:has([aria-selected].day-range-end)]:rounded-r-md"
                 >
                   <button
                     brnCalendarCellButton
@@ -260,7 +260,7 @@ export class HlmCalendarMulti<T> {
   protected readonly _btnClass = hlm(
     buttonVariants({ variant: 'ghost' }),
     'size-8 p-0 font-normal aria-selected:opacity-100',
-    'data-[outside]:text-muted-foreground data-[outside]:aria-selected:bg-accent/50 data-[outside]:aria-selected:text-muted-foreground data-[outside]:opacity-50 data-[outside]:aria-selected:opacity-30',
+    'data-[outside]:text-muted-foreground data-[outside]:aria-selected:bg-accent data-[outside]:aria-selected:text-muted-foreground data-[outside]:opacity-50 data-[outside]:aria-selected:opacity-30',
     'data-[today]:bg-accent data-[today]:text-accent-foreground',
     'data-[selected]:bg-primary data-[selected]:text-primary-foreground data-[selected]:hover:bg-primary data-[selected]:hover:text-primary-foreground data-[selected]:focus:bg-primary data-[selected]:focus:text-primary-foreground',
     'data-[disabled]:text-muted-foreground data-[disabled]:opacity-50',

@@ -95,13 +95,13 @@ export class SystemHealth {
   getStatusColor(status: string): string {
     switch (status) {
       case 'OK':
-        return 'text-green-500';
+        return 'text-emerald-600 dark:text-emerald-400';
       case 'Error':
-        return 'text-red-500';
+        return 'text-destructive';
       case 'Degraded':
-        return 'text-yellow-500';
+        return 'text-amber-600 dark:text-amber-400';
       default:
-        return 'text-gray-500'; // Default for unknown status
+        return 'text-muted-foreground'; // Default for unknown status
     }
   }
 }

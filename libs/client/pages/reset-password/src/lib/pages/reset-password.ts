@@ -9,6 +9,7 @@ import { HlmCard, HlmCardContent, HlmCardDescription, HlmCardFooter, HlmCardHead
 import { HlmIcon, HlmIconImports } from '@nyots/ui/icon';
 import { provideIcons } from '@ng-icons/core';
 import { lucideLoader2, lucideLock, lucideKey } from '@ng-icons/lucide';
+import { ThemeToggleComponent } from '@nyots/ui-theme-toggle';
 import { AuthService } from '@nyots/data-source/auth';
 
 @Component({
@@ -27,6 +28,7 @@ import { AuthService } from '@nyots/data-source/auth';
     HlmIcon,
     HlmIconImports,
     RouterLink,
+    ThemeToggleComponent,
   ],
   providers: [provideIcons({ lucideLoader2, lucideLock, lucideKey })],
   templateUrl: 'reset-password.html',

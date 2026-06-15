@@ -38,12 +38,12 @@ import {
     }),
   ],
   template: `
-    <div class="min-h-screen bg-slate-50">
+    <div class="min-h-screen bg-background">
       <!-- Header -->
-      <header class="bg-white border-b border-slate-200">
+      <header class="bg-card border-b border-border">
         <div class="container mx-auto px-4 py-4">
           <div class="flex items-center justify-between">
-            <h1 class="text-2xl font-bold text-slate-900">Contributions Management</h1>
+            <h1 class="text-2xl font-bold text-foreground">Contributions Management</h1>
             <a
               hlmBtn
               [routerLink]="['/dashboard','contributions','create']"
@@ -57,54 +57,54 @@ import {
       </header>
 
       <!-- Navigation Tabs -->
-      <nav class="bg-white border-b border-slate-200">
+      <nav class="bg-card border-b border-border">
         <div class="container mx-auto px-4">
           <div class="flex gap-1 overflow-x-auto">
             <a
               routerLink="/dashboard/contributions"
-              routerLinkActive="border-b-2 border-blue-600 text-blue-600"
+              routerLinkActive="border-b-2 border-primary text-primary"
               [routerLinkActiveOptions]="{ exact: true }"
-              class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-900 whitespace-nowrap"
+              class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground whitespace-nowrap"
             >
               <ng-icon name="lucideLayoutDashboard" size="sm" />
               Dashboard
             </a>
             <a
               routerLink="/dashboard/contributions/list"
-              routerLinkActive="border-b-2 border-blue-600 text-blue-600"
-              class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-900 whitespace-nowrap"
+              routerLinkActive="border-b-2 border-primary text-primary"
+              class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground whitespace-nowrap"
             >
               <ng-icon name="lucideList" size="sm" />
               All Contributions
             </a>
             <a
               routerLink="/dashboard/contributions/pending"
-              routerLinkActive="border-b-2 border-blue-600 text-blue-600"
-              class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-900 whitespace-nowrap"
+              routerLinkActive="border-b-2 border-primary text-primary"
+              class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground whitespace-nowrap"
             >
               <ng-icon name="lucideClock" size="sm" />
               Pending
             </a>
             <a
               routerLink="/dashboard/contributions/reports"
-              routerLinkActive="border-b-2 border-blue-600 text-blue-600"
-              class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-900 whitespace-nowrap"
+              routerLinkActive="border-b-2 border-primary text-primary"
+              class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground whitespace-nowrap"
             >
               <ng-icon name="lucideFileText" size="sm" />
               Reports
             </a>
             <a
               routerLink="/dashboard/contributions/refunds"
-              routerLinkActive="border-b-2 border-blue-600 text-blue-600"
-              class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-900 whitespace-nowrap"
+              routerLinkActive="border-b-2 border-primary text-primary"
+              class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground whitespace-nowrap"
             >
               <ng-icon name="lucideRefreshCw" size="sm" />
               Refunds
             </a>
             <a
               routerLink="/dashboard/contributions/transactions"
-              routerLinkActive="border-b-2 border-blue-600 text-blue-600"
-              class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-900 whitespace-nowrap"
+              routerLinkActive="border-b-2 border-primary text-primary"
+              class="flex items-center gap-2 px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground whitespace-nowrap"
             >
               <ng-icon name="lucideActivity" size="sm" />
               Transactions
