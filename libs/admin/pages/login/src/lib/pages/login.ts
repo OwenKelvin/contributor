@@ -9,8 +9,8 @@ import {
 import { HlmButton } from '@nyots/ui/button';
 import { HlmInput } from '@nyots/ui/input';
 import { HlmLabel } from '@nyots/ui/label';
-import { HlmIcon, HlmIconImports } from '@nyots/ui/icon';
-import { provideIcons } from '@ng-icons/core';
+import { HlmIcon } from '@nyots/ui/icon';
+import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideLoader2, lucideMail, lucideLock, lucideAlertCircle } from '@ng-icons/lucide';
 import { ThemeToggleComponent } from '@nyots/ui-theme-toggle';
 import { Router } from '@angular/router';
@@ -27,14 +27,16 @@ declare const google: any;
     HlmInput,
     HlmLabel,
     HlmIcon,
-    HlmIconImports,
+    NgIcon,
     ThemeToggleComponent,
   ],
-  providers: [provideIcons({ lucideLoader2, lucideMail, lucideLock, lucideAlertCircle })],
+  providers: [
+    provideIcons({ lucideLoader2, lucideMail, lucideLock, lucideAlertCircle }),
+  ],
   templateUrl: 'login.html',
 })
 export class Login implements OnInit {
-  private readonly googleClientId = inject(GOOGLE_CLIENT_ID)
+  private readonly googleClientId = inject(GOOGLE_CLIENT_ID);
   private authService = inject(AuthService);
   private router = inject(Router);
   private elementRef = inject(ElementRef);
@@ -64,13 +66,13 @@ export class Login implements OnInit {
 
       google.accounts.id.renderButton(
         this.elementRef.nativeElement.querySelector('#google-btn-container'),
-        { theme: 'outline', size: 'large', width: '100%' } // customization attributes
+        { theme: 'outline', size: 'large', width: '100%' }, // customization attributes
       );
     }
   }
 
   async onSubmit(e: Event) {
-    e.preventDefault()
+    e.preventDefault();
     await submit(this.loginForm, async (state) => {
       if (!this.loginForm().valid()) {
         return;
@@ -81,7 +83,6 @@ export class Login implements OnInit {
       const credentials = state().value();
 
       try {
-
         const response = await this.authService.login(credentials);
 
         this.isLoading.set(false);
@@ -121,7 +122,9 @@ export class Login implements OnInit {
     this.errorMessage.set(null);
     if (response.credential) {
       try {
-        const backendResponse = await this.authService.googleLogin(response.credential);
+        const backendResponse = await this.authService.googleLogin(
+          response.credential,
+        );
         if (backendResponse.data?.googleLogin.accessToken) {
           await this.router.navigate(['/dashboard']);
         }
@@ -134,7 +137,9 @@ export class Login implements OnInit {
         this.isLoading.set(false);
       }
     } else {
-      this.errorMessage.set('Google authentication failed: No credential received.');
+      this.errorMessage.set(
+        'Google authentication failed: No credential received.',
+      );
       this.isLoading.set(false);
     }
   }

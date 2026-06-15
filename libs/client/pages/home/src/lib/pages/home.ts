@@ -11,8 +11,8 @@ import { HlmInput } from '@nyots/ui/input';
 import { HlmTextarea } from '@nyots/ui/textarea';
 import { HlmLabel } from '@nyots/ui/label';
 import { HlmBadge } from '@nyots/ui/badge';
-import { HlmIcon, HlmIconImports } from '@nyots/ui/icon';
-import { provideIcons } from '@ng-icons/core';
+import { HlmIcon } from '@nyots/ui/icon';
+import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideSearch,
   lucideHeart,
@@ -78,38 +78,41 @@ interface ContactForm {
     HlmBadge,
     HlmIcon,
     ThemeToggleComponent,
-    ...HlmIconImports,
+    HlmIcon,
+    NgIcon,
   ],
-  providers: [provideIcons({
-    lucideSearch,
-    lucideHeart,
-    lucideHandHeart,
-    lucideUsers,
-    lucideBarChart3,
-    lucideArrowRight,
-    lucideMenu,
-    lucideX,
-    lucideChevronDown,
-    lucideMail,
-    lucidePhone,
-    lucideMapPin,
-    lucideSend,
-    lucideCheckCircle2,
-    lucideLoader2,
-    lucideTrendingUp,
-    lucideTarget,
-    lucideGlobe,
-    lucideBuilding2,
-    lucideLandmark,
-    lucideSprout,
-    lucideTreeDeciduous,
-    lucideWheat,
-    lucideTractor,
-    lucideHome,
-    lucideStore,
-    lucideHammer,
-    lucideFlower2,
-  })],
+  providers: [
+    provideIcons({
+      lucideSearch,
+      lucideHeart,
+      lucideHandHeart,
+      lucideUsers,
+      lucideBarChart3,
+      lucideArrowRight,
+      lucideMenu,
+      lucideX,
+      lucideChevronDown,
+      lucideMail,
+      lucidePhone,
+      lucideMapPin,
+      lucideSend,
+      lucideCheckCircle2,
+      lucideLoader2,
+      lucideTrendingUp,
+      lucideTarget,
+      lucideGlobe,
+      lucideBuilding2,
+      lucideLandmark,
+      lucideSprout,
+      lucideTreeDeciduous,
+      lucideWheat,
+      lucideTractor,
+      lucideHome,
+      lucideStore,
+      lucideHammer,
+      lucideFlower2,
+    }),
+  ],
   template: `
     <!-- Navigation -->
     <nav class="fixed top-0 left-0 right-0 z-50 glass-nav transition-all duration-300" [class.shadow-sm]="scrolled()">
@@ -722,87 +725,125 @@ interface ContactForm {
       </div>
     </footer>
   `,
-  styles: [`
-    :host {
-      display: block;
-      scroll-behavior: smooth;
-    }
+  styles: [
+    `
+      :host {
+        display: block;
+        scroll-behavior: smooth;
+      }
 
-    html {
-      scroll-behavior: smooth;
-    }
+      html {
+        scroll-behavior: smooth;
+      }
 
-    /* Reveal animations */
-    .reveal-item {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-    }
+      /* Reveal animations */
+      .reveal-item {
+        opacity: 0;
+        transform: translateY(30px);
+        transition:
+          opacity 0.8s ease-out,
+          transform 0.8s ease-out;
+      }
 
-    .reveal-item.revealed {
-      opacity: 1;
-      transform: translateY(0);
-    }
+      .reveal-item.revealed {
+        opacity: 1;
+        transform: translateY(0);
+      }
 
-    /* Stagger delay classes */
-    .reveal-item:nth-child(1) { transition-delay: 0ms; }
-    .reveal-item:nth-child(2) { transition-delay: 100ms; }
-    .reveal-item:nth-child(3) { transition-delay: 200ms; }
-    .reveal-item:nth-child(4) { transition-delay: 300ms; }
-    .reveal-item:nth-child(5) { transition-delay: 400ms; }
-    .reveal-item:nth-child(6) { transition-delay: 500ms; }
+      /* Stagger delay classes */
+      .reveal-item:nth-child(1) {
+        transition-delay: 0ms;
+      }
+      .reveal-item:nth-child(2) {
+        transition-delay: 100ms;
+      }
+      .reveal-item:nth-child(3) {
+        transition-delay: 200ms;
+      }
+      .reveal-item:nth-child(4) {
+        transition-delay: 300ms;
+      }
+      .reveal-item:nth-child(5) {
+        transition-delay: 400ms;
+      }
+      .reveal-item:nth-child(6) {
+        transition-delay: 500ms;
+      }
 
-    /* Hero specific */
-    #hero .reveal-item {
-      transition-delay: 0ms;
-    }
+      /* Hero specific */
+      #hero .reveal-item {
+        transition-delay: 0ms;
+      }
 
-    #hero .reveal-item:nth-child(1) { transition-delay: 0ms; }
-    #hero .reveal-item:nth-child(2) { transition-delay: 150ms; }
-    #hero .reveal-item:nth-child(3) { transition-delay: 300ms; }
-    #hero .reveal-item:nth-child(4) { transition-delay: 450ms; }
+      #hero .reveal-item:nth-child(1) {
+        transition-delay: 0ms;
+      }
+      #hero .reveal-item:nth-child(2) {
+        transition-delay: 150ms;
+      }
+      #hero .reveal-item:nth-child(3) {
+        transition-delay: 300ms;
+      }
+      #hero .reveal-item:nth-child(4) {
+        transition-delay: 450ms;
+      }
 
-    /* Line clamp utilities */
-    .line-clamp-1 {
-      display: -webkit-box;
-      -webkit-line-clamp: 1;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .line-clamp-2 {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
+      /* Line clamp utilities */
+      .line-clamp-1 {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
 
-    /* Bounce animation for scroll indicator */
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(8px); }
-    }
-    .animate-bounce {
-      animation: bounce 2s ease-in-out infinite;
-    }
+      /* Bounce animation for scroll indicator */
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(8px);
+        }
+      }
+      .animate-bounce {
+        animation: bounce 2s ease-in-out infinite;
+      }
 
-    /* Pulse for loading */
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-    .animate-pulse {
-      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
+      /* Pulse for loading */
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+      .animate-pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
 
-    /* Spin for loader */
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    .animate-spin {
-      animation: spin 1s linear infinite;
-    }
-  `]
+      /* Spin for loader */
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .animate-spin {
+        animation: spin 1s linear infinite;
+      }
+    `,
+  ],
 })
 export class HomePage implements OnInit {
   private platformId = inject(PLATFORM_ID);
@@ -815,15 +856,30 @@ export class HomePage implements OnInit {
   mobileMenuOpen = signal(false);
 
   // Stats
-  rawStats = signal({ projects: 0, contributors: 0, funded: 0, totalRaised: 0 });
-  displayedStats = signal({ projects: 0, contributors: 0, funded: 0, totalRaised: 0 });
+  rawStats = signal({
+    projects: 0,
+    contributors: 0,
+    funded: 0,
+    totalRaised: 0,
+  });
+  displayedStats = signal({
+    projects: 0,
+    contributors: 0,
+    funded: 0,
+    totalRaised: 0,
+  });
 
   // Projects
   projects = signal<Project[]>([]);
   projectsLoading = signal(true);
 
   // Contact form
-  contactForm = signal<ContactForm>({ name: '', email: '', subject: '', message: '' });
+  contactForm = signal<ContactForm>({
+    name: '',
+    email: '',
+    subject: '',
+    message: '',
+  });
   contactSubmitting = signal(false);
   contactSuccess = signal(false);
 
@@ -835,25 +891,29 @@ export class HomePage implements OnInit {
     {
       number: 1,
       title: 'Browse',
-      description: 'Discover projects that align with your values and investment goals across various categories.',
+      description:
+        'Discover projects that align with your values and investment goals across various categories.',
       icon: 'lucideSearch' as const,
     },
     {
       number: 2,
       title: 'Choose',
-      description: 'Select the causes and ventures you care about most. Review details, goals, and impact metrics.',
+      description:
+        'Select the causes and ventures you care about most. Review details, goals, and impact metrics.',
       icon: 'lucideHeart' as const,
     },
     {
       number: 3,
       title: 'Contribute',
-      description: 'Invest securely in minutes with our streamlined contribution process and multiple payment options.',
+      description:
+        'Invest securely in minutes with our streamlined contribution process and multiple payment options.',
       icon: 'lucideHandHeart' as const,
     },
     {
       number: 4,
       title: 'Track',
-      description: 'Watch your impact grow. Receive updates on project progress and see your capital create change.',
+      description:
+        'Watch your impact grow. Receive updates on project progress and see your capital create change.',
       icon: 'lucideBarChart3' as const,
     },
   ];
@@ -883,16 +943,17 @@ export class HomePage implements OnInit {
     this.projectsLoading.set(true);
     try {
       const result = await this.projectService.getActiveProjects({ first: 6 });
-      const fetched = result?.edges?.map(edge => ({
-        id: edge.node.id,
-        title: edge.node.title,
-        description: edge.node.description,
-        goalAmount: edge.node.goalAmount,
-        currentAmount: edge.node.currentAmount,
-        status: edge.node.status,
-        featuredImage: edge.node.featuredImage || null,
-        category: edge.node.category,
-      })) || [];
+      const fetched =
+        result?.edges?.map((edge) => ({
+          id: edge.node.id,
+          title: edge.node.title,
+          description: edge.node.description,
+          goalAmount: edge.node.goalAmount,
+          currentAmount: edge.node.currentAmount,
+          status: edge.node.status,
+          featuredImage: edge.node.featuredImage || null,
+          category: edge.node.category,
+        })) || [];
       this.projects.set(fetched);
     } catch (error) {
       console.error('Error loading projects:', error);
@@ -958,9 +1019,13 @@ export class HomePage implements OnInit {
   }
 
   private setupScrollListener() {
-    window.addEventListener('scroll', () => {
-      this.scrolled.set(window.scrollY > 10);
-    }, { passive: true });
+    window.addEventListener(
+      'scroll',
+      () => {
+        this.scrolled.set(window.scrollY > 10);
+      },
+      { passive: true },
+    );
   }
 
   private setupIntersectionObserver() {
@@ -968,7 +1033,7 @@ export class HomePage implements OnInit {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach(entry => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const items = entry.target.querySelectorAll('.reveal-item');
             items.forEach((item, index) => {
@@ -980,7 +1045,7 @@ export class HomePage implements OnInit {
           }
         });
       },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' },
     );
 
     // Observe all sections
@@ -990,7 +1055,7 @@ export class HomePage implements OnInit {
       this.howItWorksRef?.nativeElement,
       this.aboutRef?.nativeElement,
       this.contactRef?.nativeElement,
-    ].forEach(el => {
+    ].forEach((el) => {
       if (el) observer.observe(el);
     });
   }

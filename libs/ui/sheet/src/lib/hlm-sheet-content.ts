@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, ElementRef, Renderer2, effect, inject, signal } from '@angular/core';
-import { provideIcons } from '@ng-icons/core';
+import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideX } from '@ng-icons/lucide';
 import { injectExposedSideProvider, injectExposesStateProvider } from '@spartan-ng/brain/core';
-import { HlmIconImports } from '@nyots/ui/icon';
 import { classes } from '@nyots/ui/utils';
 import { cva } from 'class-variance-authority';
 import { HlmSheetClose } from './hlm-sheet-close';
+import { HlmIcon } from '@nyots/ui/icon';
 
 export const sheetVariants = cva(
 	'bg-background data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-50 flex flex-col gap-4 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500',
@@ -27,33 +27,37 @@ export const sheetVariants = cva(
 );
 
 @Component({
-	selector: 'hlm-sheet-content',
-	imports: [HlmSheetClose, HlmIconImports],
-	providers: [provideIcons({ lucideX })],
-	changeDetection: ChangeDetectionStrategy.OnPush,
-	host: {
-		'data-slot': 'sheet-content',
-		'[attr.data-state]': 'state()',
-	},
-	template: `
-		<ng-content />
-		<button hlmSheetClose>
-			<span class="sr-only">Close</span>
-			<ng-icon hlm size="sm" name="lucideX" />
-		</button>
-	`,
+  selector: 'hlm-sheet-content',
+  imports: [HlmSheetClose, HlmIcon, NgIcon],
+  providers: [provideIcons({ lucideX })],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    'data-slot': 'sheet-content',
+    '[attr.data-state]': 'state()',
+  },
+  template: `
+    <ng-content />
+    <button hlmSheetClose>
+      <span class="sr-only">Close</span>
+      <ng-icon hlm size="sm" name="lucideX" />
+    </button>
+  `,
 })
 export class HlmSheetContent {
-	private readonly _stateProvider = injectExposesStateProvider({ host: true });
-	private readonly _sideProvider = injectExposedSideProvider({ host: true });
-	public readonly state = this._stateProvider.state ?? signal('closed');
-	private readonly _renderer = inject(Renderer2);
-	private readonly _element = inject(ElementRef);
+  private readonly _stateProvider = injectExposesStateProvider({ host: true });
+  private readonly _sideProvider = injectExposedSideProvider({ host: true });
+  public readonly state = this._stateProvider.state ?? signal('closed');
+  private readonly _renderer = inject(Renderer2);
+  private readonly _element = inject(ElementRef);
 
-	constructor() {
-		classes(() => sheetVariants({ side: this._sideProvider.side() }));
-		effect(() => {
-			this._renderer.setAttribute(this._element.nativeElement, 'data-state', this.state());
-		});
-	}
+  constructor() {
+    classes(() => sheetVariants({ side: this._sideProvider.side() }));
+    effect(() => {
+      this._renderer.setAttribute(
+        this._element.nativeElement,
+        'data-state',
+        this.state(),
+      );
+    });
+  }
 }
