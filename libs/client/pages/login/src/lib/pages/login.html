@@ -48,8 +48,11 @@
         </div>
 
         <!-- Password Login Form -->
-        @if (loginMode() === 'password') {
-          <form (submit)="onSubmit($event)" class="space-y-4">
+        <div
+          class="grid overflow-hidden transition-[grid-template-rows] duration-300 ease-in-out"
+          [class]="loginMode() === 'password' ? '[grid-template-rows:1fr]' : '[grid-template-rows:0fr]'"
+        >
+          <form (submit)="onSubmit($event)" class="space-y-4 min-h-0">
             <div class="space-y-2">
               <label hlmLabel for="email">Email</label>
               <div class="relative">
@@ -113,11 +116,14 @@
               }
             </button>
           </form>
-        }
+        </div>
 
         <!-- Magic Link Form -->
-        @if (loginMode() === 'magicLink') {
-          <form (submit)="onMagicLinkSubmit($event)" class="space-y-4">
+        <div
+          class="grid overflow-hidden transition-[grid-template-rows] duration-300 ease-in-out"
+          [class]="loginMode() === 'magicLink' ? '[grid-template-rows:1fr]' : '[grid-template-rows:0fr]'"
+        >
+          <form (submit)="onMagicLinkSubmit($event)" class="space-y-4 min-h-0">
             <div class="space-y-2">
               <label hlmLabel for="magicEmail">Email</label>
               <div class="relative">
@@ -161,7 +167,7 @@
               }
             </button>
           </form>
-        }
+        </div>
 
         <!-- Messages -->
         @if (errorMessage()) {
@@ -187,7 +193,7 @@
             </div>
           </div>
 
-          <div id="google-btn-container" class="w-full"></div>
+          <div #googleButtonContainer class="google-btn-container w-full"></div>
         }
       </div>
 
@@ -229,7 +235,7 @@
             <p><strong>5. Financial Contributions</strong><br>All contributions made through the platform are subject to applicable laws and regulations. The platform facilitates payments but does not guarantee project outcomes.</p>
             <p><strong>6. Privacy and Data</strong><br>Your personal data is handled in accordance with our Privacy Policy. We use industry-standard security measures to protect your information.</p>
             <p><strong>7. Termination</strong><br>We reserve the right to suspend or terminate your account for violations of these terms or for any other reason at our discretion.</p>
-            <p><strong>8. Contact</strong><br>For questions about these Terms, please contact support@nyots.com.</p>
+            <p><strong>8. Contact</strong><br>For questions about these Terms, please contact support&commat;nyots.com.</p>
           </div>
         </div>
 

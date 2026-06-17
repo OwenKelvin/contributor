@@ -1,4 +1,11 @@
-import { Component, inject, signal, OnInit, ElementRef } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  OnInit,
+  ElementRef,
+  viewChild, effect, untracked,
+} from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
@@ -88,6 +95,28 @@ export class Login implements OnInit {
   termsAccepted = signal(false);
   tokenFromUrl = signal<string | null>(null);
 
+  googleButton = viewChild('googleButtonContainer', { read: ElementRef});
+  googleButtonEffect = effect(() => {
+    const googleButton = this.googleButton()?.nativeElement;
+    untracked(() => {
+      // Initialize Google Identity Services
+      if (typeof google !== 'undefined' && googleButton) {
+        google.accounts.id.initialize({
+          client_id: this.googleClientId,
+          callback: this.handleGoogleAuthResponse.bind(this),
+          auto_select: false,
+          cancel_on_tap_outside: true,
+        });
+
+        google.accounts.id.renderButton(googleButton, {
+          theme: 'outline',
+          size: 'large',
+          width: '800px',
+        });
+      }
+    })
+  });
+
   ngOnInit(): void {
     // Check for magic token in URL
     const queryParams = this.route.snapshot.queryParams;
@@ -96,21 +125,6 @@ export class Login implements OnInit {
       this.tokenFromUrl.set(token);
       this.consumeMagicLink(token);
       return;
-    }
-
-    // Initialize Google Identity Services
-    if (typeof google !== 'undefined') {
-      google.accounts.id.initialize({
-        client_id: this.googleClientId,
-        callback: this.handleGoogleAuthResponse.bind(this),
-        auto_select: false,
-        cancel_on_tap_outside: true,
-      });
-
-      google.accounts.id.renderButton(
-        this.elementRef.nativeElement.querySelector('#google-btn-container'),
-        { theme: 'outline', size: 'large', width: '100%' },
-      );
     }
   }
 

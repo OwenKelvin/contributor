@@ -66,7 +66,7 @@ export class Login implements OnInit {
 
       google.accounts.id.renderButton(
         this.elementRef.nativeElement.querySelector('#google-btn-container'),
-        { theme: 'outline', size: 'large', width: '100%' }, // customization attributes
+        { theme: 'outline', size: 'large' }, // customization attributes
       );
     }
   }

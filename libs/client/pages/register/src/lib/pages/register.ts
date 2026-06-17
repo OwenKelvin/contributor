@@ -1,13 +1,23 @@
-import { Component, inject, signal, OnInit, ElementRef } from '@angular/core';
-import { CommonModule, DOCUMENT } from '@angular/common';
 import {
-  form,
-  required,
+  Component,
+  effect,
+  ElementRef,
+  inject,
+  OnInit,
+  signal,
+  untracked,
+  viewChild,
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
   email,
-  submit,
+  FieldTree,
+  form,
+  FormField,
   minLength,
+  required,
+  submit,
   validate,
-  FieldTree, FormField,
 } from '@angular/forms/signals';
 import { HlmButton } from '@nyots/ui/button';
 import { HlmInput } from '@nyots/ui/input';
@@ -24,10 +34,10 @@ import { HlmIcon } from '@nyots/ui/icon';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideLoader2,
-  lucideMail,
   lucideLock,
-  lucideUser,
+  lucideMail,
   lucidePhone,
+  lucideUser,
 } from '@ng-icons/lucide';
 import { ThemeToggleComponent } from '@nyots/ui-theme-toggle';
 import { AuthService } from '@nyots/data-source/auth';
@@ -70,7 +80,7 @@ declare const google: any;
   ],
   templateUrl: './register.html',
 })
-export class Register implements OnInit {
+export class Register {
   private readonly googleClientId = inject(GOOGLE_CLIENT_ID);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
@@ -113,24 +123,26 @@ export class Register implements OnInit {
   successMessage = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
 
-  ngOnInit(): void {
-    console.log(this.googleClientId);
-    if (typeof google !== 'undefined') {
-      google.accounts.id.initialize({
-        client_id: this.googleClientId,
-        callback: this.handleGoogleAuthResponse.bind(this),
-        auto_select: false,
-        cancel_on_tap_outside: true,
-      });
+  googleButton = viewChild('googleButtonContainer', { read: ElementRef });
+  googleButtonEffect = effect(() => {
+    const googleButton = this.googleButton()?.nativeElement;
+    untracked(() => {
 
-      google.accounts.id.renderButton(
-        this.elementRef.nativeElement.querySelector(
-          '#google-btn-container-register',
-        ),
-        { theme: 'outline', size: 'large', width: '100%' }, // customization attributes
-      );
-    }
-  }
+      if (typeof google !== 'undefined') {
+        google.accounts.id.initialize({
+          client_id: this.googleClientId,
+          callback: this.handleGoogleAuthResponse.bind(this),
+          auto_select: false,
+          cancel_on_tap_outside: true,
+        });
+
+        google.accounts.id.renderButton(
+          googleButton,
+          { theme: 'outline', size: 'large' }, // customization attributes
+        );
+      }
+    });
+  });
 
   async registerNewUser(registrationForm: FieldTree<IRegisterInput>) {
     try {
