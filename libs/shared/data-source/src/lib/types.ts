@@ -318,6 +318,7 @@ export type IMutation = {
   _empty?: Maybe<Scalars['String']['output']>;
   adminCreateContribution: IContribution;
   approveProject: IProject;
+  assignUserRole: IUser;
   banUser: IUser;
   bulkUpdateContributionStatus: IContributionBulkUpdateResult;
   bulkUpdateProjects: IBulkUpdateResult;
@@ -357,6 +358,12 @@ export type IMutationAdminCreateContributionArgs = {
 export type IMutationApproveProjectArgs = {
   id: Scalars['ID']['input'];
   notes?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type IMutationAssignUserRoleArgs = {
+  roleIds: Array<Scalars['ID']['input']>;
+  userId: Scalars['ID']['input'];
 };
 
 

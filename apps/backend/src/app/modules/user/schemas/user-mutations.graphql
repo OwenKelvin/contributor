@@ -3,6 +3,8 @@ extend type Mutation {
 
   updateUser(id: ID!, input: UpdateUserInput!): User!
 
+  assignUserRole(userId: ID!, roleIds: [ID!]!): User!
+
   deleteUser(id: ID!): Boolean!
 
   bulkUpdateUsers(

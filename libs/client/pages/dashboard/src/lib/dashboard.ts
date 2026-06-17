@@ -163,13 +163,13 @@ import {
                 My Account
                 <ng-icon hlmIcon name="lucideChevronUp" class="ml-auto" />
               </button>
-              <ng-template #menu>
-                <hlm-dropdown-menu class="w-60">
-                  <button hlmDropdownMenuItem>Profile</button>
-                  <button hlmDropdownMenuItem>Settings</button>
-                  <button hlmDropdownMenuItem (click)="signOut()">Sign out</button>
-                </hlm-dropdown-menu>
-              </ng-template>
+        <ng-template #menu>
+          <hlm-dropdown-menu class="w-60">
+            <a hlmDropdownMenuItem routerLink="/dashboard/profile">Profile</a>
+            <button hlmDropdownMenuItem>Settings</button>
+            <button hlmDropdownMenuItem (click)="signOut()">Sign out</button>
+          </hlm-dropdown-menu>
+        </ng-template>
             </li>
           </ul>
         </div>
@@ -206,12 +206,18 @@ import {
           <div class="mx-4 mt-4 p-4 bg-amber-50 dark:bg-amber-900 border border-amber-200 dark:border-amber-800 rounded-lg">
             <div class="flex items-start gap-3">
               <ng-icon name="lucideAlertTriangle" class="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" hlm size="sm" />
-              <div class="flex-1">
-                <h3 class="text-sm font-semibold text-amber-800 dark:text-amber-200">Account setup incomplete</h3>
-                <p class="text-sm text-amber-700 dark:text-amber-300 mt-1">
-                  Please complete your profile by adding your name and other details to get the most out of NyotsCo.
-                </p>
-              </div>
+        <div class="flex-1">
+          <h3 class="text-sm font-semibold text-amber-800 dark:text-amber-200">Account setup incomplete</h3>
+          <p class="text-sm text-amber-700 dark:text-amber-300 mt-1">
+            Please complete your profile by adding your name and other details to get the most out of NyotsCo.
+          </p>
+          <a
+            routerLink="/dashboard/profile"
+            class="inline-block mt-2 text-sm font-medium text-amber-800 dark:text-amber-200 underline hover:text-amber-900 dark:hover:text-amber-100"
+          >
+            Complete profile →
+          </a>
+        </div>
               <button
                 class="text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-200 text-sm"
                 (click)="hideBanner.set(true)"

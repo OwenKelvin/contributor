@@ -87,6 +87,14 @@ export type IUpdateUserMutationVariables = Exact<{
 
 export type IUpdateUserMutation = { updateUser: { id: string, email: string, firstName: string | null, lastName: string | null, phoneNumber: string | null, createdAt: string, updatedAt: string, roles: Array<{ id: string, name: string, description: string | null }> | null } };
 
+export type IAssignUserRoleMutationVariables = Exact<{
+  userId: string | number;
+  roleIds: Array<string | number> | string | number;
+}>;
+
+
+export type IAssignUserRoleMutation = { assignUserRole: { id: string, email: string, firstName: string | null, lastName: string | null, phoneNumber: string | null, createdAt: string, updatedAt: string, roles: Array<{ id: string, name: string, description: string | null }> | null } };
+
 export type IDeleteUserMutationVariables = Exact<{
   id: string | number;
 }>;
@@ -297,6 +305,35 @@ export const UpdateUserDocument = gql`
   })
   export class IUpdateUserGQL extends Apollo.Mutation<IUpdateUserMutation, IUpdateUserMutationVariables> {
     override document = UpdateUserDocument;
+    
+    constructor(apollo: Apollo.Apollo) {
+      super(apollo);
+    }
+  }
+export const AssignUserRoleDocument = gql`
+    mutation AssignUserRole($userId: ID!, $roleIds: [ID!]!) {
+  assignUserRole(userId: $userId, roleIds: $roleIds) {
+    id
+    email
+    firstName
+    lastName
+    phoneNumber
+    roles {
+      id
+      name
+      description
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+  @Injectable({
+    providedIn: 'root'
+  })
+  export class IAssignUserRoleGQL extends Apollo.Mutation<IAssignUserRoleMutation, IAssignUserRoleMutationVariables> {
+    override document = AssignUserRoleDocument;
     
     constructor(apollo: Apollo.Apollo) {
       super(apollo);

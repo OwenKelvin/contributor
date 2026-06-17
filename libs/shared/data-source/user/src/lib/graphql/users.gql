@@ -127,6 +127,23 @@ mutation UpdateUser($id: ID!, $input: UpdateUserInput!) {
   }
 }
 
+mutation AssignUserRole($userId: ID!, $roleIds: [ID!]!) {
+  assignUserRole(userId: $userId, roleIds: $roleIds) {
+    id
+    email
+    firstName
+    lastName
+    phoneNumber
+    roles {
+      id
+      name
+      description
+    }
+    createdAt
+    updatedAt
+  }
+}
+
 mutation DeleteUser($id: ID!) {
   deleteUser(id: $id)
 }

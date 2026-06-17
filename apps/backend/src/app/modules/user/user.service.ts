@@ -1,4 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import * as bcrypt from 'bcryptjs';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './user.model';
 import { Role } from '../role/role.model';
@@ -210,7 +211,9 @@ export class UserService {
     // Update basic fields
     const updateData: any = {};
     if (input.email !== undefined) updateData.email = input.email;
-    if (input.password !== undefined) updateData.password = input.password;
+    if (input.password !== undefined) {
+      updateData.password = await bcrypt.hash(input.password, 10);
+    }
     if (input.firstName !== undefined) updateData.firstName = input.firstName;
     if (input.lastName !== undefined) updateData.lastName = input.lastName;
     if (input.phoneNumber !== undefined) updateData.phoneNumber = input.phoneNumber;

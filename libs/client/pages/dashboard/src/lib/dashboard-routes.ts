@@ -36,6 +36,11 @@ export const DashboardRoutes: Routes = [
         path: 'my-activity',
         data: { breadcrumb: 'My Activity' },
         loadComponent: () => import('./my-activity/my-activity.component').then(m => m.MyActivityComponent)
+      },
+      {
+        path: 'profile',
+        data: { breadcrumb: 'Profile' },
+        loadComponent: () => import('./profile/profile.component').then(m => m.ProfileComponent)
       }
     ]
   }

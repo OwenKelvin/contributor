@@ -6,6 +6,7 @@ import {
   IGetBannedUsersGQL,
   ICreateUserGQL,
   IUpdateUserGQL,
+  IAssignUserRoleGQL,
   IDeleteUserGQL,
   IBulkUpdateUsersGQL,
   IBanUserGQL,
@@ -44,6 +45,7 @@ export class UserService {
   private getBannedUsersGQL = inject(IGetBannedUsersGQL);
   private createUserGQL = inject(ICreateUserGQL);
   private updateUserGQL = inject(IUpdateUserGQL);
+  private assignUserRoleGQL = inject(IAssignUserRoleGQL);
   private deleteUserGQL = inject(IDeleteUserGQL);
   private bulkUpdateUsersGQL = inject(IBulkUpdateUsersGQL);
   private banUserGQL = inject(IBanUserGQL);
@@ -138,6 +140,21 @@ export class UserService {
   }
 
   /**
+   * Assigns roles to a user (admin only).
+   * @param userId - User ID
+   * @param roleIds - Array of role IDs
+   * @returns Updated user
+   */
+  async assignUserRole(userId: string, roleIds: string[]) {
+    const response = await firstValueFrom(
+      this.assignUserRoleGQL.mutate({
+        variables: { userId, roleIds },
+      }),
+    );
+    return response.data?.assignUserRole;
+  }
+
+  /**
    * Deletes a user.
    * @param id - User ID
    * @returns Boolean indicating success
@@ -196,7 +213,7 @@ export class UserService {
   }
 
   /**
-   * Bulk assigns a role to multiple users.
+   * Bulk assigns a role to multiple users (admin only).
    * @param userIds - Array of user IDs
    * @param roleId - ID of the role to assign
    * @returns Bulk operation result
@@ -208,27 +225,20 @@ export class UserService {
       failedIds: [],
     };
 
-    // Assuming bulkUpdateUsersGQL can handle assigning roles
-    // This is a simplified example; a real implementation might require a specific GraphQL mutation for bulk role assignment
-    try {
-      const response = await firstValueFrom(
-        this.bulkUpdateUsersGQL.mutate({
-          variables: {
-            ids: userIds,
-            input: { roleIds: [roleId] }, // Assuming roleIds can be directly updated
-          },
-        }),
-      );
-      if (response.data?.bulkUpdateUsers?.success) {
-        result.successCount = userIds.length; // Assuming all succeed if no error
-      } else {
-        result.failureCount = userIds.length;
-        result.failedIds = userIds;
+    for (const userId of userIds) {
+      try {
+        const updatedUser = await this.assignUserRole(userId, [roleId]);
+        if (updatedUser) {
+          result.successCount++;
+        } else {
+          result.failureCount++;
+          result.failedIds.push(userId);
+        }
+      } catch (error) {
+        console.error(`Error assigning role to user ${userId}:`, error);
+        result.failureCount++;
+        result.failedIds.push(userId);
       }
-    } catch (error) {
-      console.error('Error in bulkAssignRole:', error);
-      result.failureCount = userIds.length;
-      result.failedIds = userIds;
     }
 
     return result;

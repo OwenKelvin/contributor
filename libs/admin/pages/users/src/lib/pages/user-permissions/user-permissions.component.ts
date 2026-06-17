@@ -129,9 +129,7 @@ export class UserPermissionsComponent {
         ? currentRoleIds.filter(id => id !== role.id)
         : [...currentRoleIds, role.id];
 
-      await this.userService.updateUser(user.id, {
-        roleIds: newRoleIds,
-      });
+      await this.userService.assignUserRole(user.id, newRoleIds);
 
       toast.success(`Role ${hasRole ? 'removed' : 'added'} successfully`);
       await this.loadData();

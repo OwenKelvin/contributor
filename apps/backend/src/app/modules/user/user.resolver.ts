@@ -1,5 +1,6 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { UserService } from './user.service';
 import { User } from './user.model';
 import { CreateUserInput } from './dto/create-user.input';
@@ -10,9 +11,11 @@ import { BulkUpdateUserInput } from './dto/bulk-update-user.input';
 import { UserConnection } from './types/user-connection.type';
 import { BulkUpdateResult } from './types/bulk-update-result.type';
 import { BanUserInput } from './dto/ban-user.input';
+import { RoleList } from '../role/role-list';
 
-import { UseGuards } from '@nestjs/common';
+import { UnauthorizedException, UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -48,13 +51,42 @@ export class UserResolver {
     return this.userService.createUser(input, user?.id);
   }
 
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => User)
   async updateUser(
     @Args('id') id: string,
     @Args('input') input: UpdateUserInput,
     @CurrentUser() user: any,
   ): Promise<User> {
-    return this.userService.updateUser(id, input, user?.id);
+    const currentUserId = user?.id || user?.req?.user?.id;
+    if (!currentUserId) {
+      throw new UnauthorizedException('You must be logged in to update a user.');
+    }
+    if (id !== currentUserId) {
+      throw new UnauthorizedException('You can only update your own profile.');
+    }
+    // Prevent self-service role changes
+    const sanitizedInput: UpdateUserInput = {
+      ...input,
+      roleIds: undefined,
+    };
+    return this.userService.updateUser(id, sanitizedInput, currentUserId);
+  }
+
+  @UseGuards(GqlAuthGuard, RolesGuard)
+  @Roles(RoleList.Admin)
+  @Mutation(() => User)
+  async assignUserRole(
+    @Args('userId') userId: string,
+    @Args('roleIds', { type: () => [String] }) roleIds: string[],
+    @CurrentUser() context: any,
+  ): Promise<User> {
+    const adminId = context.req?.user?.id || context.id;
+    return this.userService.updateUser(
+      userId,
+      { roleIds },
+      adminId,
+    );
   }
 
   @Mutation(() => Boolean)
