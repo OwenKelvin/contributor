@@ -80,7 +80,7 @@
             </div>
 
             @if (errorMessage()) {
-              <div class="flex items-center gap-2 p-3 rounded-lg bg-destructive border border-destructive text-destructive text-sm animate-in fade-in slide-in-from-top-1">
+              <div class="flex items-center gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive text-destructive text-sm animate-in fade-in slide-in-from-top-1">
                 <ng-icon hlmIcon name="lucideAlertCircle" size="sm" class="shrink-0" />
                 <p>{{ errorMessage() }}</p>
               </div>
